@@ -1,0 +1,19 @@
+<RCC>
+  <qresource prefix="BDLS">
+    <file>icons/go-next-24.png</file>
+    <file>icons/go-previous-24.png</file>
+    <file>icons/zoom-in-32.png</file>
+    <file>icons/zoom-out-32.png</file>
+    <file>icons/search_files.png</file>
+    <file>icons/savedb.png</file>
+    <file>icons/search.png</file>
+    <file>icons/search_doc.png</file>
+    <file>icons/unlock.png</file>
+    <file>icons/lock.png</file>
+    <file>icons/del_row.png</file>
+    <file>icons/add_row.png</file>
+  </qresource>
+  <qresource prefix="tt">
+    <file>tabtoolbar.json</file>
+  </qresource>
+</RCC>

@@ -1,0 +1,229 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{5E5D1836-91FD-43C2-A38B-5904AED63CE9}</ProjectGuid>
+    <Keyword>QtVS_v304</Keyword>
+    <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">10.0.19041.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">10.0.19041.0</WindowsTargetPlatformVersion>
+    <QtMsBuild Condition="'$(QtMsBuild)'=='' OR !Exists('$(QtMsBuild)\qt.targets')">$(MSBuildProjectDirectory)\QtMsBuild</QtMsBuild>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Condition="Exists('$(QtMsBuild)\qt_defaults.props')">
+    <Import Project="$(QtMsBuild)\qt_defaults.props" />
+  </ImportGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
+    <QtInstall>6.3.0_msvc2019_64</QtInstall>
+    <QtModules>core;sql;gui;multimedia;widgets;multimediawidgets;webenginewidgets;charts</QtModules>
+    <QtBuildConfig>debug</QtBuildConfig>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
+    <QtInstall>6.3.0_msvc2019_64</QtInstall>
+    <QtModules>core;sql;gui;multimedia;widgets;multimediawidgets;webenginewidgets</QtModules>
+    <QtBuildConfig>release</QtBuildConfig>
+  </PropertyGroup>
+  <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') or !Exists('$(QtMsBuild)\qt.props')">
+    <Message Importance="High" Text="QtMsBuild: could not locate qt.targets, qt.props; project may not build correctly." />
+  </Target>
+  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Label="Shared" />
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(QtMsBuild)\Qt.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(QtMsBuild)\Qt.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <IncludePath>E:\source\BDLS\QXlsx\header;$(QTDIR)\include\;$(QTDIR)\include\QtGui\6.3.0;$(QTDIR)\include\QtGui\6.3.0\QtGui;$(QTDIR)\include\QtCore\6.3.0;$(QTDIR)\include\QtCore\6.3.0\QtCore;E:\Library\Qt\6.3.0\msvc2019_64\include\QtPdf;E:\Library\Qt\6.3.0\msvc2019_64\include\QtPdfWidgets;$(IncludePath)</IncludePath>
+    <LibraryPath>E:\Library\Qt\6.3.0\msvc2019_64\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <IncludePath>E:\source\BDLS\QXlsx\header;$(QTDIR)\include\;$(QTDIR)\include\QtGui\6.3.0;$(QTDIR)\include\QtGui\6.3.0\QtGui;$(QTDIR)\include\QtCore\6.3.0;$(QTDIR)\include\QtCore\6.3.0\QtCore;E:\Library\Qt\6.3.0\msvc2019_64\include\QtPdf;E:\Library\Qt\6.3.0\msvc2019_64\include\QtPdfWidgets;$(IncludePath)</IncludePath>
+    <LibraryPath>E:\Library\Qt\6.3.0\msvc2019_64\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Link>
+      <AdditionalDependencies>Qt6Pdfd.lib;Qt6PdfWidgetsd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Link>
+      <AdditionalDependencies>Qt6Pdf.lib;Qt6PdfWidgets.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
+    <ClCompile>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="Configuration">
+    <ClCompile>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <Optimization>MaxSpeed</Optimization>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\QXlsx\source\xlsxabstractooxmlfile.cpp" />
+    <ClCompile Include="..\QXlsx\source\xlsxabstractsheet.cpp" />
+    <ClCompile Include="..\QXlsx\source\xlsxcell.cpp" />
+    <ClCompile Include="..\QXlsx\source\xlsxcellformula.cpp" />
+    <ClCompile Include="..\QXlsx\source\xlsxcelllocation.cpp" />
+    <ClCompile Include="..\QXlsx\source\xlsxcellrange.cpp" />
+    <ClCompile Include="..\QXlsx\source\xlsxcellreference.cpp" />
+    <ClCompile Include="..\QXlsx\source\xlsxchart.cpp" />
+    <ClCompile Include="..\QXlsx\source\xlsxchartsheet.cpp" />
+    <ClCompile Include="..\QXlsx\source\xlsxcolor.cpp" />
+    <ClCompile Include="..\QXlsx\source\xlsxconditionalformatting.cpp" />
+    <ClCompile Include="..\QXlsx\source\xlsxcontenttypes.cpp" />
+    <ClCompile Include="..\QXlsx\source\xlsxdatavalidation.cpp" />
+    <ClCompile Include="..\QXlsx\source\xlsxdatetype.cpp" />
+    <ClCompile Include="..\QXlsx\source\xlsxdocpropsapp.cpp" />
+    <ClCompile Include="..\QXlsx\source\xlsxdocpropscore.cpp" />
+    <ClCompile Include="..\QXlsx\source\xlsxdocument.cpp" />
+    <ClCompile Include="..\QXlsx\source\xlsxdrawing.cpp" />
+    <ClCompile Include="..\QXlsx\source\xlsxdrawinganchor.cpp" />
+    <ClCompile Include="..\QXlsx\source\xlsxformat.cpp" />
+    <ClCompile Include="..\QXlsx\source\xlsxmediafile.cpp" />
+    <ClCompile Include="..\QXlsx\source\xlsxnumformatparser.cpp" />
+    <ClCompile Include="..\QXlsx\source\xlsxrelationships.cpp" />
+    <ClCompile Include="..\QXlsx\source\xlsxrichstring.cpp" />
+    <ClCompile Include="..\QXlsx\source\xlsxsharedstrings.cpp" />
+    <ClCompile Include="..\QXlsx\source\xlsxsimpleooxmlfile.cpp" />
+    <ClCompile Include="..\QXlsx\source\xlsxstyles.cpp" />
+    <ClCompile Include="..\QXlsx\source\xlsxtheme.cpp" />
+    <ClCompile Include="..\QXlsx\source\xlsxutility.cpp" />
+    <ClCompile Include="..\QXlsx\source\xlsxworkbook.cpp" />
+    <ClCompile Include="..\QXlsx\source\xlsxworksheet.cpp" />
+    <ClCompile Include="..\QXlsx\source\xlsxzipreader.cpp" />
+    <ClCompile Include="..\QXlsx\source\xlsxzipwriter.cpp" />
+    <ClCompile Include="MemoControls.cpp" />
+    <ClCompile Include="MySortFilterProxyModel.cpp" />
+    <ClCompile Include="pageselector.cpp" />
+    <ClCompile Include="playercontrols.cpp" />
+    <ClCompile Include="SearchControls.cpp" />
+    <ClCompile Include="videowidget.cpp" />
+    <ClCompile Include="widgetBottomView.cpp" />
+    <ClCompile Include="widgetLeftView.cpp" />
+    <ClCompile Include="widgetRightView.cpp" />
+    <ClCompile Include="zoomselector.cpp" />
+    <QtRcc Include="BDLS.qrc" />
+    <QtUic Include="BDLS.ui" />
+    <QtMoc Include="BDLS.h" />
+    <ClCompile Include="BDLS.cpp" />
+    <ClCompile Include="main.cpp" />
+    <QtUic Include="widgetBottomView.ui" />
+    <QtUic Include="widgetLeftView.ui" />
+    <QtUic Include="widgetRightView.ui" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="widgetLeftView.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="widgetRightView.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="widgetBottomView.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\QXlsx\header\xlsxabstractooxmlfile.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxabstractooxmlfile_p.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxabstractsheet.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxabstractsheet_p.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxcell.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxcellformula.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxcellformula_p.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxcelllocation.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxcellrange.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxcellreference.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxcell_p.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxchart.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxchartsheet.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxchartsheet_p.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxchart_p.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxcolor_p.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxconditionalformatting.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxconditionalformatting_p.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxcontenttypes_p.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxdatavalidation.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxdatavalidation_p.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxdatetype.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxdocpropsapp_p.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxdocpropscore_p.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxdocument_p.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxdrawinganchor_p.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxdrawing_p.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxformat.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxformat_p.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxglobal.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxmediafile_p.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxnumformatparser_p.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxrelationships_p.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxrichstring.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxrichstring_p.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxsharedstrings_p.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxsimpleooxmlfile_p.h" />
+    <ClInclude Include="db_manager.h" />
+    <QtMoc Include="MemoControls.h" />
+    <QtMoc Include="SearchControls.h" />
+    <QtMoc Include="videowidget.h" />
+    <QtMoc Include="playercontrols.h" />
+    <QtMoc Include="zoomselector.h" />
+    <QtMoc Include="pageselector.h" />
+    <QtMoc Include="MySortFilterProxyModel.h" />
+    <QtMoc Include="..\QXlsx\header\xlsxdocument.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxstyles_p.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxtheme_p.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxutility_p.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxworkbook.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxworkbook_p.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxworksheet.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxworksheet_p.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxzipreader_p.h" />
+    <ClInclude Include="..\QXlsx\header\xlsxzipwriter_p.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
+    <Import Project="$(QtMsBuild)\qt.targets" />
+  </ImportGroup>
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>widgetLeftView</class>
+ <widget class="QWidget" name="widgetLeftView">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>469</width>
+    <height>783</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>widgetLeftView</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="0">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>1</number>
+     </property>
+     <widget class="QWidget" name="fileview">
+      <attribute name="title">
+       <string>File</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="spacing">
+        <number>2</number>
+       </property>
+       <property name="leftMargin">
+        <number>2</number>
+       </property>
+       <property name="topMargin">
+        <number>2</number>
+       </property>
+       <property name="rightMargin">
+        <number>2</number>
+       </property>
+       <property name="bottomMargin">
+        <number>2</number>
+       </property>
+       <item>
+        <widget class="QTreeView" name="tvFiles"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="searchview">
+      <attribute name="title">
+       <string>Search</string>
+      </attribute>
+     </widget>
+     <widget class="QWidget" name="noteview">
+      <attribute name="title">
+       <string>Note</string>
+      </attribute>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>
