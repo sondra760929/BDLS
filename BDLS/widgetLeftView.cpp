@@ -267,13 +267,12 @@ void widgetLeftView::setTagList()
 {
 	tagDatas.clear();
 	tags.clear();
-	db_manager db(m_pView->m_strDBfilepath);
-	if (db.Connected())
+	if (m_pView->DBConnected())
 	{
 		QVariantList data;
 		//	tag가 존재하는지 확인
 		QString query = QString("SELECT id, tags FROM hsah_tags");
-		db.exec(query, data);
+		m_pView->db->exec(query, data);
 		for (const auto& item : data)
 		{
 			auto map = item.toMap();
@@ -383,8 +382,7 @@ void widgetLeftView::onSearchMemoDell()
 
 void widgetLeftView::doSearch1()
 {
-	db_manager db(m_pView->m_strDBfilepath);
-	if (db.Connected())
+	if (m_pView->DBConnected())
 	{
 		QVariantList data;
 		QMap< int, bool > total_search_file_index;
@@ -412,7 +410,7 @@ void widgetLeftView::doSearch1()
 				{
 					//	meta 검색
 					query = QString("SELECT file_id, value FROM header_info WHERE header_id=%1 AND value LIKE \"%%2%\"").arg(header_index).arg(search_word);
-					db.exec(query, data);
+					m_pView->db->exec(query, data);
 					for (const auto& item : data)
 					{
 						auto map = item.toMap();
@@ -431,7 +429,7 @@ void widgetLeftView::doSearch1()
 				{
 					//	내용 검색
 					query = QString("SELECT file_id, page_no, block_no FROM page_info WHERE block_text LIKE \"%%1%\"").arg(search_word);
-					db.exec(query, data);
+					m_pView->db->exec(query, data);
 					for (const auto& item : data)
 					{
 						auto map = item.toMap();
@@ -510,7 +508,7 @@ void widgetLeftView::doSearch1()
 			if (total_search_file_index[file_id])
 			{
 				QString file_name;
-				db.exec(QString("SELECT file_name FROM file_info WHERE id=%1").arg(file_id), data);
+				m_pView->db->exec(QString("SELECT file_name FROM file_info WHERE id=%1").arg(file_id), data);
 				for (const auto& item : data)
 				{
 					auto map = item.toMap();
@@ -538,7 +536,7 @@ void widgetLeftView::doSearch1()
 				{
 					QString file_contents;
 					query = QString("SELECT block_text FROM page_info WHERE file_id=%1 ORDER BY page_no, block_no").arg(file_id);
-					db.exec(query, data);
+					m_pView->db->exec(query, data);
 					for (const auto& item : data)
 					{
 						auto map = item.toMap();
@@ -596,8 +594,7 @@ void widgetLeftView::doSearch1()
 
 void widgetLeftView::doSearch2()
 {
-	db_manager db(m_pView->m_strDBfilepath);
-	if (db.Connected())
+	if (m_pView->DBConnected())
 	{
 		QVariantList data;
 		QMap< int, bool > total_search_file_index;
@@ -620,7 +617,7 @@ void widgetLeftView::doSearch2()
 				if (sc->m_searchTitle->currentText() == "내용")
 				{
 					query = QString("SELECT id, file_id, parent_id, value, date_time FROM reply_info WHERE value LIKE \"%%1%\"").arg(search_word);
-					db.exec(query, data);
+					m_pView->db->exec(query, data);
 					for (const auto& item : data)
 					{
 						auto map = item.toMap();
@@ -642,7 +639,7 @@ void widgetLeftView::doSearch2()
 				{
 					QDateTime search_time = QDateTime::fromString(search_word, "yyyy-MM-dd");
 					query = QString("SELECT id, file_id, parent_id, value, date_time FROM reply_info WHERE date_time LIKE \"%%1%\"").arg(search_time.toString("yyyy-MM-dd"));
-					db.exec(query, data);
+					m_pView->db->exec(query, data);
 					for (const auto& item : data)
 					{
 						auto map = item.toMap();
@@ -725,7 +722,7 @@ void widgetLeftView::doSearch2()
 			if (total_search_file_index[file_id])
 			{
 				QString file_name;
-				db.exec(QString("SELECT file_name FROM file_info WHERE id=%1").arg(file_id), data);
+				m_pView->db->exec(QString("SELECT file_name FROM file_info WHERE id=%1").arg(file_id), data);
 				for (const auto& item : data)
 				{
 					auto map = item.toMap();
@@ -763,15 +760,14 @@ void widgetLeftView::doSearch3()
 
 	if (search_tag_ids.size() > 0)
 	{
-		db_manager db(m_pView->m_strDBfilepath);
-		if (db.Connected())
+		if (m_pView->DBConnected())
 		{
 			QVariantList data;
 			QMap< int, int > check_file_ids;
 			for (int i = 0; i < search_tag_ids.size(); i++)
 			{
 				QString query = QString("SELECT file_id FROM file_to_hash WHERE tag_id=%1").arg(search_tag_ids[i]);
-				db.exec(query, data);
+				m_pView->db->exec(query, data);
 				if (i == 0)
 				{
 					for (const auto& item : data)
@@ -815,7 +811,7 @@ void widgetLeftView::doSearch3()
 			{
 				int file_id = find_file_ids[i];
 				QString file_name;
-				db.exec(QString("SELECT file_name FROM file_info WHERE id=%1").arg(file_id), data);
+				m_pView->db->exec(QString("SELECT file_name FROM file_info WHERE id=%1").arg(file_id), data);
 				for (const auto& item : data)
 				{
 					auto map = item.toMap();
@@ -823,7 +819,7 @@ void widgetLeftView::doSearch3()
 				}
 
 				QString output_string = "";
-				db.exec(QString("SELECT tag_id FROM file_to_hash WHERE file_id=%1").arg(file_id), data);
+				m_pView->db->exec(QString("SELECT tag_id FROM file_to_hash WHERE file_id=%1").arg(file_id), data);
 				for (const auto& item : data)
 				{
 					auto map = item.toMap();
@@ -921,13 +917,12 @@ void widgetLeftView::onFileMVDClicked(QListWidgetItem* item)
 					QMessageBox::Yes | QMessageBox::No);
 				if (reply == QMessageBox::Yes)
 				{
-					db_manager db(m_pView->m_strDBfilepath);
-					if (db.Connected())
+					if (m_pView->DBConnected())
 					{
 						QString query = QString("DELETE FROM play_info WHERE file_id=%1 AND s_time=%2")
 							.arg(m_pView->m_iCurrentFileDBID)
 							.arg(seconds);
-						db.exec(query);
+						m_pView->db->exec(query);
 
 						timeToMemo.remove(seconds);
 
@@ -951,13 +946,12 @@ void widgetLeftView::onFileTagClicked(const QModelIndex& index)
 				QMessageBox::Yes | QMessageBox::No);
 			if (reply == QMessageBox::Yes)
 			{
-				db_manager db(m_pView->m_strDBfilepath);
-				if (db.Connected())
+				if (m_pView->DBConnected())
 				{
 					QString query = QString("DELETE FROM file_to_hash WHERE file_id=%1 AND tag_id=%2")
 						.arg(m_pView->m_iCurrentFileDBID)
 						.arg(tag_id);
-					db.exec(query);
+					m_pView->db->exec(query);
 				}
 				fileTagModel->removeRow(index.row());
 			}
@@ -991,8 +985,7 @@ void widgetLeftView::doSearch4()
 
 	if (search_mv_list.size() > 0)
 	{
-		db_manager db(m_pView->m_strDBfilepath);
-		if (db.Connected())
+		if (m_pView->DBConnected())
 		{
 			QVariantList data;
 			QMap< int, int > check_file_ids;
@@ -1001,7 +994,7 @@ void widgetLeftView::doSearch4()
 			{
 				QString search_text = search_mv_list[i];
 				QString query = QString("SELECT file_id, s_title FROM play_info WHERE s_title LIKE \"%%1%\"").arg(search_text);
-				db.exec(query, data);
+				m_pView->db->exec(query, data);
 				if (i == 0)
 				{
 					for (const auto& item : data)
@@ -1071,7 +1064,7 @@ void widgetLeftView::doSearch4()
 				int file_id = find_file_ids[i];
 				QString file_name;
 				file_count = 0;
-				db.exec(QString("SELECT file_name FROM file_info WHERE id=%1").arg(file_id), data);
+				m_pView->db->exec(QString("SELECT file_name FROM file_info WHERE id=%1").arg(file_id), data);
 				for (const auto& item : data)
 				{
 					auto map = item.toMap();
@@ -1104,15 +1097,14 @@ void widgetLeftView::UpdateMemo()
 {
 	if (m_pView->m_iCurrentFileDBID > 0)
 	{
-		db_manager db(m_pView->m_strDBfilepath);
-		if (db.Connected())
+		if (m_pView->DBConnected())
 		{
 			clearMemo();
 			QList< MemoData* > temp_memo_list;
 			QVariantList data;
 			QString query = QString("SELECT id, parent_id, value, date_time FROM reply_info where file_id=%1 ORDER BY date_time")
 				.arg(m_pView->m_iCurrentFileDBID);
-			db.exec(query, data);
+			m_pView->db->exec(query, data);
 			int memo_id = 0;
 			int parent_id = 0;
 			QString memo_text;
@@ -1155,7 +1147,7 @@ void widgetLeftView::UpdateMemo()
 			clearTags();
 			query = QString("SELECT tag_id FROM file_to_hash WHERE file_id=%1")
 				.arg(m_pView->m_iCurrentFileDBID);
-			db.exec(query, data);
+			m_pView->db->exec(query, data);
 			int tag_id = 0;
 			for (const auto& item : data)
 			{
@@ -1177,7 +1169,7 @@ void widgetLeftView::UpdateMemo()
 
 			query = QString("SELECT s_time, s_title FROM play_info WHERE file_id=%1")
 				.arg(m_pView->m_iCurrentFileDBID);
-			db.exec(query, data);
+			m_pView->db->exec(query, data);
 			for (const auto& item : data)
 			{
 				auto map = item.toMap();
@@ -1252,18 +1244,17 @@ void widgetLeftView::doAddMemo()
 		QString memo_str = memoText->toPlainText();
 		if (memo_str != "")
 		{
-			db_manager db(m_pView->m_strDBfilepath);
-			if (db.Connected())
+			if (m_pView->DBConnected())
 			{
 				QVariantList data;
 				QString query = QString("INSERT INTO reply_info VALUES (NULL, %1, %2, \"%3\", datetime('now', 'localtime'))")
 					.arg(m_pView->m_iCurrentFileDBID)
 					.arg(parent_memo_id)
 					.arg(memo_str);
-				db.exec(query);
+				m_pView->db->exec(query);
 
 				query = QString("SELECT max(id) FROM reply_info");
-				db.exec(query, data);
+				m_pView->db->exec(query, data);
 				int memo_id = 0;
 				for (const auto& item : data)
 				{
@@ -1313,14 +1304,13 @@ void widgetLeftView::onSearchTagAdd()
 	QString tag_str = tagSearchEdit->text();
 	if (tag_str != "")
 	{
-		db_manager db(m_pView->m_strDBfilepath);
-		if (db.Connected())
+		if (m_pView->DBConnected())
 		{
 			QVariantList data;
 			//	tag가 존재하는지 확인
 			QString query = QString("SELECT id FROM hsah_tags WHERE tags=\"%1\"")
 				.arg(tag_str);
-			db.exec(query, data);
+			m_pView->db->exec(query, data);
 			int tag_id = 0;
 			for (const auto& item : data)
 			{
@@ -1359,14 +1349,13 @@ void widgetLeftView::doAddTag()
 		QString tag_str = tagEdit->text();
 		if (tag_str != "")
 		{
-			db_manager db(m_pView->m_strDBfilepath);
-			if (db.Connected())
+			if (m_pView->DBConnected())
 			{
 				QVariantList data;
 				//	tag가 존재하는지 확인
 				QString query = QString("SELECT id FROM hsah_tags WHERE tags=\"%1\"")
 					.arg(tag_str);
-				db.exec(query, data);
+				m_pView->db->exec(query, data);
 				int tag_id = 0;
 				for (const auto& item : data)
 				{
@@ -1379,11 +1368,11 @@ void widgetLeftView::doAddTag()
 					//	tag가 존재하지 않음
 					query = QString("INSERT INTO hsah_tags VALUES (NULL, \"%1\")")
 						.arg(tag_str);
-					db.exec(query);
+					m_pView->db->exec(query);
 
 					query = QString("SELECT id FROM hsah_tags WHERE tags=\"%1\"")
 						.arg(tag_str);
-					db.exec(query, data);
+					m_pView->db->exec(query, data);
 					for (const auto& item : data)
 					{
 						auto map = item.toMap();
@@ -1412,7 +1401,7 @@ void widgetLeftView::doAddTag()
 				query = QString("SELECT id FROM file_to_hash WHERE file_id=%1 AND tag_id=%2")
 					.arg(m_pView->m_iCurrentFileDBID)
 					.arg(tag_id);
-				db.exec(query, data);
+				m_pView->db->exec(query, data);
 				int temp_id = 0;
 				for (const auto& item : data)
 				{
@@ -1429,7 +1418,7 @@ void widgetLeftView::doAddTag()
 					query = QString("INSERT INTO file_to_hash VALUES (NULL, %1, %2)")
 						.arg(m_pView->m_iCurrentFileDBID)
 						.arg(tag_id);
-					db.exec(query);
+					m_pView->db->exec(query);
 
 					int row = fileTagModel->rowCount();
 					fileTagModel->insertRow(row);
@@ -1482,15 +1471,14 @@ void widgetLeftView::doAddMV()
 			}
 			else
 			{
-				db_manager db(m_pView->m_strDBfilepath);
-				if (db.Connected())
+				if (m_pView->DBConnected())
 				{
 
 					QString query = QString("INSERT INTO play_info VALUES (NULL, %1, %2, \"%3\")")
 						.arg(m_pView->m_iCurrentFileDBID)
 						.arg(seconds)
 						.arg(mv_title);
-					db.exec(query);
+					m_pView->db->exec(query);
 
 					timeToMemo[seconds] = mv_title;
 

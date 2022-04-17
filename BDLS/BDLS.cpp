@@ -11,6 +11,7 @@ QSettings m(m_strKey, QSettings::Registry64Format);
 QStringList media_file_format;
 BDLS::BDLS(QWidget* parent)
 	: QMainWindow(parent)
+	, db(NULL)
 {
 	ui.setupUi(this);
 
@@ -139,6 +140,24 @@ void BDLS::SelectFileFromTree(QString file_path)
 
 }
 
+bool BDLS::InitDB(QString db_file_path)
+{
+	if (db == NULL)
+	{
+		db = new db_manager(db_file_path);
+	}
+
+	return db->Connect(db_file_path);
+}
+
+bool BDLS::DBConnected()
+{
+	if (db == NULL)
+		return false;
+
+	return db->Connected();
+}
+
 void BDLS::InitFromDB()
 {
 	QString temp_string;
@@ -146,10 +165,9 @@ void BDLS::InitFromDB()
 	{
 		if (QFile::exists(m_strDBfilepath))
 		{
-			db_manager db(m_strDBfilepath);
-			if (db.Connected())
+			if (InitDB(m_strDBfilepath))
 			{
-				QStringList table_list = db.tables();
+				QStringList table_list = db->tables();
 				if (table_list.contains("headers"))
 				{
 					ClearTable();
@@ -157,7 +175,7 @@ void BDLS::InitFromDB()
 					QStringList header_list;
 					// Compile a SQL query, containing one parameter (index 1)
 					QVariantList data;
-					db.exec("SELECT id, value FROM headers ORDER BY id", data);
+					db->exec("SELECT id, value FROM headers ORDER BY id", data);
 					for (const auto& item : data)
 					{
 						auto map = item.toMap();
@@ -193,7 +211,7 @@ void BDLS::InitFromDB()
 							originModel->setHeaderData(col_size - 1, Qt::Horizontal, "파일 경로");
 						}
 
-						db.exec("SELECT id, file_name, file_path FROM file_info ORDER BY id", data);
+						db->exec("SELECT id, file_name, file_path FROM file_info ORDER BY id", data);
 						QStringList file_name_list;
 						QStringList file_path_list;
 						QList<int> file_id_list;
@@ -215,7 +233,7 @@ void BDLS::InitFromDB()
 							originModel->insertRow(i);
 							originModel->setData(originModel->index(i, 0), i + 1);
 
-							db.exec(QString("SELECT file_id, header_id, value FROM header_info WHERE file_id=%1").arg(file_id_list[i]), data);
+							db->exec(QString("SELECT file_id, header_id, value FROM header_info WHERE file_id=%1").arg(file_id_list[i]), data);
 							for (const auto& item : data)
 							{
 								auto map = item.toMap();
@@ -887,181 +905,183 @@ void BDLS::doDBUpdate()
 			//BeginProgress();
 			int total = row_count;
 			QString status_string;
-			db_manager db(m_strDBfilepath);
-			if (!db_file_exist)
+			if (InitDB(m_strDBfilepath))
 			{
-				db.exec("DROP TABLE IF EXISTS headers");
-				db.exec("CREATE TABLE headers (id INTEGER PRIMARY KEY, value TEXT)");
-				for (int j = 3; j < col_count; j++)
+				if (!db_file_exist)
 				{
-					temp_string = QString("INSERT INTO headers VALUES (NULL, \"%1\")").arg(originModel->headerData(j, Qt::Horizontal).toString());
-					//temp_string = m_Grid.QuickGetText(j, -1);
-					//sprintf_s(input_query, "INSERT INTO headers VALUES (NULL, \"%s\")", temp_string);
-					db.exec(temp_string);
+					db->exec("DROP TABLE IF EXISTS headers");
+					db->exec("CREATE TABLE headers (id INTEGER PRIMARY KEY, value TEXT)");
+					for (int j = 3; j < col_count; j++)
+					{
+						temp_string = QString("INSERT INTO headers VALUES (NULL, \"%1\")").arg(originModel->headerData(j, Qt::Horizontal).toString());
+						//temp_string = m_Grid.QuickGetText(j, -1);
+						//sprintf_s(input_query, "INSERT INTO headers VALUES (NULL, \"%s\")", temp_string);
+						db->exec(temp_string);
+					}
+					db->exec("CREATE TABLE file_info (id INTEGER PRIMARY KEY, file_name TEXT, file_path TEXT, m_no TEXT)");
+					db->exec("CREATE TABLE header_info (file_id INTEGER, header_id INTEGER, value TEXT, PRIMARY KEY(file_id, header_id))");
+					db->exec("CREATE TABLE page_info (id INTEGER PRIMARY KEY, file_id INTEGER, page_no INTEGER, block_no INTEGER, block_text TEXT)");
+					db->exec("CREATE TABLE hsah_tags (id INTEGER PRIMARY KEY, tags TEXT)");
+					db->exec("CREATE TABLE file_to_hash (id INTEGER PRIMARY KEY, file_id INTEGER, tag_id INTEGER)");
+					db->exec("CREATE TABLE reply_info (id INTEGER PRIMARY KEY, file_id INTEGER, parent_id INTEGER, value TEXT, date_time TEXT)");
+					db->exec("CREATE TABLE play_info (id INTEGER PRIMARY KEY, file_id INTEGER, s_time INTEGER, s_title TEXT)");
 				}
-				db.exec("CREATE TABLE file_info (id INTEGER PRIMARY KEY, file_name TEXT, file_path TEXT, m_no TEXT)");
-				db.exec("CREATE TABLE header_info (file_id INTEGER, header_id INTEGER, value TEXT, PRIMARY KEY(file_id, header_id))");
-				db.exec("CREATE TABLE page_info (id INTEGER PRIMARY KEY, file_id INTEGER, page_no INTEGER, block_no INTEGER, block_text TEXT)");
-				db.exec("CREATE TABLE hsah_tags (id INTEGER PRIMARY KEY, tags TEXT)");
-				db.exec("CREATE TABLE file_to_hash (id INTEGER PRIMARY KEY, file_id INTEGER, tag_id INTEGER)");
-				db.exec("CREATE TABLE reply_info (id INTEGER PRIMARY KEY, file_id INTEGER, parent_id INTEGER, value TEXT, date_time TEXT)");
-				db.exec("CREATE TABLE play_info (id INTEGER PRIMARY KEY, file_id INTEGER, s_time INTEGER, s_title TEXT)");
-			}
-			//CreateDirectory(m_strCurrentFolderPath + "\\pdf_txt", NULL);
+				//CreateDirectory(m_strCurrentFolderPath + "\\pdf_txt", NULL);
 
-			QString managed_file_no("");
+				QString managed_file_no("");
 
-			QVariantList data;
-			db.exec("SELECT max(m_no) FROM file_info", data);
-			if (data.count() > 0)
-			{
-				//	존재할 경우
-				auto map = data[0].toMap();
-				if (!map["m_no"].isNull())
-					managed_file_no = map["m_no"].toString();
-			}
-
-			for (int i = 0; i < row_count; i++)
-			{
-				QString file_name = originModel->data(originModel->index(i, col_count - 1)).toString();
-				QString file_name_only = file_name;
-				file_name_only.chop(4);
-
-				QString file_path = m_strCurrentFolderPath + "\\" + file_name;
-				QString target_file_path = m_strCurrentFolderPath + "\\" + file_name_only + ".txt";
-
-				QString cell_string = ("");
-				QString cell_string1 = ("");
-				//if (IsPDF(file_path))
-				//{
-				//	cell_string = "O";
-				//	if (CheckEncrypted(file_path))
-				//	{
-				//		cell_string1 = "V";
-				//	}
-				//	m_lstGridText[i][2] = cell_string;
-				//	m_lstGridText[i][1] = cell_string1;
-				//	if (m_lstGridIndex[i] > -1)
-				//	{
-				//		m_Grid.QuickSetText(2, m_lstGridIndex[i], cell_string);
-				//		m_Grid.QuickSetText(1, m_lstGridIndex[i], cell_string1);
-				//	}
-				//}
-
-				status_string = QString("%1 행 저장 중").arg(i + 1);
-				//UpdateProgress(status_string, i + 1, total);
-
-				int file_db_id = 0;
-				//	file id 확인
-				db.exec(QString("SELECT id FROM file_info WHERE file_path=\"%1\"").arg(file_path), data);
+				QVariantList data;
+				db->exec("SELECT max(m_no) FROM file_info", data);
 				if (data.count() > 0)
 				{
 					//	존재할 경우
 					auto map = data[0].toMap();
-					file_db_id = map["id"].toInt();
-					for (int j = 3; j < col_count; j++)
-					{
-						QString header_name = originModel->data(originModel->index(i, j)).toString();
-						temp_string = QString("UPDATE header_info SET value=\"%3\" WHERE file_id=%1 AND header_id=%2").arg(file_db_id).arg(j - 2).arg(header_name);
-						db.exec(temp_string);
-					}
+					if (!map["m_no"].isNull())
+						managed_file_no = map["m_no"].toString();
 				}
-				else
-				{
-					//	존재하지 않을 경우
-					//	insert file_info
-					managed_file_no = NextFileMNO(managed_file_no);
-					temp_string = QString("INSERT INTO file_info VALUES (NULL, \"%1\", \"%2\", \"%3\")").arg(file_name).arg(file_path).arg(managed_file_no);
-					db.exec(temp_string);
 
+				for (int i = 0; i < row_count; i++)
+				{
+					QString file_name = originModel->data(originModel->index(i, col_count - 1)).toString();
+					QString file_name_only = file_name;
+					file_name_only.chop(4);
+
+					QString file_path = m_strCurrentFolderPath + "\\" + file_name;
+					QString target_file_path = m_strCurrentFolderPath + "\\" + file_name_only + ".txt";
+
+					QString cell_string = ("");
+					QString cell_string1 = ("");
+					//if (IsPDF(file_path))
+					//{
+					//	cell_string = "O";
+					//	if (CheckEncrypted(file_path))
+					//	{
+					//		cell_string1 = "V";
+					//	}
+					//	m_lstGridText[i][2] = cell_string;
+					//	m_lstGridText[i][1] = cell_string1;
+					//	if (m_lstGridIndex[i] > -1)
+					//	{
+					//		m_Grid.QuickSetText(2, m_lstGridIndex[i], cell_string);
+					//		m_Grid.QuickSetText(1, m_lstGridIndex[i], cell_string1);
+					//	}
+					//}
+
+					status_string = QString("%1 행 저장 중").arg(i + 1);
+					//UpdateProgress(status_string, i + 1, total);
+
+					int file_db_id = 0;
 					//	file id 확인
-					db.exec(QString("SELECT id FROM file_info WHERE file_path=\"%1\"").arg(file_path), data);
+					db->exec(QString("SELECT id FROM file_info WHERE file_path=\"%1\"").arg(file_path), data);
 					if (data.count() > 0)
 					{
 						//	존재할 경우
 						auto map = data[0].toMap();
 						file_db_id = map["id"].toInt();
-
 						for (int j = 3; j < col_count; j++)
 						{
 							QString header_name = originModel->data(originModel->index(i, j)).toString();
-							temp_string = QString("INSERT INTO header_info VALUES (%1, %2, \"%3\")").arg(file_db_id).arg(j-2).arg(header_name);
-							db.exec(temp_string);
+							temp_string = QString("UPDATE header_info SET value=\"%3\" WHERE file_id=%1 AND header_id=%2").arg(file_db_id).arg(j - 2).arg(header_name);
+							db->exec(temp_string);
 						}
 					}
 					else
 					{
-						//	저장이 잘 안됐나?
-					}
-				}
+						//	존재하지 않을 경우
+						//	insert file_info
+						managed_file_no = NextFileMNO(managed_file_no);
+						temp_string = QString("INSERT INTO file_info VALUES (NULL, \"%1\", \"%2\", \"%3\")").arg(file_name).arg(file_path).arg(managed_file_no);
+						db->exec(temp_string);
 
-				//	file id 확인
-				db.exec(QString("SELECT page_no FROM page_info WHERE file_id=%1").arg(file_db_id), data);
-				if (data.count() > 0)
-				{
-					//	존재할 경우
-				}
-				else
-				{
-					if ((!QFile::exists(target_file_path)) && QFile::exists(file_path))
-					{
-						//status_string.Format(_T("%d 행 저장 중 (텍스트 추출)"), i + 1);
-						//UpdateProgress(status_string, i + 1, total);
-
-						QStringList arguments;
-						arguments.append(file_path);
-						arguments.append(target_file_path);
-
-						int i_return = QProcess::execute("PdfTxtExtractor.exe", arguments);
-						if (i_return == 0)
+						//	file id 확인
+						db->exec(QString("SELECT id FROM file_info WHERE file_path=\"%1\"").arg(file_path), data);
+						if (data.count() > 0)
 						{
-						}
-						else
-						{
-							/*QMessageBox::critical(this, QString("파일 생성 오류"), QString("PDF 파일 생성에 실패했습니다. 관리자에게 문의하십시요."));*/
-							//	text 추출 오류
-						}
-					}
-					if (QFile::exists(target_file_path))
-					{
-						QFile file(target_file_path);
-						if (!file.open(QIODevice::ReadOnly)) {
-							//	file.errorString()
-						}
-						else
-						{
-							QTextStream in(&file);
-							int total_file_size = file.size();
-							int page_no, block_no;
-							int page_index = 1;
+							//	존재할 경우
+							auto map = data[0].toMap();
+							file_db_id = map["id"].toInt();
 
-							while (!in.atEnd())
+							for (int j = 3; j < col_count; j++)
 							{
-								QString line = in.readLine();
-								QString line_info = in.readLine();
-								QStringList fields = line_info.split(",");
-								if (fields.count() > 1)
+								QString header_name = originModel->data(originModel->index(i, j)).toString();
+								temp_string = QString("INSERT INTO header_info VALUES (%1, %2, \"%3\")").arg(file_db_id).arg(j - 2).arg(header_name);
+								db->exec(temp_string);
+							}
+						}
+						else
+						{
+							//	저장이 잘 안됐나?
+						}
+					}
+
+					//	file id 확인
+					db->exec(QString("SELECT page_no FROM page_info WHERE file_id=%1").arg(file_db_id), data);
+					if (data.count() > 0)
+					{
+						//	존재할 경우
+					}
+					else
+					{
+						if ((!QFile::exists(target_file_path)) && QFile::exists(file_path))
+						{
+							//status_string.Format(_T("%d 행 저장 중 (텍스트 추출)"), i + 1);
+							//UpdateProgress(status_string, i + 1, total);
+
+							QStringList arguments;
+							arguments.append(file_path);
+							arguments.append(target_file_path);
+
+							int i_return = QProcess::execute("PdfTxtExtractor.exe", arguments);
+							if (i_return == 0)
+							{
+							}
+							else
+							{
+								/*QMessageBox::critical(this, QString("파일 생성 오류"), QString("PDF 파일 생성에 실패했습니다. 관리자에게 문의하십시요."));*/
+								//	text 추출 오류
+							}
+						}
+						if (QFile::exists(target_file_path))
+						{
+							QFile file(target_file_path);
+							if (!file.open(QIODevice::ReadOnly)) {
+								//	file.errorString()
+							}
+							else
+							{
+								QTextStream in(&file);
+								int total_file_size = file.size();
+								int page_no, block_no;
+								int page_index = 1;
+
+								while (!in.atEnd())
 								{
-									QStringList page_info = fields[0].split(":");
-									QStringList block_info = fields[1].split(":");
+									QString line = in.readLine();
+									QString line_info = in.readLine();
+									QStringList fields = line_info.split(",");
+									if (fields.count() > 1)
+									{
+										QStringList page_info = fields[0].split(":");
+										QStringList block_info = fields[1].split(":");
 
-									page_no = page_info[1].toInt();
-									block_no = block_info[1].toInt();
+										page_no = page_info[1].toInt();
+										block_no = block_info[1].toInt();
+									}
+
+									line = line.replace("'", "");
+									line = line.replace("\n", " ");
+									line = line.replace("\"", " ");
+
+									temp_string = QString("INSERT INTO page_info VALUES (NULL, %1, %2, %3, \"%4\")")
+										.arg(file_db_id)
+										.arg(page_no)
+										.arg(block_no)
+										.arg(line);
+									db->exec(temp_string);
+
+									//int cur_file_pos = ftell(extrect_fp);
+									//UpdateProgress2(cur_file_pos, total_file_size);
 								}
-
-								line = line.replace("'", "");
-								line = line.replace("\n", " ");
-								line = line.replace("\"", " ");
-
-								temp_string = QString("INSERT INTO page_info VALUES (NULL, %1, %2, %3, \"%4\")")
-									.arg(file_db_id)
-									.arg(page_no)
-									.arg(block_no)
-									.arg(line);
-								db.exec(temp_string);
-
-								//int cur_file_pos = ftell(extrect_fp);
-								//UpdateProgress2(cur_file_pos, total_file_size);
 							}
 						}
 					}

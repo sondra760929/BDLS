@@ -32,11 +32,11 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="fileview">
       <attribute name="title">
-       <string>File</string>
+       <string>파일</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <property name="spacing">
@@ -61,12 +61,17 @@
      </widget>
      <widget class="QWidget" name="searchview">
       <attribute name="title">
-       <string>Search</string>
+       <string>검색</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="noteview">
       <attribute name="title">
-       <string>Note</string>
+       <string>노트</string>
+      </attribute>
+     </widget>
+     <widget class="QWidget" name="userview">
+      <attribute name="title">
+       <string>사용자</string>
       </attribute>
      </widget>
     </widget>

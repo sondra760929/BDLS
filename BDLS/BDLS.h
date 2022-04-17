@@ -41,6 +41,9 @@ public:
 
     QTimer* m_saveTimer;
 
+    db_manager* db;
+    bool InitDB(QString db_file_path);
+    bool DBConnected();
     bool include_pass_status;
 
     void SelectFileFromTree(QString file_path);

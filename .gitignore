@@ -4,3 +4,5 @@
 *.obj
 *.ilk
 *.log
+BDLS/x64/Debug/qmake/
+x64/Debug/
