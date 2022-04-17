@@ -6,6 +6,7 @@
 #include "widgetLeftView.h"
 #include "widgetRightView.h"
 #include "widgetBottomView.h"
+#include "widgetLogin.h"
 #include <QtDebug>
 #include <QSqlDatabase>
 #include <QSqlQuery>
@@ -51,6 +52,7 @@ public:
     void OnOpenSingle();
     bool IsPDF(QString file_path);
     bool IsMV(QString file_path);
+    void doLogin();
     void doAddRow();
     void doDellRow();
     void doDBUpdate();

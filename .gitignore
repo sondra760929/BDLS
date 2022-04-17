@@ -6,3 +6,5 @@
 *.log
 BDLS/x64/Debug/qmake/
 x64/Debug/
+BDLS/x64/Debug/
+BDLS/x64/Release/

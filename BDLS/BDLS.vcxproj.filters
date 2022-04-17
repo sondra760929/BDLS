@@ -172,6 +172,9 @@
     <ClCompile Include="MemoControls.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="widgetLogin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="widgetLeftView.h">
@@ -207,6 +210,9 @@
     <QtMoc Include="MemoControls.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="widgetLogin.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="widgetLeftView.ui">
@@ -216,6 +222,9 @@
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="widgetBottomView.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="widgetLogin.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>

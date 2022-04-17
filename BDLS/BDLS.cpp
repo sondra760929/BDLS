@@ -28,6 +28,8 @@ BDLS::BDLS(QWidget* parent)
 	proxyModel->setSourceModel(originModel);
 
 	ui.treeView->setModel(proxyModel);
+	ui.treeView->setAlternatingRowColors(true);
+	ui.treeView->setIndentation(0);
 
 	connect(ui.treeView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)), this, SLOT(onTableCellClicked(const QItemSelection&, const QItemSelection&)));
 
@@ -804,14 +806,58 @@ bool BDLS::IsMV(QString file_path)
 
 void BDLS::createActions()
 {
+	ui.mainToolBar->setToolButtonStyle(Qt::ToolButtonIconOnly);
+
+	connect(ui.actionLogin, &QAction::triggered, this, &BDLS::doLogin);
+	ui.mainToolBar->addAction(ui.actionLogin);
+
+	ui.mainToolBar->addSeparator();
+
 	connect(ui.actionAddRow, &QAction::triggered, this, &BDLS::doAddRow);
 	ui.mainToolBar->addAction(ui.actionAddRow);
+	ui.actionAddRow->setEnabled(false);
 
 	connect(ui.actionDelRow, &QAction::triggered, this, &BDLS::doDellRow);
 	ui.mainToolBar->addAction(ui.actionDelRow);
+	ui.actionDelRow->setEnabled(false);
 
 	connect(ui.actionDBUpdate, &QAction::triggered, this, &BDLS::doDBUpdate);
 	ui.mainToolBar->addAction(ui.actionDBUpdate);
+	ui.actionDBUpdate->setEnabled(false);
+}
+
+void BDLS::doLogin()
+{
+	widgetLogin login_dlg(this);
+	login_dlg.setModal(true);
+	login_dlg.setWindowFlags(Qt::FramelessWindowHint);
+	login_dlg.move(this->rect().center() - QPoint(login_dlg.width() / 2, login_dlg.height() / 2));
+	login_dlg.setFocus();
+	if (login_dlg.exec() == QDialog::Accepted)
+	{
+		QString user_name = login_dlg.user_name;
+		QString user_pass = login_dlg.user_pass;
+
+		if (user_name == "admin" && user_pass == "ceohwang")
+		{
+			m_bIsAdmin = true;
+
+			ui.actionAddRow->setEnabled(true);
+			ui.actionDelRow->setEnabled(true);
+			ui.actionDBUpdate->setEnabled(true);
+		}
+		else
+		{
+			if (DBConnected())
+			{
+
+			}
+			else
+			{
+				QMessageBox::information(this, QString("확인"), QString("데이터베이스에 연결되지 않았습니다."));
+			}
+		}
+	}
 }
 
 void BDLS::doAddRow()

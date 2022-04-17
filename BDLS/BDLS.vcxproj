@@ -140,6 +140,7 @@
     <ClCompile Include="videowidget.cpp" />
     <ClCompile Include="widgetBottomView.cpp" />
     <ClCompile Include="widgetLeftView.cpp" />
+    <ClCompile Include="widgetLogin.cpp" />
     <ClCompile Include="widgetRightView.cpp" />
     <ClCompile Include="zoomselector.cpp" />
     <QtRcc Include="BDLS.qrc" />
@@ -149,6 +150,7 @@
     <ClCompile Include="main.cpp" />
     <QtUic Include="widgetBottomView.ui" />
     <QtUic Include="widgetLeftView.ui" />
+    <QtUic Include="widgetLogin.ui" />
     <QtUic Include="widgetRightView.ui" />
   </ItemGroup>
   <ItemGroup>
@@ -199,6 +201,7 @@
     <ClInclude Include="..\QXlsx\header\xlsxsharedstrings_p.h" />
     <ClInclude Include="..\QXlsx\header\xlsxsimpleooxmlfile_p.h" />
     <ClInclude Include="db_manager.h" />
+    <QtMoc Include="widgetLogin.h" />
     <QtMoc Include="MemoControls.h" />
     <QtMoc Include="SearchControls.h" />
     <QtMoc Include="videowidget.h" />
