@@ -138,6 +138,7 @@
     <ClCompile Include="playercontrols.cpp" />
     <ClCompile Include="SearchControls.cpp" />
     <ClCompile Include="videowidget.cpp" />
+    <ClCompile Include="widgetAddUser.cpp" />
     <ClCompile Include="widgetBottomView.cpp" />
     <ClCompile Include="widgetLeftView.cpp" />
     <ClCompile Include="widgetLogin.cpp" />
@@ -148,6 +149,7 @@
     <QtMoc Include="BDLS.h" />
     <ClCompile Include="BDLS.cpp" />
     <ClCompile Include="main.cpp" />
+    <QtUic Include="widgetAddUser.ui" />
     <QtUic Include="widgetBottomView.ui" />
     <QtUic Include="widgetLeftView.ui" />
     <QtUic Include="widgetLogin.ui" />
@@ -201,6 +203,7 @@
     <ClInclude Include="..\QXlsx\header\xlsxsharedstrings_p.h" />
     <ClInclude Include="..\QXlsx\header\xlsxsimpleooxmlfile_p.h" />
     <ClInclude Include="db_manager.h" />
+    <QtMoc Include="widgetAddUser.h" />
     <QtMoc Include="widgetLogin.h" />
     <QtMoc Include="MemoControls.h" />
     <QtMoc Include="SearchControls.h" />

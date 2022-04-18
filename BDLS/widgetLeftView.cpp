@@ -4,6 +4,7 @@
 #include "BDLS.h"
 #include "db_manager.h"
 #include "MemoControls.h"
+#include "widgetAddUser.h"
 
 QStringList memo_combo_header = { "내용", "날짜" };
 widgetLeftView::widgetLeftView(QWidget* parent)
@@ -257,6 +258,39 @@ widgetLeftView::widgetLeftView(QWidget* parent)
 	connect(tagList, &QListView::clicked, this, &widgetLeftView::onFileTagClicked);
 	connect(mvList, &QListWidget::currentItemChanged, this, &widgetLeftView::onFileMVClicked);
 	connect(mvList, &QListWidget::itemDoubleClicked, this, &widgetLeftView::onFileMVDClicked);
+
+	//------------------------------------------------------------------------------
+	userViewLayout = new QVBoxLayout;
+	ui.userview->setLayout(userViewLayout);
+
+	label = new QLabel(this);
+	label->setText("1. 사용자");
+	userViewLayout->addWidget(label);
+
+	userTable = new QTableWidget(this);
+	userViewLayout->addWidget(userTable);
+	QSizePolicy utTag(QSizePolicy::Preferred, QSizePolicy::Preferred);
+	utTag.setVerticalStretch(2);
+	userTable->setSizePolicy(utTag);
+	userTable->setSelectionMode(QAbstractItemView::SingleSelection);
+	userTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+	userTable->horizontalHeader()->setStretchLastSection(true);
+
+	temp_add = new QHBoxLayout;
+	QPushButton* userAdd = new QPushButton(this);
+	userAdd->setText("추가 / 변경");
+	QPushButton* userUpdate = new QPushButton(this);
+	userUpdate->setText("파일 목록 갱신");
+	QPushButton* userDel = new QPushButton(this);
+	userDel->setText("삭제");
+	temp_add->addWidget(userAdd);
+	temp_add->addWidget(userDel);
+	temp_add->addWidget(userUpdate);
+	userViewLayout->addLayout(temp_add);
+
+	connect(userAdd, &QPushButton::clicked, this, &widgetLeftView::doAddUser);
+	connect(userDel, &QPushButton::clicked, this, &widgetLeftView::doDelUser);
+	connect(userUpdate, &QPushButton::clicked, this, &widgetLeftView::doUpdateUser);
 }
 
 widgetLeftView::~widgetLeftView()
@@ -378,6 +412,13 @@ void widgetLeftView::onSearchMemoDell()
 	{
 		btn_memo_dell->setEnabled(false);
 	}
+}
+
+void widgetLeftView::ViewUser(bool show)
+{
+	ui.tabWidget->setTabEnabled(3, show);
+	if(show)
+		setUserList();
 }
 
 void widgetLeftView::doSearch1()
@@ -616,7 +657,7 @@ void widgetLeftView::doSearch2()
 
 				if (sc->m_searchTitle->currentText() == "내용")
 				{
-					query = QString("SELECT id, file_id, parent_id, value, date_time FROM reply_info WHERE value LIKE \"%%1%\"").arg(search_word);
+					query = QString("SELECT * FROM reply_info INNER JOIN user_info ON reply_info.user_id = user_info.user_id WHERE reply_info.value LIKE \"%%1%\"").arg(search_word);
 					m_pView->db->exec(query, data);
 					for (const auto& item : data)
 					{
@@ -624,6 +665,8 @@ void widgetLeftView::doSearch2()
 						int memo_id = map["id"].toInt();
 						int file_id = map["file_id"].toInt();
 						int parent_id = map["parent_id"].toInt();
+						QString user_id = map["user_id"].toString();
+						QString user_name = map["user_name"].toString();
 						QString memo_str = map["value"].toString();
 						QString date_time = map["date_time"].toString();
 						search_file_index.append(file_id);
@@ -638,7 +681,7 @@ void widgetLeftView::doSearch2()
 				else if (sc->m_searchTitle->currentText() == "날짜")
 				{
 					QDateTime search_time = QDateTime::fromString(search_word, "yyyy-MM-dd");
-					query = QString("SELECT id, file_id, parent_id, value, date_time FROM reply_info WHERE date_time LIKE \"%%1%\"").arg(search_time.toString("yyyy-MM-dd"));
+					query = QString("SELECT * FROM reply_info INNER JOIN user_info ON reply_info.user_id = user_info.user_id WHERE reply_info.date_time LIKE \"%%1%\"").arg(search_time.toString("yyyy-MM-dd"));
 					m_pView->db->exec(query, data);
 					for (const auto& item : data)
 					{
@@ -646,6 +689,8 @@ void widgetLeftView::doSearch2()
 						int memo_id = map["id"].toInt();
 						int file_id = map["file_id"].toInt();
 						int parent_id = map["parent_id"].toInt();
+						QString user_id = map["user_id"].toString();
+						QString user_name = map["user_name"].toString();
 						QString memo_str = map["value"].toString();
 						QString date_time = map["date_time"].toString();
 						search_file_index.append(file_id);
@@ -1102,11 +1147,15 @@ void widgetLeftView::UpdateMemo()
 			clearMemo();
 			QList< MemoData* > temp_memo_list;
 			QVariantList data;
-			QString query = QString("SELECT id, parent_id, value, date_time FROM reply_info where file_id=%1 ORDER BY date_time")
+			QString query = QString("SELECT * FROM reply_info WHERE file_id=%1 ORDER BY date_time")
 				.arg(m_pView->m_iCurrentFileDBID);
+			//QString query = QString("SELECT * FROM reply_info INNER JOIN user_info ON reply_info.user_id = user_info.user_id WHERE reply_info.file_id=%1 ORDER BY date_time")
+			//	.arg(m_pView->m_iCurrentFileDBID);
 			m_pView->db->exec(query, data);
 			int memo_id = 0;
 			int parent_id = 0;
+			QString user_id;
+			QString user_name;
 			QString memo_text;
 			QString memo_date;
 			for (const auto& item : data)
@@ -1114,10 +1163,12 @@ void widgetLeftView::UpdateMemo()
 				auto map = item.toMap();
 				memo_id = map["id"].toInt();
 				parent_id = map["parent_id"].toInt();
+				user_id = map["user_id"].toString();
+				user_name = map["user_name"].toString();
 				memo_text = map["value"].toString();
 				memo_date = map["date_time"].toString();
 
-				MemoData* new_memo = new MemoData(memo_id, parent_id, memo_text, memo_date);
+				MemoData* new_memo = new MemoData(memo_id, parent_id, user_id, user_name, memo_text, memo_date);
 				memoDatas[memo_id] = new_memo;
 				if (parent_id > 0)
 				{
@@ -1218,6 +1269,7 @@ void widgetLeftView::AddMemoControl(MemoData* new_memo, MemoData* parent_memo)
 	memo->setStyleSheet("QWidget#mymemo{background:white; border: 1px solid red;}");
 	memo->setDate(new_memo->m_datetime.toString("yyyy-MM-dd  HH:mm:ss"));
 	memo->setMemo(new_memo->m_memo);
+	memo->setUserName(new_memo->m_username);
 	memo->memo_id = new_memo->m_id;
 	memo_control_list.append(memo);
 	new_memo->connected_control = memo;
@@ -1247,9 +1299,10 @@ void widgetLeftView::doAddMemo()
 			if (m_pView->DBConnected())
 			{
 				QVariantList data;
-				QString query = QString("INSERT INTO reply_info VALUES (NULL, %1, %2, \"%3\", datetime('now', 'localtime'))")
+				QString query = QString("INSERT INTO reply_info VALUES (NULL, %1, %2, \"%3\", \"%4\", datetime('now', 'localtime'))")
 					.arg(m_pView->m_iCurrentFileDBID)
 					.arg(parent_memo_id)
+					.arg(m_pView->m_loginUserID)
 					.arg(memo_str);
 				m_pView->db->exec(query);
 
@@ -1262,7 +1315,7 @@ void widgetLeftView::doAddMemo()
 					memo_id = map["max(id)"].toInt();
 				}
 				QString memo_date = QDateTime::currentDateTime().toString("yyyy-MM-dd  HH:mm:ss");
-				MemoData* new_memo = new MemoData(memo_id, parent_memo_id, memo_str, memo_date);
+				MemoData* new_memo = new MemoData(memo_id, parent_memo_id, m_pView->m_loginUserID, m_pView->m_loginUserName, memo_str, memo_date);
 				memoDatas[memo_id] = new_memo;
 				MemoData* parent_memo = NULL;
 				if (parent_memo_id > 0)
@@ -1514,4 +1567,117 @@ void widgetLeftView::setMVPos(int secs)
 	QTime a(0, 0, 0);
 	a = a.addSecs(secs);
 	mvTime->setTime(a);
+}
+
+void widgetLeftView::setUserList()
+{
+	if (m_pView->DBConnected())
+	{
+		QStringList table_list = m_pView->db->tables();
+		if (!table_list.contains("user_info"))
+		{
+			m_pView->db->exec("CREATE TABLE user_info (id INTEGER PRIMARY KEY, user_id TEXT, user_pass TEXT, user_name TEXT, read_only INTEGER)");
+		}
+
+		userTable->setRowCount(0);
+		userTable->setColumnCount(2);
+		userTable->setHorizontalHeaderLabels(QStringList() << "ID" << "이름");
+		QVariantList data;
+		//	tag가 존재하는지 확인
+		QString query = QString("SELECT user_id, user_name FROM user_info ORDER BY user_id");
+		int row_count = 0;
+		m_pView->db->exec(query, data);
+		for (const auto& item : data)
+		{
+			auto map = item.toMap();
+			QString tag_id = map["user_id"].toString();
+			QString tag_str = map["user_name"].toString();
+
+			row_count++;
+			userTable->setRowCount(row_count);
+			userTable->setItem(row_count - 1, 0, new QTableWidgetItem(tag_id));
+			userTable->setItem(row_count - 1, 1, new QTableWidgetItem(tag_str));
+		}
+	}
+}
+
+void widgetLeftView::doAddUser()
+{
+	widgetAddUser login_dlg(this);
+	login_dlg.setModal(true);
+	login_dlg.setWindowFlags(Qt::FramelessWindowHint);
+	login_dlg.move(this->rect().center() - QPoint(login_dlg.width() / 2, login_dlg.height() / 2));
+	login_dlg.setFocus();
+	if (login_dlg.exec() == QDialog::Accepted)
+	{
+		QString user_id = login_dlg.user_id;
+		QString user_pass = login_dlg.user_pass;
+		QString user_name = login_dlg.user_name;
+
+		bool user_exist = false;
+		QString prev_user_name;
+		QVariantList data;
+		QString query = QString("SELECT user_id, user_name FROM user_info WHERE user_id=\"%1\"").arg(user_id);
+		m_pView->db->exec(query, data);
+		for (const auto& item : data)
+		{
+			auto map = item.toMap();
+			prev_user_name = map["user_name"].toString();
+			user_exist = true;
+		}
+
+		if (user_exist)
+		{
+			QMessageBox::StandardButton reply;
+			reply = QMessageBox::question(this, QString("확인"), QString("[%1] 사용자가 존재합니다. 암호와 이름을 변경하시겠습니까?").arg(user_id),
+				QMessageBox::Yes | QMessageBox::No);
+			if (reply == QMessageBox::Yes)
+			{
+				QString query = QString("UPDATE user_info SET user_pass=\"%2\", user_name=\"%3\" WHERE user_id=\"%1\"")
+					.arg(user_id)
+					.arg(user_pass)
+					.arg(user_name);
+				m_pView->db->exec(query);
+
+				setUserList();
+			}
+		}
+		else
+		{
+			query = QString("INSERT INTO user_info VALUES (NULL, \"%1\", \"%2\", \"%3\", 1)")
+				.arg(user_id)
+				.arg(user_pass)
+				.arg(user_name);
+			m_pView->db->exec(query);
+
+			setUserList();
+		}
+	}
+}
+
+void widgetLeftView::doDelUser()
+{
+	QModelIndexList selection = userTable->selectionModel()->selectedRows();
+	if (selection.count() > 0)
+	{
+		QModelIndex index = selection.at(0);
+		QString user_id = userTable->item(index.row(), 0)->text();
+		QString user_name = userTable->item(index.row(), 1)->text();
+		QMessageBox::StandardButton reply;
+		reply = QMessageBox::question(this, QString("확인"), QString("[%1] [%2] 사용자를 삭제하시겠습니까?").arg(user_id).arg(user_name),
+			QMessageBox::Yes | QMessageBox::No);
+		if (reply == QMessageBox::Yes)
+		{
+			QString query = QString("DELETE FROM user_info WHERE user_id=\"%1\"")
+				.arg(user_id);
+			m_pView->db->exec(query);
+
+			setUserList();
+		}
+	}
+}
+
+void widgetLeftView::doUpdateUser()
+{
+
 }

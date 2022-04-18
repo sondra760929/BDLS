@@ -9,16 +9,19 @@ MemoControls::MemoControls(QWidget *parent, int level)
 	, m_parent(parent)
 {
 	lblDateTime = new QLabel(this);
+	lblUserName = new QLabel(this);
 	lblMemo = new QLabel(this);
+	lblUserName->setStyleSheet("QLabel { background-color:white; font:bold; font-size: " + QString::number(7) + "pt; qproperty-alignment: 'AlignRight';}");
 	lblDateTime->setStyleSheet("QLabel { background-color:white; font:bold; font-size: " + QString::number(5) + "pt; qproperty-alignment: 'AlignRight';}");
 	lblMemo->setStyleSheet("QLabel { background-color:white; font-size: " + QString::number(10) + "pt; text-align:left;}");
 
     layout = new QVBoxLayout;
 	layout->setSpacing(0);
     layout->setContentsMargins(_level * 15, 0, 0, 0);
-    layout->addWidget(lblDateTime);
-    layout->addWidget(lblMemo);
-    setLayout(layout);
+    layout->addWidget(lblUserName);
+	layout->addWidget(lblMemo);
+	layout->addWidget(lblDateTime);
+	setLayout(layout);
 }
 
 MemoControls::~MemoControls()
@@ -39,6 +42,11 @@ void MemoControls::setDate(QString date)
 void MemoControls::setMemo(QString memo)
 {
 	lblMemo->setText(memo);
+}
+
+void MemoControls::setUserName(QString name)
+{
+	lblUserName->setText(name);
 }
 
 void MemoControls::mousePressEvent(QMouseEvent* event)

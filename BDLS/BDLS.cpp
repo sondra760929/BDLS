@@ -108,38 +108,40 @@ void BDLS::createDockWindows()
 void BDLS::SelectFileFromTree(QString file_path)
 {
 	m_strCurrentSelectedItemPath = file_path;
-	QFileInfo f_info(file_path);
-	QString ext = f_info.suffix().toLower();
+	//if (m_bIsLogin)
+	//{
+		QFileInfo f_info(file_path);
+		QString ext = f_info.suffix().toLower();
 
-	if (ext == "pdf")
-	{
-		m_iCurrentSelectedItemType = 2;
-		//  pdf view
-		_widgetRightView->ViewPDF(file_path);
-	}
-	else if (ext == "xls" || ext == "xlsx")
-	{
-		OnOpenSingle();
-	}
-	else if (ext == "db3")
-	{
-		char strUtf8[512] = { 0, };
-		m_strDBfilepath = file_path;
-		m_strCurrentFolderPath = f_info.absolutePath();
-		m.setValue("QSettings", file_path);
-		InitFromDB();
-	}
-	else if (media_file_format.contains(ext))
-	{
-		m_iCurrentSelectedItemType = 3;
-		_widgetRightView->ViewMovie(file_path);
-	}
-	else
-	{
-		m_iCurrentSelectedItemType = 4;
-		m_strCurrentFolderPath = file_path;
-	}
-
+		if (ext == "pdf")
+		{
+			m_iCurrentSelectedItemType = 2;
+			//  pdf view
+			_widgetRightView->ViewPDF(file_path);
+		}
+		else if (ext == "xls" || ext == "xlsx")
+		{
+			OnOpenSingle();
+		}
+		else if (ext == "db3")
+		{
+			char strUtf8[512] = { 0, };
+			m_strDBfilepath = file_path;
+			m_strCurrentFolderPath = f_info.absolutePath();
+			m.setValue("QSettings", file_path);
+			InitFromDB();
+		}
+		else if (media_file_format.contains(ext))
+		{
+			m_iCurrentSelectedItemType = 3;
+			_widgetRightView->ViewMovie(file_path);
+		}
+		else
+		{
+			m_iCurrentSelectedItemType = 4;
+			m_strCurrentFolderPath = file_path;
+		}
+	//}
 }
 
 bool BDLS::InitDB(QString db_file_path)
@@ -169,97 +171,100 @@ void BDLS::InitFromDB()
 		{
 			if (InitDB(m_strDBfilepath))
 			{
-				QStringList table_list = db->tables();
-				if (table_list.contains("headers"))
+				if (m_bIsLogin)
 				{
-					ClearTable();
-
-					QStringList header_list;
-					// Compile a SQL query, containing one parameter (index 1)
-					QVariantList data;
-					db->exec("SELECT id, value FROM headers ORDER BY id", data);
-					for (const auto& item : data)
+					QStringList table_list = db->tables();
+					if (table_list.contains("headers"))
 					{
-						auto map = item.toMap();
-						//map["id"].toInt();
-						header_list.append(map["value"].toString());
-						map_title_to_index[map["value"].toString()] = map["id"].toInt();
-					}
+						ClearTable();
 
-					if (header_list.size() > 0)
-					{
-						m_iCurrentSelectedItemType = 1;
-						int row = 1;
-						int col_size = header_list.size() + 5;	//	no, ?, !, 검색결과, 파일경로
-						QString no;
-
-						originModel->insertColumn(0);
-						originModel->setHeaderData(0, Qt::Horizontal, "No");
-						originModel->insertColumn(1);
-						originModel->setHeaderData(1, Qt::Horizontal, "?");
-						originModel->insertColumn(2);
-						originModel->setHeaderData(2, Qt::Horizontal, "!");
-						for (int i = 0; i < header_list.size(); i++)
-						{
-							originModel->insertColumn(i + 3);
-							originModel->setHeaderData(i + 3, Qt::Horizontal, header_list[i]);
-						}
-						originModel->insertColumn(col_size - 2);
-						originModel->setHeaderData(col_size - 2, Qt::Horizontal, "검색 결과");
-
-						//if (m_bIsAdmin)
-						{
-							originModel->insertColumn(col_size - 1);
-							originModel->setHeaderData(col_size - 1, Qt::Horizontal, "파일 경로");
-						}
-
-						db->exec("SELECT id, file_name, file_path FROM file_info ORDER BY id", data);
-						QStringList file_name_list;
-						QStringList file_path_list;
-						QList<int> file_id_list;
+						QStringList header_list;
+						// Compile a SQL query, containing one parameter (index 1)
+						QVariantList data;
+						db->exec("SELECT id, value FROM headers ORDER BY id", data);
 						for (const auto& item : data)
 						{
 							auto map = item.toMap();
 							//map["id"].toInt();
-							int file_id = map["id"].toInt();
-							QString file_name = map["file_name"].toString();
-							QString file_path = map["file_path"].toString();
-							file_id_list.append(file_id);
-							file_name_list.append(file_name);
-							file_path_list.append(file_path);
-							map_file_to_id[file_name] = file_id;
+							header_list.append(map["value"].toString());
+							map_title_to_index[map["value"].toString()] = map["id"].toInt();
 						}
 
-						for(int i=0; i<file_id_list.count(); i++)
+						if (header_list.size() > 0)
 						{
-							originModel->insertRow(i);
-							originModel->setData(originModel->index(i, 0), i + 1);
+							m_iCurrentSelectedItemType = 1;
+							int row = 1;
+							int col_size = header_list.size() + 5;	//	no, ?, !, 검색결과, 파일경로
+							QString no;
 
-							db->exec(QString("SELECT file_id, header_id, value FROM header_info WHERE file_id=%1").arg(file_id_list[i]), data);
+							originModel->insertColumn(0);
+							originModel->setHeaderData(0, Qt::Horizontal, "No");
+							originModel->insertColumn(1);
+							originModel->setHeaderData(1, Qt::Horizontal, "?");
+							originModel->insertColumn(2);
+							originModel->setHeaderData(2, Qt::Horizontal, "!");
+							for (int i = 0; i < header_list.size(); i++)
+							{
+								originModel->insertColumn(i + 3);
+								originModel->setHeaderData(i + 3, Qt::Horizontal, header_list[i]);
+							}
+							originModel->insertColumn(col_size - 2);
+							originModel->setHeaderData(col_size - 2, Qt::Horizontal, "검색 결과");
+
+							//if (m_bIsAdmin)
+							{
+								originModel->insertColumn(col_size - 1);
+								originModel->setHeaderData(col_size - 1, Qt::Horizontal, "파일 경로");
+							}
+
+							db->exec("SELECT id, file_name, file_path FROM file_info ORDER BY id", data);
+							QStringList file_name_list;
+							QStringList file_path_list;
+							QList<int> file_id_list;
 							for (const auto& item : data)
 							{
 								auto map = item.toMap();
 								//map["id"].toInt();
-								int header_id = map["header_id"].toInt();
-								QString value = map["value"].toString();
-
-								originModel->setData(originModel->index(i, header_id + 2), value);
+								int file_id = map["id"].toInt();
+								QString file_name = map["file_name"].toString();
+								QString file_path = map["file_path"].toString();
+								file_id_list.append(file_id);
+								file_name_list.append(file_name);
+								file_path_list.append(file_path);
+								map_file_to_id[file_name] = file_id;
 							}
-							originModel->setData(originModel->index(i, col_size - 1), file_name_list[i]);
+
+							for (int i = 0; i < file_id_list.count(); i++)
+							{
+								originModel->insertRow(i);
+								originModel->setData(originModel->index(i, 0), i + 1);
+
+								db->exec(QString("SELECT file_id, header_id, value FROM header_info WHERE file_id=%1").arg(file_id_list[i]), data);
+								for (const auto& item : data)
+								{
+									auto map = item.toMap();
+									//map["id"].toInt();
+									int header_id = map["header_id"].toInt();
+									QString value = map["value"].toString();
+
+									originModel->setData(originModel->index(i, header_id + 2), value);
+								}
+								originModel->setData(originModel->index(i, col_size - 1), file_name_list[i]);
+
+							}
 
 						}
+						proxyModel->invalidate();
+						for (int i = 0; i < proxyModel->columnCount(); ++i)
+							ui.treeView->resizeColumnToContents(i);
 
+						setSearchCombo();
+						setTagList();
 					}
-					proxyModel->invalidate();
-					for (int i = 0; i < proxyModel->columnCount(); ++i)
-						ui.treeView->resizeColumnToContents(i);
-
-					setSearchCombo();
-					setTagList();
-				}
-				else
-				{
-					//AddOutput(_T("error"), _T("headers not exists"), 0, 0);
+					else
+					{
+						//AddOutput(_T("error"), _T("headers not exists"), 0, 0);
+					}
 				}
 			}
 		}
@@ -321,363 +326,366 @@ void BDLS::setTagList()
 
 void BDLS::OnOpenSingle()
 {
-	QFileInfo f_info(m_strCurrentSelectedItemPath);
-	QString ext = f_info.suffix().toLower();
-	QString folder_path = f_info.absolutePath();
-	QString file_name = f_info.fileName();
-
-	QStringList excel_file_list;
-	//vector< int > grid_width;
-
-	if (ext == "xls" || ext == "xlsx")
+	if (m_bIsAdmin)
 	{
-		int data_row_count = originModel->rowCount();
-		if (m_strDBfilepath != "" && data_row_count > 0)
+		QFileInfo f_info(m_strCurrentSelectedItemPath);
+		QString ext = f_info.suffix().toLower();
+		QString folder_path = f_info.absolutePath();
+		QString file_name = f_info.fileName();
+
+		QStringList excel_file_list;
+		//vector< int > grid_width;
+
+		if (ext == "xls" || ext == "xlsx")
 		{
-			//	db를 읽은 상태임
-			QMessageBox::StandardButton reply;
-			reply = QMessageBox::question(this, QString("확인"), QString("현재 테이블에 추가하시겠습니까? [아니오]를 선택하시면 엑셀을 새로 로딩합니다."),
-				QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
-			if (reply == QMessageBox::Yes)
+			int data_row_count = originModel->rowCount();
+			if (m_strDBfilepath != "" && data_row_count > 0)
 			{
-				//	추가로 로딩
-				if (m_strCurrentFolderPath != folder_path)
+				//	db를 읽은 상태임
+				QMessageBox::StandardButton reply;
+				reply = QMessageBox::question(this, QString("확인"), QString("현재 테이블에 추가하시겠습니까? [아니오]를 선택하시면 엑셀을 새로 로딩합니다."),
+					QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+				if (reply == QMessageBox::Yes)
 				{
-					reply = QMessageBox::question(this, QString("확인"), QString("현재 DB파일과 다른 폴더에 있는 엑셀파일입니다.기존 파일 링크가 해제될 수 있습니다.계속 진행하시겠습니까 ? "), QMessageBox::Yes | QMessageBox::No);
-					if (reply != QMessageBox::Yes)
+					//	추가로 로딩
+					if (m_strCurrentFolderPath != folder_path)
 					{
-						//	폴더가 달라서 취소
-						return;
-					}
-				}
-				//	추가로 읽기
-				m_strCurrentExcelPath = m_strCurrentSelectedItemPath;
-
-				m_iCurrentSelectedItemType = 1;
-
-				char strUtf8[512] = { 0, };
-				int row = 1;
-				int col_size = 3;
-				QString no;
-				int grid_col_count = originModel->columnCount();
-				int grid_row_count = originModel->rowCount();
-				//try {
-				QXlsx::Document xlsx(m_strCurrentExcelPath);
-				if (xlsx.load())
-				{
-					QList<int> new_col_index;
-					QString title_string;
-					bool total_check_title = true;
-					QXlsx::Cell* cell = xlsx.cellAt(row, col_size - 2);
-					while (cell != NULL && cell->readValue().toString() != "")
-					{
-						cell = xlsx.cellAt(1, col_size - 2);
-						QString cell_string = cell->readValue().toString();
-
-						title_string = originModel->headerData(col_size, Qt::Horizontal).toString();
-						if (title_string == cell_string)
-						{
-							new_col_index.push_back(col_size);
-						}
-						else
-						{
-							bool check_title = false;
-							for (int col_index = 3; col_index < grid_col_count; col_index++)
-							{
-								if (cell_string == originModel->headerData(col_index, Qt::Horizontal).toString())
-								{
-									new_col_index.push_back(col_index);
-									check_title = true;
-									break;
-								}
-							}
-
-							if (check_title == false)
-							{
-								total_check_title = false;
-								new_col_index.push_back(-1);
-							}
-						}
-						col_size++;
-						cell = xlsx.cellAt(row, col_size - 2);
-					}
-
-					if (total_check_title == false)
-					{
-						reply = QMessageBox::question(this, 
-							QString("확인"), 
-							QString("동일하지 않은 항목이 존재합니다. 기존 항목과 동일하지 않은 항목은 무시됩니다. 계속 진행하시겠습니까?"), 
-							QMessageBox::Yes | QMessageBox::No);
+						reply = QMessageBox::question(this, QString("확인"), QString("현재 DB파일과 다른 폴더에 있는 엑셀파일입니다.기존 파일 링크가 해제될 수 있습니다.계속 진행하시겠습니까 ? "), QMessageBox::Yes | QMessageBox::No);
 						if (reply != QMessageBox::Yes)
 						{
 							//	폴더가 달라서 취소
 							return;
 						}
 					}
+					//	추가로 읽기
+					m_strCurrentExcelPath = m_strCurrentSelectedItemPath;
 
-					//col_size = m_lstGridText[0].size();
+					m_iCurrentSelectedItemType = 1;
 
-					row++;
-					grid_row_count++;
-					data_row_count++;
-					cell = xlsx.cellAt(row, 1);
-					while (cell != NULL && cell->readValue().toString() != "")
+					char strUtf8[512] = { 0, };
+					int row = 1;
+					int col_size = 3;
+					QString no;
+					int grid_col_count = originModel->columnCount();
+					int grid_row_count = originModel->rowCount();
+					//try {
+					QXlsx::Document xlsx(m_strCurrentExcelPath);
+					if (xlsx.load())
 					{
-						originModel->insertRow(0);
-						//m_lstGridText.resize(data_row_count);
-						//m_lstGridText[data_row_count - 1].resize(col_size);
-						//m_lstGridShow.resize(data_row_count);
-						//m_lstGridShow[data_row_count - 1].resize(col_size, true);
-						//m_lstGridIndex.resize(data_row_count);
-						//m_lstGridSelected.resize(data_row_count);
-						//m_lstGridKey.resize(data_row_count);
-
-						no = QString::number(data_row_count);
-
-						originModel->setData(originModel->index(0, 0), no);
-						//SetItemData(grid_row_count - 1, 0, no);
-						//m_lstGridText[data_row_count - 1][0] = no;
-						//m_lstGridIndex[data_row_count - 1] = grid_row_count - 1;
-						//m_lstGridKey[data_row_count - 1] = -1;
-
-						for (int i = 3; i < col_size - 1; i++)
+						QList<int> new_col_index;
+						QString title_string;
+						bool total_check_title = true;
+						QXlsx::Cell* cell = xlsx.cellAt(row, col_size - 2);
+						while (cell != NULL && cell->readValue().toString() != "")
 						{
-							cell = xlsx.cellAt(row, i - 2);
-							if (cell != NULL)
+							cell = xlsx.cellAt(1, col_size - 2);
+							QString cell_string = cell->readValue().toString();
+
+							title_string = originModel->headerData(col_size, Qt::Horizontal).toString();
+							if (title_string == cell_string)
 							{
-								if (new_col_index[i - 3] > -1)
+								new_col_index.push_back(col_size);
+							}
+							else
+							{
+								bool check_title = false;
+								for (int col_index = 3; col_index < grid_col_count; col_index++)
 								{
-									QString cell_string = cell->readValue().toString();
-									originModel->setData(originModel->index(0, new_col_index[i - 3]), cell_string);
-									//m_lstGridText[data_row_count - 1][new_col_index[i - 3]] = cell_string;
+									if (cell_string == originModel->headerData(col_index, Qt::Horizontal).toString())
+									{
+										new_col_index.push_back(col_index);
+										check_title = true;
+										break;
+									}
 								}
+
+								if (check_title == false)
+								{
+									total_check_title = false;
+									new_col_index.push_back(-1);
+								}
+							}
+							col_size++;
+							cell = xlsx.cellAt(row, col_size - 2);
+						}
+
+						if (total_check_title == false)
+						{
+							reply = QMessageBox::question(this,
+								QString("확인"),
+								QString("동일하지 않은 항목이 존재합니다. 기존 항목과 동일하지 않은 항목은 무시됩니다. 계속 진행하시겠습니까?"),
+								QMessageBox::Yes | QMessageBox::No);
+							if (reply != QMessageBox::Yes)
+							{
+								//	폴더가 달라서 취소
+								return;
 							}
 						}
 
-						cell = xlsx.cellAt(row, 26);
-						QString cell_string;
-						if (cell != NULL)
-						{
-							cell_string = cell->readValue().toString();
-						}
-						if (m_bIsAdmin)
-						{
-							originModel->setData(originModel->index(0, col_size - 1), cell_string);
-						}
-						//m_lstGridText[data_row_count - 1][col_size - 1] = cell_string;
+						//col_size = m_lstGridText[0].size();
 
-						QString pdf_file_path = folder_path + "\\" + cell_string;
-						cell_string = "";
-						QString cell_string1 = "";
-						//if (IsPDF(pdf_file_path))
-						//{
-						//	cell_string = "O";
-						//	if (CheckEncrypted(pdf_file_path))
-						//	{
-						//		cell_string1 = "V";
-						//	}
-						//}
-						//m_lstGridText[data_row_count - 1][2] = cell_string;
-						originModel->setData(originModel->index(0, 2), cell_string);
-						//m_Grid.QuickSetAlignment(2, grid_row_count - 1, UG_ALIGNCENTER);
-
-						originModel->setData(originModel->index(0, 1), cell_string1);
-						//m_lstGridText[data_row_count - 1][1] = cell_string1;
-						//m_Grid.QuickSetAlignment(1, grid_row_count - 1, UG_ALIGNCENTER);
-
-						//QString exist_file_path = GetExistingFilePath(folder_path, m_Grid.QuickGetText(2, row - 2), m_Grid.QuickGetText(1, row - 2));
-						////	파일 경로
-						//m_Grid.QuickSetText(col_size - 1, row - 2, exist_file_path);
-						//m_lstGridText[row - 2][col_size - 1] = exist_file_path;
 						row++;
 						grid_row_count++;
 						data_row_count++;
+						cell = xlsx.cellAt(row, 1);
+						while (cell != NULL && cell->readValue().toString() != "")
+						{
+							originModel->insertRow(0);
+							//m_lstGridText.resize(data_row_count);
+							//m_lstGridText[data_row_count - 1].resize(col_size);
+							//m_lstGridShow.resize(data_row_count);
+							//m_lstGridShow[data_row_count - 1].resize(col_size, true);
+							//m_lstGridIndex.resize(data_row_count);
+							//m_lstGridSelected.resize(data_row_count);
+							//m_lstGridKey.resize(data_row_count);
+
+							no = QString::number(data_row_count);
+
+							originModel->setData(originModel->index(0, 0), no);
+							//SetItemData(grid_row_count - 1, 0, no);
+							//m_lstGridText[data_row_count - 1][0] = no;
+							//m_lstGridIndex[data_row_count - 1] = grid_row_count - 1;
+							//m_lstGridKey[data_row_count - 1] = -1;
+
+							for (int i = 3; i < col_size - 1; i++)
+							{
+								cell = xlsx.cellAt(row, i - 2);
+								if (cell != NULL)
+								{
+									if (new_col_index[i - 3] > -1)
+									{
+										QString cell_string = cell->readValue().toString();
+										originModel->setData(originModel->index(0, new_col_index[i - 3]), cell_string);
+										//m_lstGridText[data_row_count - 1][new_col_index[i - 3]] = cell_string;
+									}
+								}
+							}
+
+							cell = xlsx.cellAt(row, 26);
+							QString cell_string;
+							if (cell != NULL)
+							{
+								cell_string = cell->readValue().toString();
+							}
+							if (m_bIsAdmin)
+							{
+								originModel->setData(originModel->index(0, col_size - 1), cell_string);
+							}
+							//m_lstGridText[data_row_count - 1][col_size - 1] = cell_string;
+
+							QString pdf_file_path = folder_path + "\\" + cell_string;
+							cell_string = "";
+							QString cell_string1 = "";
+							//if (IsPDF(pdf_file_path))
+							//{
+							//	cell_string = "O";
+							//	if (CheckEncrypted(pdf_file_path))
+							//	{
+							//		cell_string1 = "V";
+							//	}
+							//}
+							//m_lstGridText[data_row_count - 1][2] = cell_string;
+							originModel->setData(originModel->index(0, 2), cell_string);
+							//m_Grid.QuickSetAlignment(2, grid_row_count - 1, UG_ALIGNCENTER);
+
+							originModel->setData(originModel->index(0, 1), cell_string1);
+							//m_lstGridText[data_row_count - 1][1] = cell_string1;
+							//m_Grid.QuickSetAlignment(1, grid_row_count - 1, UG_ALIGNCENTER);
+
+							//QString exist_file_path = GetExistingFilePath(folder_path, m_Grid.QuickGetText(2, row - 2), m_Grid.QuickGetText(1, row - 2));
+							////	파일 경로
+							//m_Grid.QuickSetText(col_size - 1, row - 2, exist_file_path);
+							//m_lstGridText[row - 2][col_size - 1] = exist_file_path;
+							row++;
+							grid_row_count++;
+							data_row_count++;
+						}
 					}
+					//}
+					//catch (exception const& e) {
+					//	AfxMessageBox(QString(e.what()));
+					//}
+					//m_Grid.SetPaintMode(TRUE);
+					//if (is_fitGrid)
+					//{
+					//	int col_no = m_Grid.GetNumberCols();
+					//	for (int i = 0; i < col_no && i < grid_width.size(); i++)
+					//	{
+					//		m_Grid.SetColWidth(i, grid_width[i]);
+					//	}
+					//}
+					//FitGrid();
+					return;
 				}
-				//}
-				//catch (exception const& e) {
-				//	AfxMessageBox(QString(e.what()));
-				//}
-				//m_Grid.SetPaintMode(TRUE);
-				//if (is_fitGrid)
-				//{
-				//	int col_no = m_Grid.GetNumberCols();
-				//	for (int i = 0; i < col_no && i < grid_width.size(); i++)
-				//	{
-				//		m_Grid.SetColWidth(i, grid_width[i]);
-				//	}
-				//}
-				//FitGrid();
-				return;
+				else if (reply == QMessageBox::Cancel)
+				{
+					return;
+				}
 			}
-			else if (reply == QMessageBox::Cancel)
-			{
-				return;
-			}
-		}
 
-		//	신규로 읽기
-		m_strCurrentExcelPath = m_strCurrentSelectedItemPath;
-		m_strCurrentFolderPath = folder_path;
-		//	통합 파일이면 열기
-		//if (file_name.Find("통합") > -1)
-		//{
-		//	is_total_mode = true;
-		//}
-		//else
-		//{
-		//	is_total_mode = false;
-		//}
-
-		m_iCurrentSelectedItemType = 1;
-
-		//StopLoadingThread();
-		//m_lstGridText.clear();
-		//m_lstGridIndex.clear();
-		//m_lstGridSelected.clear();
-		//m_lstGridKey.clear();
-		m_strDBfilepath = "";
-
-		ClearTable();
-		//m_Grid.SetPaintMode(FALSE);
-		//if (is_fitGrid)
-		//{
-		//	int col_no = m_Grid.GetNumberCols();
-		//	for (int i = 0; i < col_no; i++)
-		//	{
-		//		grid_width.push_back(m_Grid.GetColWidth(i));
-		//	}
-		//}
-		int row = 1;
-		int col_size = 3;
-		QString no;
-		QXlsx::Document xlsx(m_strCurrentExcelPath);
-		if (xlsx.load())
-		{
-			QStringList header_label;
-			header_label << "No" << "?" << "!";
-			originModel->insertColumn(0);
-			originModel->insertColumn(0);
-			originModel->insertColumn(0);
-			//SetItemData(row - 2, 1, "?");
-			//SetItemData(row - 2, 2, "!");
-
-			QXlsx::Cell* cell = xlsx.cellAt(row, col_size - 2);
-			while (cell != NULL && cell->readValue().toString() != "")
-			{
-				//ui.treeView->setColumnCount(col_size + 1);
-				//m_Grid.SetNumberCols(col_size + 1);
-				header_label << cell->readValue().toString();
-				originModel->insertColumn(0);
-				//SetItemData(row - 2, col_size, cell->readValue().toString());
-				col_size++;
-				cell = xlsx.cellAt(row, col_size - 2);
-			}
-			header_label << QString("검색 결과");
-			originModel->insertColumn(0);
-			//ui.treeView->setColumnCount(col_size + 1);
-			//SetItemData(row - 2, col_size, QString("검색 결과"));
-			col_size++;
-
-			//if (m_bIsAdmin)
+			//	신규로 읽기
+			m_strCurrentExcelPath = m_strCurrentSelectedItemPath;
+			m_strCurrentFolderPath = folder_path;
+			//	통합 파일이면 열기
+			//if (file_name.Find("통합") > -1)
 			//{
+			//	is_total_mode = true;
+			//}
+			//else
+			//{
+			//	is_total_mode = false;
+			//}
+
+			m_iCurrentSelectedItemType = 1;
+
+			//StopLoadingThread();
+			//m_lstGridText.clear();
+			//m_lstGridIndex.clear();
+			//m_lstGridSelected.clear();
+			//m_lstGridKey.clear();
+			m_strDBfilepath = "";
+
+			ClearTable();
+			//m_Grid.SetPaintMode(FALSE);
+			//if (is_fitGrid)
+			//{
+			//	int col_no = m_Grid.GetNumberCols();
+			//	for (int i = 0; i < col_no; i++)
+			//	{
+			//		grid_width.push_back(m_Grid.GetColWidth(i));
+			//	}
+			//}
+			int row = 1;
+			int col_size = 3;
+			QString no;
+			QXlsx::Document xlsx(m_strCurrentExcelPath);
+			if (xlsx.load())
+			{
+				QStringList header_label;
+				header_label << "No" << "?" << "!";
+				originModel->insertColumn(0);
+				originModel->insertColumn(0);
+				originModel->insertColumn(0);
+				//SetItemData(row - 2, 1, "?");
+				//SetItemData(row - 2, 2, "!");
+
+				QXlsx::Cell* cell = xlsx.cellAt(row, col_size - 2);
+				while (cell != NULL && cell->readValue().toString() != "")
+				{
+					//ui.treeView->setColumnCount(col_size + 1);
+					//m_Grid.SetNumberCols(col_size + 1);
+					header_label << cell->readValue().toString();
+					originModel->insertColumn(0);
+					//SetItemData(row - 2, col_size, cell->readValue().toString());
+					col_size++;
+					cell = xlsx.cellAt(row, col_size - 2);
+				}
+				header_label << QString("검색 결과");
+				originModel->insertColumn(0);
 				//ui.treeView->setColumnCount(col_size + 1);
+				//SetItemData(row - 2, col_size, QString("검색 결과"));
+				col_size++;
+
+				//if (m_bIsAdmin)
+				//{
+					//ui.treeView->setColumnCount(col_size + 1);
 				header_label << QString("파일 경로");
 				//SetItemData(row - 2, col_size, QString("파일 경로"));
 			//}
-			originModel->insertColumn(0);
-			col_size++;
+				originModel->insertColumn(0);
+				col_size++;
 
-			for (int i = 0; i < col_size; i++)
-			{
-				originModel->setHeaderData(i, Qt::Horizontal, header_label[i]);
-			}
-
-			//m_lstFilter.resize(col_size);
-
-			row++;
-			cell = xlsx.cellAt(row, 1);
-			int row_index = 0;
-			while (cell != NULL && cell->readValue().toString() != "")
-			{
-				originModel->insertRow(row_index);
-				//ui.treeView->setRowCount(row - 1);
-				//m_lstGridText.resize(row - 1);
-				//m_lstGridText[row - 2].resize(col_size);
-				//m_lstGridShow.resize(row - 1);
-				//m_lstGridShow[row - 2].resize(col_size, true);
-				//m_lstGridIndex.resize(row - 1);
-				//m_lstGridSelected.resize(row - 1);
-				//m_lstGridKey.resize(row - 1);
-				//SetItemData(row - 2, 0, row - 1);
-				originModel->setData(originModel->index(row_index, 0), row - 1);
-				//m_lstGridText[row - 2][0] = no;
-				//m_lstGridIndex[row - 2] = row - 2;
-				//m_lstGridKey[row - 2] = -1;
-
-				for (int i = 3; i < col_size - 2; i++)
+				for (int i = 0; i < col_size; i++)
 				{
-					cell = xlsx.cellAt(row, i - 2);
+					originModel->setHeaderData(i, Qt::Horizontal, header_label[i]);
+				}
+
+				//m_lstFilter.resize(col_size);
+
+				row++;
+				cell = xlsx.cellAt(row, 1);
+				int row_index = 0;
+				while (cell != NULL && cell->readValue().toString() != "")
+				{
+					originModel->insertRow(row_index);
+					//ui.treeView->setRowCount(row - 1);
+					//m_lstGridText.resize(row - 1);
+					//m_lstGridText[row - 2].resize(col_size);
+					//m_lstGridShow.resize(row - 1);
+					//m_lstGridShow[row - 2].resize(col_size, true);
+					//m_lstGridIndex.resize(row - 1);
+					//m_lstGridSelected.resize(row - 1);
+					//m_lstGridKey.resize(row - 1);
+					//SetItemData(row - 2, 0, row - 1);
+					originModel->setData(originModel->index(row_index, 0), row - 1);
+					//m_lstGridText[row - 2][0] = no;
+					//m_lstGridIndex[row - 2] = row - 2;
+					//m_lstGridKey[row - 2] = -1;
+
+					for (int i = 3; i < col_size - 2; i++)
+					{
+						cell = xlsx.cellAt(row, i - 2);
+						if (cell != NULL)
+						{
+							//SetItemData(row - 2, i, cell->readValue().toString());
+							originModel->setData(originModel->index(row_index, i), cell->readValue().toString());
+							//m_lstGridText[row - 2][i] = cell_string;
+						}
+					}
+					cell = xlsx.cellAt(row, 26);
+					QString cell_string;
 					if (cell != NULL)
 					{
-						//SetItemData(row - 2, i, cell->readValue().toString());
-						originModel->setData(originModel->index(row_index, i), cell->readValue().toString());
-						//m_lstGridText[row - 2][i] = cell_string;
+						cell_string = cell->readValue().toString();
 					}
-				}
-				cell = xlsx.cellAt(row, 26);
-				QString cell_string;
-				if (cell != NULL)
-				{
-					cell_string = cell->readValue().toString();
-				}
-				//if (m_bIsAdmin)
-				//{
-					//SetItemData(row - 2, col_size - 1, cell_string);
+					//if (m_bIsAdmin)
+					//{
+						//SetItemData(row - 2, col_size - 1, cell_string);
 					originModel->setData(originModel->index(row_index, col_size - 1), cell_string);
-				//}
-				//m_lstGridText[row - 2][col_size - 1] = cell_string;
+					//}
+					//m_lstGridText[row - 2][col_size - 1] = cell_string;
 
-				QString pdf_file_path = folder_path + "\\" + cell_string;
-				cell_string = "";
-				QString cell_string1 = "";
-				//if (IsPDF(pdf_file_path))
-				//{
-				//	cell_string = "O";
-				//	if (CheckEncrypted(pdf_file_path))
-				//	{
-				//		cell_string1 = "V";
-				//	}
-				//}
-				//m_lstGridText[row - 2][2] = cell_string;
-				//SetItemData(row - 2, 2, cell_string);
-				//SetItemData(row - 2, 1, cell_string1);
-				originModel->setData(originModel->index(row_index, 2), cell_string);
-				originModel->setData(originModel->index(row_index, 1), cell_string1);
-				//QString exist_file_path = GetExistingFilePath(folder_path, m_Grid.QuickGetText(2, row - 2), m_Grid.QuickGetText(1, row - 2));
-				////	파일 경로
-				//m_Grid.QuickSetText(col_size - 1, row - 2, exist_file_path);
-				//m_lstGridText[row - 2][col_size - 1] = exist_file_path;
-				row++;
-				row_index++;
-				cell = xlsx.cellAt(row, 1);
+					QString pdf_file_path = folder_path + "\\" + cell_string;
+					cell_string = "";
+					QString cell_string1 = "";
+					//if (IsPDF(pdf_file_path))
+					//{
+					//	cell_string = "O";
+					//	if (CheckEncrypted(pdf_file_path))
+					//	{
+					//		cell_string1 = "V";
+					//	}
+					//}
+					//m_lstGridText[row - 2][2] = cell_string;
+					//SetItemData(row - 2, 2, cell_string);
+					//SetItemData(row - 2, 1, cell_string1);
+					originModel->setData(originModel->index(row_index, 2), cell_string);
+					originModel->setData(originModel->index(row_index, 1), cell_string1);
+					//QString exist_file_path = GetExistingFilePath(folder_path, m_Grid.QuickGetText(2, row - 2), m_Grid.QuickGetText(1, row - 2));
+					////	파일 경로
+					//m_Grid.QuickSetText(col_size - 1, row - 2, exist_file_path);
+					//m_lstGridText[row - 2][col_size - 1] = exist_file_path;
+					row++;
+					row_index++;
+					cell = xlsx.cellAt(row, 1);
+				}
 			}
+
+			proxyModel->invalidate();
+			for (int i = 0; i < proxyModel->columnCount(); ++i)
+				ui.treeView->resizeColumnToContents(i);
+			//m_Grid.SetPaintMode(TRUE);
+			//if (is_fitGrid)
+			//{
+			//	int col_no = m_Grid.GetNumberCols();
+			//	for (int i = 0; i < col_no && i < grid_width.size(); i++)
+			//	{
+			//		m_Grid.SetColWidth(i, grid_width[i]);
+			//	}
+			//}
+			//FitGrid();
+
 		}
-
-		proxyModel->invalidate();
-		for (int i = 0; i < proxyModel->columnCount(); ++i)
-			ui.treeView->resizeColumnToContents(i);
-		//m_Grid.SetPaintMode(TRUE);
-		//if (is_fitGrid)
-		//{
-		//	int col_no = m_Grid.GetNumberCols();
-		//	for (int i = 0; i < col_no && i < grid_width.size(); i++)
-		//	{
-		//		m_Grid.SetColWidth(i, grid_width[i]);
-		//	}
-		//}
-		//FitGrid();
-
 	}
 }
 
@@ -841,16 +849,37 @@ void BDLS::doLogin()
 		if (user_name == "admin" && user_pass == "ceohwang")
 		{
 			m_bIsAdmin = true;
-
+			m_bIsLogin = true;
+			m_loginUserID = user_name;
+			m_loginUserPass = user_pass;
+			m_loginUserName = "CEO";
 			ui.actionAddRow->setEnabled(true);
 			ui.actionDelRow->setEnabled(true);
 			ui.actionDBUpdate->setEnabled(true);
+			_widgetLeftView->ViewUser(true);
+
+			SelectFileFromTree(m_strCurrentSelectedItemPath);
 		}
 		else
 		{
 			if (DBConnected())
 			{
-
+				QVariantList data;
+				db->exec(QString("SELECT user_name FROM user_info WHERE user_id=\"%1\" AND user_pass=\"%2\"").arg(user_name).arg(user_pass), data);
+				for (const auto& item : data)
+				{
+					auto map = item.toMap();
+					m_loginUserName = map["user_name"].toString();
+					m_loginUserID = user_name;
+					m_loginUserPass = user_pass;
+					m_bIsLogin = true;
+					m_bIsAdmin = false;
+					_widgetLeftView->ViewUser(false);
+				}
+				if (m_bIsLogin)
+				{
+					SelectFileFromTree(m_strCurrentSelectedItemPath);
+				}
 			}
 			else
 			{
@@ -969,7 +998,7 @@ void BDLS::doDBUpdate()
 					db->exec("CREATE TABLE page_info (id INTEGER PRIMARY KEY, file_id INTEGER, page_no INTEGER, block_no INTEGER, block_text TEXT)");
 					db->exec("CREATE TABLE hsah_tags (id INTEGER PRIMARY KEY, tags TEXT)");
 					db->exec("CREATE TABLE file_to_hash (id INTEGER PRIMARY KEY, file_id INTEGER, tag_id INTEGER)");
-					db->exec("CREATE TABLE reply_info (id INTEGER PRIMARY KEY, file_id INTEGER, parent_id INTEGER, value TEXT, date_time TEXT)");
+					db->exec("CREATE TABLE reply_info (id INTEGER PRIMARY KEY, file_id INTEGER, parent_id INTEGER, user_id TEXT, value TEXT, date_time TEXT)");
 					db->exec("CREATE TABLE play_info (id INTEGER PRIMARY KEY, file_id INTEGER, s_time INTEGER, s_title TEXT)");
 					db->exec("CREATE TABLE user_info (id INTEGER PRIMARY KEY, user_id TEXT, user_pass TEXT, user_name TEXT, read_only INTEGER)");
 				}

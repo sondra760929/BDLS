@@ -22,7 +22,11 @@ class BDLS : public QMainWindow
 public:
     BDLS(QWidget *parent = Q_NULLPTR);
 
-    bool m_bIsAdmin = true;
+    bool m_bIsAdmin = false;
+    bool m_bIsLogin = false;
+    QString m_loginUserID = "";
+    QString m_loginUserPass = "";
+    QString m_loginUserName = "";
 
     //QTableWidget* tableWidget;
     widgetLeftView* _widgetLeftView;

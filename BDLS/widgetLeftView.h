@@ -38,6 +38,9 @@ public:
 	void refreshMVList();
 	void clearMVs();
 	void setMVPos(int secs);
+	void ViewUser(bool show);
+	void setUserList();
+
 private:
 	Ui::widgetLeftView ui;
 	QBoxLayout* searchViewLayout;
@@ -77,6 +80,9 @@ private:
 
 	QMap<QString, int> serchVMDatas;
 
+	QBoxLayout* userViewLayout;
+	QTableWidget* userTable;
+
 private slots:
 	void onCurrentChanged(const QItemSelection& current, const QItemSelection& prev);
 	void onSearchAdd();
@@ -98,4 +104,7 @@ private slots:
 	void onFileTagClicked(const QModelIndex& index);
 	void onFileMVClicked(QListWidgetItem* current, QListWidgetItem* previous);
 	void onFileMVDClicked(QListWidgetItem* item);
+	void doAddUser();
+	void doDelUser();
+	void doUpdateUser();
 };
