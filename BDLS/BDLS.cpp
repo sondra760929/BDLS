@@ -906,6 +906,7 @@ void BDLS::doDBUpdate()
 				db.exec("CREATE TABLE file_to_hash (id INTEGER PRIMARY KEY, file_id INTEGER, tag_id INTEGER)");
 				db.exec("CREATE TABLE reply_info (id INTEGER PRIMARY KEY, file_id INTEGER, parent_id INTEGER, value TEXT, date_time TEXT)");
 				db.exec("CREATE TABLE play_info (id INTEGER PRIMARY KEY, file_id INTEGER, s_time INTEGER, s_title TEXT)");
+				db.exec("CREATE TABLE user_info (id INTEGER PRIMARY KEY, user_id TEXT, user_pass TEXT, user_name TEXT, read_only INTEGER)");
 			}
 			//CreateDirectory(m_strCurrentFolderPath + "\\pdf_txt", NULL);
 
