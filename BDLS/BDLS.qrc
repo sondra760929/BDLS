@@ -5,6 +5,15 @@
     <file>icons/zoom-in-32.png</file>
     <file>icons/zoom-out-32.png</file>
     <file>icons/search_files.png</file>
+    <file>icons/ic_fluent_accessibility_24_regular.png</file>
+    <file>icons/ic_fluent_add_square_24_regular.png</file>
+    <file>icons/ic_fluent_database_search_24_regular.png</file>
+    <file>icons/ic_fluent_lock_closed_24_regular.png</file>
+    <file>icons/ic_fluent_lock_open_24_regular.png</file>
+    <file>icons/ic_fluent_save_24_regular.png</file>
+    <file>icons/ic_fluent_slide_multiple_search_24_regular.png</file>
+    <file>icons/ic_fluent_slide_search_24_regular.png</file>
+    <file>icons/ic_fluent_subtract_square_24_regular.png</file>
     <file>icons/savedb.png</file>
     <file>icons/search.png</file>
     <file>icons/search_doc.png</file>

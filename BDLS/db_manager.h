@@ -4,23 +4,55 @@ class db_manager {
 public:
     db_manager(const QString& path)
     {
-        my_db = QSqlDatabase::addDatabase("QSQLITE");
-        my_db.setDatabaseName(path);
-
-        if (my_db.open()) {
-            is_connected = true;
-            qDebug() << "success DB connection.\n";
-        }
-        else {
-            is_connected = false;
-            qDebug() << "fail DB connection.\n";
-        }
+        Connect(path);
     }
 
     ~db_manager()
     {
         if (is_connected)
             my_db.close();
+    }
+
+    bool Connect(QString path)
+    {
+        if (is_connected)
+        {
+            if (path.toLower() != db_path.toLower())
+            {
+                //  다른 경로로 연결 시도
+                my_db.close();
+                is_connected = false;
+
+                my_db.setDatabaseName(path);
+
+                if (my_db.open()) {
+                    is_connected = true;
+                    db_path = path;
+                    qDebug() << "success DB connection.\n";
+                }
+                else {
+                    is_connected = false;
+                    qDebug() << "fail DB connection.\n";
+                }
+            }
+        }
+        else
+        {
+            my_db = QSqlDatabase::addDatabase("QSQLITE");
+            my_db.setDatabaseName(path);
+
+            if (my_db.open()) {
+                is_connected = true;
+                db_path = path;
+                qDebug() << "success DB connection.\n";
+            }
+            else {
+                is_connected = false;
+                qDebug() << "fail DB connection.\n";
+            }
+        }
+
+        return is_connected;
     }
 
     bool Connected() { return is_connected; }
@@ -51,4 +83,5 @@ public:
 private:
     QSqlDatabase my_db;
     bool is_connected = false;
+    QString db_path = "";
 };

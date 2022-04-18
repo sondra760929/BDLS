@@ -6,6 +6,7 @@
 #include "widgetLeftView.h"
 #include "widgetRightView.h"
 #include "widgetBottomView.h"
+#include "widgetLogin.h"
 #include <QtDebug>
 #include <QSqlDatabase>
 #include <QSqlQuery>
@@ -41,6 +42,9 @@ public:
 
     QTimer* m_saveTimer;
 
+    db_manager* db;
+    bool InitDB(QString db_file_path);
+    bool DBConnected();
     bool include_pass_status;
 
     void SelectFileFromTree(QString file_path);
@@ -48,6 +52,7 @@ public:
     void OnOpenSingle();
     bool IsPDF(QString file_path);
     bool IsMV(QString file_path);
+    void doLogin();
     void doAddRow();
     void doDellRow();
     void doDBUpdate();

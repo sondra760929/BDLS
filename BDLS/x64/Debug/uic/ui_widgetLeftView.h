@@ -29,6 +29,7 @@ public:
     QTreeView *tvFiles;
     QWidget *searchview;
     QWidget *noteview;
+    QWidget *userview;
 
     void setupUi(QWidget *widgetLeftView)
     {
@@ -61,13 +62,16 @@ public:
         noteview = new QWidget();
         noteview->setObjectName(QString::fromUtf8("noteview"));
         tabWidget->addTab(noteview, QString());
+        userview = new QWidget();
+        userview->setObjectName(QString::fromUtf8("userview"));
+        tabWidget->addTab(userview, QString());
 
         verticalLayout->addWidget(tabWidget);
 
 
         retranslateUi(widgetLeftView);
 
-        tabWidget->setCurrentIndex(1);
+        tabWidget->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(widgetLeftView);
@@ -76,9 +80,10 @@ public:
     void retranslateUi(QWidget *widgetLeftView)
     {
         widgetLeftView->setWindowTitle(QCoreApplication::translate("widgetLeftView", "widgetLeftView", nullptr));
-        tabWidget->setTabText(tabWidget->indexOf(fileview), QCoreApplication::translate("widgetLeftView", "File", nullptr));
-        tabWidget->setTabText(tabWidget->indexOf(searchview), QCoreApplication::translate("widgetLeftView", "Search", nullptr));
-        tabWidget->setTabText(tabWidget->indexOf(noteview), QCoreApplication::translate("widgetLeftView", "Note", nullptr));
+        tabWidget->setTabText(tabWidget->indexOf(fileview), QCoreApplication::translate("widgetLeftView", "\355\214\214\354\235\274", nullptr));
+        tabWidget->setTabText(tabWidget->indexOf(searchview), QCoreApplication::translate("widgetLeftView", "\352\262\200\354\203\211", nullptr));
+        tabWidget->setTabText(tabWidget->indexOf(noteview), QCoreApplication::translate("widgetLeftView", "\353\205\270\355\212\270", nullptr));
+        tabWidget->setTabText(tabWidget->indexOf(userview), QCoreApplication::translate("widgetLeftView", "\354\202\254\354\232\251\354\236\220", nullptr));
     } // retranslateUi
 
 };
