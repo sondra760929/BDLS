@@ -18,6 +18,7 @@ void widgetAddUser::onOKButtonClicked()
 	user_id = ui.lineEdit_3->text();
 	user_pass = ui.lineEdit_4->text();
 	user_name = ui.lineEdit_5->text();
+	user_super = ui.chkSuper->isChecked();
 	accept();
 }
 

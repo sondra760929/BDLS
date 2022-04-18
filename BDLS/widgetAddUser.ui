@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>222</height>
+    <height>255</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,7 +16,7 @@
   <property name="styleSheet">
    <string notr="true">#widgetAddUser
 {
-  background: rgba(0, 0, 0, 150);
+  background: rgb(105, 105, 105);
   border-radius: 8px;
 }
 
@@ -33,18 +33,6 @@ QPushButton
 QPushButton:hover { background-color: #66c011; }</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="leftMargin">
-    <number>20</number>
-   </property>
-   <property name="topMargin">
-    <number>20</number>
-   </property>
-   <property name="rightMargin">
-    <number>20</number>
-   </property>
-   <property name="bottomMargin">
-    <number>20</number>
-   </property>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_4">
      <property name="topMargin">
@@ -56,7 +44,7 @@ QPushButton:hover { background-color: #66c011; }</string>
      <item>
       <widget class="QLabel" name="label_4">
        <property name="text">
-        <string>User ID    : </string>
+        <string>아이디 : </string>
        </property>
       </widget>
      </item>
@@ -76,7 +64,7 @@ QPushButton:hover { background-color: #66c011; }</string>
      <item>
       <widget class="QLabel" name="label_3">
        <property name="text">
-        <string>Password : </string>
+        <string>암   호 : </string>
        </property>
       </widget>
      </item>
@@ -100,12 +88,36 @@ QPushButton:hover { background-color: #66c011; }</string>
      <item>
       <widget class="QLabel" name="label_5">
        <property name="text">
-        <string>User Name : </string>
+        <string>이   름 : </string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QLineEdit" name="lineEdit_5"/>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="topMargin">
+      <number>10</number>
+     </property>
+     <property name="bottomMargin">
+      <number>10</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>관리자 : </string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="chkSuper">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -162,10 +174,9 @@ QPushButton:hover { background-color: #66c011; }</string>
   <tabstop>lineEdit_4</tabstop>
   <tabstop>lineEdit_3</tabstop>
   <tabstop>lineEdit_5</tabstop>
+  <tabstop>chkSuper</tabstop>
   <tabstop>btnOK</tabstop>
   <tabstop>btnCancel</tabstop>
-  <tabstop>lineEdit_2</tabstop>
-  <tabstop>lineEdit</tabstop>
  </tabstops>
  <resources/>
  <connections/>

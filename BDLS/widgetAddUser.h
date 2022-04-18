@@ -13,7 +13,8 @@ public:
 
 	QString user_id;
 	QString user_pass;
-	QString user_name;
+	QString user_name; 
+	bool user_super;
 
 private:
 	Ui::widgetAddUser ui;

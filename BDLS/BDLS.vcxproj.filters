@@ -169,13 +169,16 @@
     <ClCompile Include="SearchControls.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MemoControls.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="widgetLogin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="widgetAddUser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgetMemo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgetProgress.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -219,6 +222,12 @@
     <QtMoc Include="widgetAddUser.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="widgetMemo.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="widgetProgress.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="widgetLeftView.ui">
@@ -234,6 +243,12 @@
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="widgetAddUser.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="widgetMemo.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="widgetProgress.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>

@@ -36,6 +36,9 @@ BDLS::BDLS(QWidget* parent)
 	createDockWindows();
 	createActions();
 
+	_widgetProgress = new widgetProgress(this);
+	_widgetProgress->hide();
+
 	//QMediaPlayer* player = new QMediaPlayer;
 	//player->setVideoOutput(ui.pdfView);
 
@@ -128,6 +131,7 @@ void BDLS::SelectFileFromTree(QString file_path)
 			char strUtf8[512] = { 0, };
 			m_strDBfilepath = file_path;
 			m_strCurrentFolderPath = f_info.absolutePath();
+			m_strDBfolderpath = m_strCurrentFolderPath;
 			m.setValue("QSettings", file_path);
 			InitFromDB();
 		}
@@ -250,7 +254,6 @@ void BDLS::InitFromDB()
 									originModel->setData(originModel->index(i, header_id + 2), value);
 								}
 								originModel->setData(originModel->index(i, col_size - 1), file_name_list[i]);
-
 							}
 
 						}
@@ -326,7 +329,7 @@ void BDLS::setTagList()
 
 void BDLS::OnOpenSingle()
 {
-	if (m_bIsAdmin)
+	if (m_UserLevel == ADMIN)
 	{
 		QFileInfo f_info(m_strCurrentSelectedItemPath);
 		QString ext = f_info.suffix().toLower();
@@ -467,10 +470,10 @@ void BDLS::OnOpenSingle()
 							{
 								cell_string = cell->readValue().toString();
 							}
-							if (m_bIsAdmin)
-							{
+							//if (m_bIsAdmin)
+							//{
 								originModel->setData(originModel->index(0, col_size - 1), cell_string);
-							}
+							//}
 							//m_lstGridText[data_row_count - 1][col_size - 1] = cell_string;
 
 							QString pdf_file_path = folder_path + "\\" + cell_string;
@@ -691,7 +694,7 @@ void BDLS::OnOpenSingle()
 
 void BDLS::SetCurrentFile(QString file_name, QString file_info)
 {
-	QString file_path = m_strCurrentFolderPath + "\\" + file_name;
+	QString file_path = m_strDBfolderpath + "\\" + file_name;
 	m_iCurrentFileDBID = map_file_to_id[file_name];
 	_widgetLeftView->UpdateMemo();
 	if (IsPDF(file_path))
@@ -718,7 +721,7 @@ void BDLS::onTableCellClicked(const QItemSelection& selected, const QItemSelecti
 			QModelIndex index = selected.indexes()[0];
 			int col_size = proxyModel->columnCount();
 			QString file_name = proxyModel->data(proxyModel->index(index.row(), col_size - 1)).toString();
-			QString file_path = m_strCurrentFolderPath + "\\" + file_name;
+			QString file_path = m_strDBfolderpath + "\\" + file_name;
 			if (file_path != m_strCurrentSelectedItemPath)
 			{
 				SetCurrentFile(file_name);
@@ -821,6 +824,10 @@ void BDLS::createActions()
 
 	ui.mainToolBar->addSeparator();
 
+	connect(ui.actionAddFolder, &QAction::triggered, this, &BDLS::doAddFolder);
+	ui.mainToolBar->addAction(ui.actionAddFolder);
+	ui.actionAddFolder->setEnabled(false);
+
 	connect(ui.actionAddRow, &QAction::triggered, this, &BDLS::doAddRow);
 	ui.mainToolBar->addAction(ui.actionAddRow);
 	ui.actionAddRow->setEnabled(false);
@@ -828,6 +835,8 @@ void BDLS::createActions()
 	connect(ui.actionDelRow, &QAction::triggered, this, &BDLS::doDellRow);
 	ui.mainToolBar->addAction(ui.actionDelRow);
 	ui.actionDelRow->setEnabled(false);
+
+	ui.mainToolBar->addSeparator();
 
 	connect(ui.actionDBUpdate, &QAction::triggered, this, &BDLS::doDBUpdate);
 	ui.mainToolBar->addAction(ui.actionDBUpdate);
@@ -837,22 +846,22 @@ void BDLS::createActions()
 void BDLS::doLogin()
 {
 	widgetLogin login_dlg(this);
-	login_dlg.setModal(true);
-	login_dlg.setWindowFlags(Qt::FramelessWindowHint);
+	login_dlg.setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
 	login_dlg.move(this->rect().center() - QPoint(login_dlg.width() / 2, login_dlg.height() / 2));
-	login_dlg.setFocus();
 	if (login_dlg.exec() == QDialog::Accepted)
 	{
-		QString user_name = login_dlg.user_name;
+		QString user_id = login_dlg.user_name;
 		QString user_pass = login_dlg.user_pass;
 
-		if (user_name == "admin" && user_pass == "ceohwang")
+		if (user_id == "admin" && user_pass == "ceohwang")
 		{
-			m_bIsAdmin = true;
+			m_UserLevel = ADMIN;
 			m_bIsLogin = true;
-			m_loginUserID = user_name;
+			m_loginUserID = user_id;
 			m_loginUserPass = user_pass;
 			m_loginUserName = "CEO";
+
+			ui.actionAddFolder->setEnabled(true);
 			ui.actionAddRow->setEnabled(true);
 			ui.actionDelRow->setEnabled(true);
 			ui.actionDBUpdate->setEnabled(true);
@@ -862,23 +871,59 @@ void BDLS::doLogin()
 		}
 		else
 		{
+			ui.actionAddFolder->setEnabled(false);
+			ui.actionAddRow->setEnabled(false);
+			ui.actionDelRow->setEnabled(false);
+			ui.actionDBUpdate->setEnabled(false);
+
 			if (DBConnected())
 			{
 				QVariantList data;
-				db->exec(QString("SELECT user_name FROM user_info WHERE user_id=\"%1\" AND user_pass=\"%2\"").arg(user_name).arg(user_pass), data);
+				QString db_user_name;
+				QString db_user_pass = "";
+				int db_user_super;
+				db->exec(QString("SELECT user_pass, user_name, read_only FROM user_info WHERE user_id=\"%1\"").arg(user_id), data);
 				for (const auto& item : data)
 				{
 					auto map = item.toMap();
-					m_loginUserName = map["user_name"].toString();
-					m_loginUserID = user_name;
-					m_loginUserPass = user_pass;
-					m_bIsLogin = true;
-					m_bIsAdmin = false;
-					_widgetLeftView->ViewUser(false);
+					db_user_name = map["user_name"].toString();
+					db_user_pass = map["user_pass"].toString();
+					db_user_super = map["read_only"].toInt();
 				}
-				if (m_bIsLogin)
+
+				if (db_user_pass == "")
 				{
-					SelectFileFromTree(m_strCurrentSelectedItemPath);
+					QMessageBox::information(this, QString("확인"), QString("아이디가 존재하지 않습니다."));
+				}
+				else
+				{
+					if (db_user_pass != user_pass)
+					{
+						QMessageBox::information(this, QString("확인"), QString("암호가 일치하지 않습니다."));
+					}
+					else
+					{
+						m_loginUserID = user_id;
+						m_loginUserPass = user_pass;
+						m_loginUserName = db_user_name;
+
+						m_bIsLogin = true;
+						if (db_user_super == 1)
+						{
+							m_UserLevel = SUPER;
+							_widgetLeftView->ViewUser(true);
+						}
+						else
+						{
+							m_UserLevel = NORMAL;
+							_widgetLeftView->ViewUser(false);
+						}
+
+						if (m_bIsLogin)
+						{
+							SelectFileFromTree(m_strCurrentSelectedItemPath);
+						}
+					}
 				}
 			}
 			else
@@ -889,14 +934,104 @@ void BDLS::doLogin()
 	}
 }
 
+void BDLS::doAddFolder()
+{
+	if (m_UserLevel == ADMIN)
+	{
+		QFileInfo f_info(m_strCurrentSelectedItemPath);
+		if (f_info.isDir())
+		{
+			QMessageBox::StandardButton reply = QMessageBox::question(this, QString("확인"), QString("[%1]\n폴더 하위 파일을 목록에 추가하시겠습니까?").arg(m_strCurrentSelectedItemPath), QMessageBox::Yes | QMessageBox::No);
+			if (reply == QMessageBox::Yes)
+			{
+				if (AddFolder(m_strCurrentSelectedItemPath))
+				{
+					proxyModel->invalidate();
+					for (int i = 0; i < proxyModel->columnCount(); ++i)
+						ui.treeView->resizeColumnToContents(i);
+
+					ui.treeView->scrollTo(proxyModel->mapFromSource(originModel->index(originModel->rowCount() - 1, 0)));
+				}
+			}
+		}
+		else
+		{
+			//QMessageBox::StandardButton reply = QMessageBox::question(this, QString("확인"), QString("[%1]\n폴더 하위 파일을 목록에 추가하시겠습니까?").arg(m_strCurrentSelectedItemPath), QMessageBox::Yes | QMessageBox::No);
+			//if (reply == QMessageBox::Yes)
+			//{
+			if (IsPDF(m_strCurrentSelectedItemPath))
+			{
+				int new_index = originModel->rowCount();
+				int col_size = originModel->columnCount();
+				AddFile(new_index, col_size, m_strCurrentSelectedItemPath);
+
+				proxyModel->invalidate();
+				for (int i = 0; i < proxyModel->columnCount(); ++i)
+					ui.treeView->resizeColumnToContents(i);
+
+				ui.treeView->scrollTo(proxyModel->mapFromSource(originModel->index(originModel->rowCount() - 1, 0)));
+			}
+			//}
+		}
+	}
+}
+
 void BDLS::doAddRow()
 {
+	if (m_UserLevel == ADMIN)
+	{
+		int new_index = originModel->rowCount();
+		originModel->insertRow(new_index);
+		originModel->setData(originModel->index(new_index, 0), new_index + 1);
+		proxyModel->invalidate();
+		ui.treeView->scrollTo(proxyModel->mapFromSource(originModel->index(new_index, 0)));
+	}
+}
 
+bool BDLS::AddFile(int new_index, int col_size, QString file_path)
+{
+	QDir dir(m_strDBfolderpath);
+	QFileInfo f_info(file_path);
+
+	originModel->insertRow(new_index);
+	originModel->setData(originModel->index(new_index, 0), new_index + 1);
+	originModel->setData(originModel->index(new_index, 3), f_info.completeBaseName());
+	originModel->setData(originModel->index(new_index, col_size - 1), dir.relativeFilePath(file_path));
+
+	return true;
+}
+
+bool BDLS::AddFolder(QString folder_path)
+{
+	bool add_list = false;
+	QDir directory(folder_path);
+	QStringList pdfs = directory.entryList(QStringList() << "*.pdf" << "*.PDF", QDir::Files);
+	int new_index = originModel->rowCount();
+	int col_size = originModel->columnCount();
+	foreach(QString filename, pdfs)
+	{
+		QString file_path = folder_path + "/" + filename;
+		AddFile(new_index, col_size, file_path);
+		new_index++;
+		add_list = true;
+	}
+
+	QStringList folders = directory.entryList(QDir::NoDot | QDir::NoDotDot | QDir::Dirs);
+	foreach(QString foldername, folders)
+	{
+		add_list = AddFolder(folder_path + "/" + foldername) || add_list;
+	}
+
+	return add_list;
 }
 
 void BDLS::doDellRow()
 {
-
+	if (proxyModel)
+	{
+		originModel->removeRow(proxyModel->mapToSource(ui.treeView->selectionModel()->currentIndex()).row());
+		proxyModel->invalidate();
+	}
 }
 
 QString BDLS::NextFileMNO(QString last_mno)
@@ -934,39 +1069,26 @@ void BDLS::doDBUpdate()
 	bool db_file_exist = false;
 	if (row_count > 0)
 	{
-		//if (m_strDBfilepath == "")
-		//{
-		QString str_file_path = m_strCurrentFolderPath + "\\index.db3";
-		m_strDBfilepath = str_file_path;
-
-		if (QFile::exists(str_file_path))
+		if (!DBConnected())
 		{
-			db_file_exist = true;
-			//if (AfxMessageBox(_T("DB 파일이 존재합니다. 새로 저장하시겠습니까?"), MB_YESNO) == IDYES)
-			//{
-			//	char strUtf8[512] = { 0, };
-			//	lpctstr_to_utf8(str_file_path, strUtf8);
-			//	m_strDBfilepath = std::string(strUtf8);
-			//}
-			//else
-			//{
-			//	return;
-			//}
-		}
-		//else
-		//{
-		//	char strUtf8[512] = { 0, };
-		//	lpctstr_to_utf8(str_file_path, strUtf8);
-		//	m_strDBfilepath = std::string(strUtf8);
-		//}
-	//}
-	//else
-	//{
-	//	OnButtonUpdatedb();
-	//	return;
-	//}
+			QString str_file_path = m_strCurrentFolderPath + "\\index.db3";
+			if (QFile::exists(str_file_path))
+			{
+				db_file_exist = true;
+				QMessageBox::StandardButton reply = QMessageBox::question(this, QString("확인"), QString("DB 파일이 존재합니다. 새로 저장하시겠습니까?"), QMessageBox::Yes | QMessageBox::No);
+				if (reply != QMessageBox::Yes)
+				{
+					return;
+				}
+			}
 
-		if (m_bIsAdmin)
+			m_strDBfilepath = str_file_path;
+			QFileInfo f_info(m_strDBfilepath);
+			m_strDBfolderpath = f_info.absolutePath();
+		}
+
+		int file_name_index = col_count - 1;
+		//if (m_bIsAdmin)
 			col_count--;
 		col_count--;
 
@@ -977,7 +1099,7 @@ void BDLS::doDBUpdate()
 		QString temp_string1;
 		try
 		{
-			//BeginProgress();
+			BeginProgress();
 			int total = row_count;
 			QString status_string;
 			if (InitDB(m_strDBfilepath))
@@ -1018,12 +1140,12 @@ void BDLS::doDBUpdate()
 
 				for (int i = 0; i < row_count; i++)
 				{
-					QString file_name = originModel->data(originModel->index(i, col_count - 1)).toString();
+					QString file_name = originModel->data(originModel->index(i, file_name_index)).toString();
 					QString file_name_only = file_name;
 					file_name_only.chop(4);
 
-					QString file_path = m_strCurrentFolderPath + "\\" + file_name;
-					QString target_file_path = m_strCurrentFolderPath + "\\" + file_name_only + ".txt";
+					QString file_path = m_strDBfolderpath + "\\" + file_name;
+					QString target_file_path = m_strDBfolderpath + "\\" + file_name_only + ".txt";
 
 					QString cell_string = ("");
 					QString cell_string1 = ("");
@@ -1044,7 +1166,7 @@ void BDLS::doDBUpdate()
 					//}
 
 					status_string = QString("%1 행 저장 중").arg(i + 1);
-					//UpdateProgress(status_string, i + 1, total);
+					UpdateProgress(status_string, i + 1, total);
 
 					int file_db_id = 0;
 					//	file id 확인
@@ -1101,7 +1223,7 @@ void BDLS::doDBUpdate()
 						if ((!QFile::exists(target_file_path)) && QFile::exists(file_path))
 						{
 							//status_string.Format(_T("%d 행 저장 중 (텍스트 추출)"), i + 1);
-							//UpdateProgress(status_string, i + 1, total);
+							UpdateProgress(status_string, i + 1, total);
 
 							QStringList arguments;
 							arguments.append(file_path);
@@ -1163,7 +1285,7 @@ void BDLS::doDBUpdate()
 					}
 				}
 			}
-			//EndProgress();
+			EndProgress();
 			include_pass_status = true;
 			//QString cell_string(utf_to_unicode(m_strDBfilepath).c_str());
 			m.setValue("CURRENT_PATH", m_strDBfilepath);
@@ -1203,4 +1325,37 @@ void BDLS::writeSettings()
 {
 	QSettings settings("DIGIBOOK", QCoreApplication::applicationName());
 	settings.setValue("geometry", saveGeometry());
+}
+
+void BDLS::BeginProgress()
+{
+	if (_widgetProgress)
+	{
+		_widgetProgress->SetStatus1("");
+		_widgetProgress->SetProgress1(0);
+		_widgetProgress->SetStatus2("");
+		_widgetProgress->SetProgress2(0);
+		_widgetProgress->setWindowFlags(Qt::Window | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+		_widgetProgress->move(this->rect().center() - QPoint(_widgetProgress->width() / 2, _widgetProgress->height() / 2));
+		_widgetProgress->show();
+	}
+}
+
+void BDLS::UpdateProgress(QString status, int pos, int total)
+{
+	if (_widgetProgress)
+	{
+		_widgetProgress->SetStatus1(status);
+		_widgetProgress->SetProgress1(pos * 100 / total);
+		qApp->processEvents();
+	}
+}
+
+
+void BDLS::EndProgress()
+{
+	if (_widgetProgress)
+	{
+		_widgetProgress->hide();
+	}
 }

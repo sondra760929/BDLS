@@ -14,6 +14,14 @@
 #include <qsqlfield.h>
 #include "MySortFilterProxyModel.h"
 #include "db_manager.h"
+#include "widgetProgress.h"
+
+enum USER_LEVEL
+{
+    NORMAL,
+    SUPER,
+    ADMIN
+};
 
 class BDLS : public QMainWindow
 {
@@ -22,7 +30,7 @@ class BDLS : public QMainWindow
 public:
     BDLS(QWidget *parent = Q_NULLPTR);
 
-    bool m_bIsAdmin = false;
+    USER_LEVEL m_UserLevel = NORMAL;
     bool m_bIsLogin = false;
     QString m_loginUserID = "";
     QString m_loginUserPass = "";
@@ -36,6 +44,7 @@ public:
     MySortFilterProxyModel* proxyModel;
 
     QString m_strDBfilepath;
+    QString m_strDBfolderpath;
     QString m_strCurrentSelectedItemPath;
     QString m_strCurrentFolderPath;
     QString m_strCurrentExcelPath;
@@ -57,6 +66,7 @@ public:
     bool IsPDF(QString file_path);
     bool IsMV(QString file_path);
     void doLogin();
+    void doAddFolder();
     void doAddRow();
     void doDellRow();
     void doDBUpdate();
@@ -68,6 +78,12 @@ public:
     QMap<QString, int> map_title_to_index;
     QMap<QString, int> map_file_to_id;
     int m_iCurrentFileDBID;
+    bool AddFolder(QString folder_path);
+    bool AddFile(int new_index, int col_size, QString file_path);
+    widgetProgress* _widgetProgress;
+    void BeginProgress();
+    void UpdateProgress(QString status, int pos, int total);
+    void EndProgress();
 
     void readSettings();
     void writeSettings();

@@ -16,7 +16,7 @@
   <property name="styleSheet">
    <string notr="true">#widgetLogin
 {
-  background: rgba(0, 0, 0, 150);
+  background: rgb(105, 105, 105);
   border-radius: 8px;
 }
 
@@ -56,7 +56,7 @@ QPushButton:hover { background-color: #66c011; }</string>
      <item>
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Username : </string>
+        <string>아이디 : </string>
        </property>
       </widget>
      </item>
@@ -76,7 +76,7 @@ QPushButton:hover { background-color: #66c011; }</string>
      <item>
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>Password : </string>
+        <string>암   호 : </string>
        </property>
       </widget>
      </item>

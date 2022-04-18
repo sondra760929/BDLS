@@ -6,10 +6,10 @@
 #include <QFileSystemModel>
 #include <QtWidgets>
 #include "SearchControls.h"
-#include "MemoControls.h"
+#include "widgetMemo.h"
 
 class BDLS;
-class MemoControls;
+class widgetMemo;
 class widgetLeftView : public QWidget
 {
 	Q_OBJECT
@@ -26,10 +26,11 @@ public:
 	QList< SearchControls*> search_list;
 	QList< SearchControls*> memo_list;
 
-	QList< MemoControls* > memo_control_list;
+	QList< widgetMemo* > memo_control_list;
 	void SetCurrentFile(QString file_path);
 	void setSearchCombo(QMap<QString, int>& map_h_to_i);
-	void OnMemoClicked(MemoControls* pmemo);
+	void OnMemoClicked(widgetMemo* pmemo);
+	void clearMemoSelection();
 	void UpdateMemo();
 	void AddMemoControl(MemoData* new_memo, MemoData* parent_memo = NULL);
 	void clearMemo();

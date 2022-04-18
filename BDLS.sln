@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.31515.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BDLS", "BDLS\BDLS.vcxproj", "{5E5D1836-91FD-43C2-A38B-5904AED63CE9}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SetupBDLS", "SetupBDLS\SetupBDLS.vdproj", "{498E45FD-1517-46F4-9586-2EC9AA020B6C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -15,12 +17,14 @@ Global
 		{5E5D1836-91FD-43C2-A38B-5904AED63CE9}.Debug|x64.Build.0 = Debug|x64
 		{5E5D1836-91FD-43C2-A38B-5904AED63CE9}.Release|x64.ActiveCfg = Release|x64
 		{5E5D1836-91FD-43C2-A38B-5904AED63CE9}.Release|x64.Build.0 = Release|x64
+		{498E45FD-1517-46F4-9586-2EC9AA020B6C}.Debug|x64.ActiveCfg = Debug
+		{498E45FD-1517-46F4-9586-2EC9AA020B6C}.Release|x64.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		Qt5Version = 6.3.0_msvc2019_64
 		SolutionGuid = {A9CD5BF8-FD37-4136-A6C9-389225230D69}
+		Qt5Version = 6.3.0_msvc2019_64
 	EndGlobalSection
 EndGlobal

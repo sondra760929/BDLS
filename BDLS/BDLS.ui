@@ -126,10 +126,10 @@ QHeaderView::section{background-color: rgb(200, 200, 200);font:bold;}</string>
      <normaloff>:/BDLS/icons/ic_fluent_save_24_regular.png</normaloff>:/BDLS/icons/ic_fluent_save_24_regular.png</iconset>
    </property>
    <property name="text">
-    <string>DB 업데이트</string>
+    <string>DB 저장</string>
    </property>
    <property name="toolTip">
-    <string>DB 업데이트</string>
+    <string>DB 저장</string>
    </property>
   </action>
   <action name="actionSearchList">
@@ -202,6 +202,18 @@ QHeaderView::section{background-color: rgb(200, 200, 200);font:bold;}</string>
    </property>
    <property name="toolTip">
     <string>로그인</string>
+   </property>
+  </action>
+  <action name="actionAddFolder">
+   <property name="icon">
+    <iconset resource="BDLS.qrc">
+     <normaloff>:/BDLS/icons/ic_fluent_folder_add_24_regular.png</normaloff>:/BDLS/icons/ic_fluent_folder_add_24_regular.png</iconset>
+   </property>
+   <property name="text">
+    <string>폴더 추가</string>
+   </property>
+   <property name="toolTip">
+    <string>폴더 추가</string>
    </property>
   </action>
  </widget>

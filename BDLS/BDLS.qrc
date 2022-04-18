@@ -1,5 +1,9 @@
 <RCC>
   <qresource prefix="BDLS">
+    <file>icons/ic_fluent_folder_add_24_regular.png</file>
+    <file>icons/ic_fluent_person_add_24_regular.png</file>
+    <file>icons/ic_fluent_person_available_24_regular.png</file>
+    <file>icons/ic_fluent_person_delete_24_regular.png</file>
     <file>icons/go-next-24.png</file>
     <file>icons/go-previous-24.png</file>
     <file>icons/zoom-in-32.png</file>

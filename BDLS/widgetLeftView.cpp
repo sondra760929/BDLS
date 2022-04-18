@@ -3,7 +3,7 @@
 #include <QtWidgets/qmessagebox.h>
 #include "BDLS.h"
 #include "db_manager.h"
-#include "MemoControls.h"
+#include "widgetMemo.h"
 #include "widgetAddUser.h"
 
 QStringList memo_combo_header = { "내용", "날짜" };
@@ -28,6 +28,9 @@ widgetLeftView::widgetLeftView(QWidget* parent)
 	connect(fileTree->selectionModel(), SIGNAL(selectionChanged(QItemSelection, QItemSelection)), this, SLOT(onCurrentChanged(QItemSelection, QItemSelection)));
 
 	//------------------------------------------------------------------------------
+
+	//QSplitter* search_splitter = new QSplitter(ui.searchview);
+
 	searchViewLayout = new QVBoxLayout;
 
 	QBoxLayout* temp_add = new QHBoxLayout;
@@ -130,6 +133,7 @@ widgetLeftView::widgetLeftView(QWidget* parent)
 	searchViewLayout->addWidget(btn_search4);
 
 	searchViewLayout->addStretch(1);
+
 	ui.searchview->setLayout(searchViewLayout);
 
 	connect(btn_add, &QPushButton::clicked, this, &widgetLeftView::onSearchAdd);
@@ -416,7 +420,7 @@ void widgetLeftView::onSearchMemoDell()
 
 void widgetLeftView::ViewUser(bool show)
 {
-	ui.tabWidget->setTabEnabled(3, show);
+	ui.tabWidget->setTabVisible(3, show);
 	if(show)
 		setUserList();
 }
@@ -625,10 +629,11 @@ void widgetLeftView::doSearch1()
 					}
 				}
 				this_file->setText(0, QString("%1 [%2]").arg(file_name).arg(file_count));
+				this_file->setExpanded(true);
 			}
 		}
 		this_search->setText(0, QString("%1 [%2]").arg(QDateTime::currentDateTime().toString()).arg(total_count));
-
+		this_search->setExpanded(true);
 		m_pView->_widgetBottomView->AddResult(this_search);
 	}
 }
@@ -1026,115 +1031,118 @@ void widgetLeftView::onSearchTagClicked(const QModelIndex& index)
 }
 void widgetLeftView::doSearch4()
 {
+	if (m_pView->DBConnected() == false)
+	{
+		QMessageBox::information(this, QString("확인"), QString("데이터베이스를 먼저 생성하세요."));
+		return;
+	}
+
 	QList<QString> search_mv_list = serchVMDatas.keys();
 
 	if (search_mv_list.size() > 0)
 	{
-		if (m_pView->DBConnected())
+		QVariantList data;
+		QMap< int, int > check_file_ids;
+		QMap< int, QList<QString> > file_to_result;
+		for (int i = 0; i < search_mv_list.size(); i++)
 		{
-			QVariantList data;
-			QMap< int, int > check_file_ids;
-			QMap< int, QList<QString> > file_to_result;
-			for (int i = 0; i < search_mv_list.size(); i++)
+			QString search_text = search_mv_list[i];
+			QString query = QString("SELECT file_id, s_title FROM play_info WHERE s_title LIKE \"%%1%\"").arg(search_text);
+			m_pView->db->exec(query, data);
+			if (i == 0)
 			{
-				QString search_text = search_mv_list[i];
-				QString query = QString("SELECT file_id, s_title FROM play_info WHERE s_title LIKE \"%%1%\"").arg(search_text);
-				m_pView->db->exec(query, data);
-				if (i == 0)
-				{
-					for (const auto& item : data)
-					{
-						auto map = item.toMap();
-						int file_id = map["file_id"].toInt();
-						QString s_title = map["s_title"].toString();
-						check_file_ids[file_id] = 0;
-
-						QList<int> find_index;
-						int index = s_title.indexOf(search_text);
-						while (index > -1)
-						{
-							find_index.append(index);
-							index = s_title.indexOf(search_text, index + 1);
-						}
-
-						QString result_info;
-						index = 0;
-						for (int j = 0; j < find_index.size(); j++)
-						{
-							int current_index = find_index[j];
-							if (current_index > index)
-								result_info += s_title.mid(index, current_index - index);
-
-							result_info += QString("<font color=\"red\">%1</font>").arg(search_text);
-							index = current_index + search_text.length();
-						}
-						result_info += s_title.right(s_title.length() - index);
-
-						file_to_result[file_id].append(result_info);
-					}
-				}
-				else
-				{
-					for (const auto& item : data)
-					{
-						auto map = item.toMap();
-						int file_id = map["file_id"].toInt();
-						if (check_file_ids.contains(file_id))
-							check_file_ids[file_id] = i;
-					}
-
-					QList<int> temp_file_ids = check_file_ids.keys();
-					for (int j = 0; j < temp_file_ids.size(); j++)
-					{
-						if (check_file_ids[temp_file_ids[j]] < i)
-						{
-							check_file_ids.remove(temp_file_ids[j]);
-						}
-					}
-
-					if (check_file_ids.size() < 1)
-					{
-						break;
-					}
-				}
-			}
-
-			QTreeWidgetItem* this_search = new QTreeWidgetItem();
-			//	결과 표시
-			int total_count = 0;
-			int file_count = 0;
-			QList<int> find_file_ids = check_file_ids.keys();
-			for (int i = 0; i < find_file_ids.size(); i++)
-			{
-				int file_id = find_file_ids[i];
-				QString file_name;
-				file_count = 0;
-				m_pView->db->exec(QString("SELECT file_name FROM file_info WHERE id=%1").arg(file_id), data);
 				for (const auto& item : data)
 				{
 					auto map = item.toMap();
-					file_name = map["file_name"].toString();
-				}
+					int file_id = map["file_id"].toInt();
+					QString s_title = map["s_title"].toString();
+					check_file_ids[file_id] = 0;
 
-				QTreeWidgetItem* this_file = new QTreeWidgetItem(this_search);
-				for (int j = 0; j < file_to_result[file_id].size(); j++)
-				{
-					QTreeWidgetItem* this_info = new QTreeWidgetItem(this_file);
-					QLabel* this_info_label = new QLabel();
-					this_info_label->setText(file_to_result[file_id][j]);
-					m_pView->_widgetBottomView->m_outputTree->setItemWidget(this_info, 0, this_info_label);
-					QString data_str = QString("%1/0/0").arg(file_id);
-					this_info->setData(0, Qt::AccessibleTextRole, data_str);
-					//this_info->setText(0, total_file_to_header[file_id][j].second);
-					total_count++;
-					file_count++;
+					QList<int> find_index;
+					int index = s_title.indexOf(search_text);
+					while (index > -1)
+					{
+						find_index.append(index);
+						index = s_title.indexOf(search_text, index + 1);
+					}
+
+					QString result_info;
+					index = 0;
+					for (int j = 0; j < find_index.size(); j++)
+					{
+						int current_index = find_index[j];
+						if (current_index > index)
+							result_info += s_title.mid(index, current_index - index);
+
+						result_info += QString("<font color=\"red\">%1</font>").arg(search_text);
+						index = current_index + search_text.length();
+					}
+					result_info += s_title.right(s_title.length() - index);
+
+					file_to_result[file_id].append(result_info);
 				}
-				this_file->setText(0, QString("%1 [%2]").arg(file_name).arg(file_count));
 			}
-			this_search->setText(0, QString("%1 [%2]").arg(QDateTime::currentDateTime().toString()).arg(total_count));
+			else
+			{
+				for (const auto& item : data)
+				{
+					auto map = item.toMap();
+					int file_id = map["file_id"].toInt();
+					if (check_file_ids.contains(file_id))
+						check_file_ids[file_id] = i;
+				}
 
-			m_pView->_widgetBottomView->AddResult(this_search);
+				QList<int> temp_file_ids = check_file_ids.keys();
+				for (int j = 0; j < temp_file_ids.size(); j++)
+				{
+					if (check_file_ids[temp_file_ids[j]] < i)
+					{
+						check_file_ids.remove(temp_file_ids[j]);
+					}
+				}
+
+				if (check_file_ids.size() < 1)
+				{
+					break;
+				}
+			}
 		}
+
+		QTreeWidgetItem* this_search = new QTreeWidgetItem();
+		//	결과 표시
+		int total_count = 0;
+		int file_count = 0;
+		QList<int> find_file_ids = check_file_ids.keys();
+		for (int i = 0; i < find_file_ids.size(); i++)
+		{
+			int file_id = find_file_ids[i];
+			QString file_name;
+			file_count = 0;
+			m_pView->db->exec(QString("SELECT file_name FROM file_info WHERE id=%1").arg(file_id), data);
+			for (const auto& item : data)
+			{
+				auto map = item.toMap();
+				file_name = map["file_name"].toString();
+			}
+
+			QTreeWidgetItem* this_file = new QTreeWidgetItem(this_search);
+			for (int j = 0; j < file_to_result[file_id].size(); j++)
+			{
+				QTreeWidgetItem* this_info = new QTreeWidgetItem(this_file);
+				QLabel* this_info_label = new QLabel();
+				this_info_label->setText(file_to_result[file_id][j]);
+				m_pView->_widgetBottomView->m_outputTree->setItemWidget(this_info, 0, this_info_label);
+				QString data_str = QString("%1/0/0").arg(file_id);
+				this_info->setData(0, Qt::AccessibleTextRole, data_str);
+				//this_info->setText(0, total_file_to_header[file_id][j].second);
+				total_count++;
+				file_count++;
+			}
+			this_file->setText(0, QString("%1 [%2]").arg(file_name).arg(file_count));
+		}
+		this_search->setText(0, QString("%1 [%2]").arg(QDateTime::currentDateTime().toString()).arg(total_count));
+
+		m_pView->_widgetBottomView->AddResult(this_search);
 	}
 }
 
@@ -1147,10 +1155,10 @@ void widgetLeftView::UpdateMemo()
 			clearMemo();
 			QList< MemoData* > temp_memo_list;
 			QVariantList data;
-			QString query = QString("SELECT * FROM reply_info WHERE file_id=%1 ORDER BY date_time")
-				.arg(m_pView->m_iCurrentFileDBID);
-			//QString query = QString("SELECT * FROM reply_info INNER JOIN user_info ON reply_info.user_id = user_info.user_id WHERE reply_info.file_id=%1 ORDER BY date_time")
+			//QString query = QString("SELECT * FROM reply_info WHERE file_id=%1 ORDER BY date_time")
 			//	.arg(m_pView->m_iCurrentFileDBID);
+			QString query = QString("SELECT * FROM reply_info INNER JOIN user_info ON reply_info.user_id = user_info.user_id WHERE reply_info.file_id=%1 ORDER BY date_time")
+				.arg(m_pView->m_iCurrentFileDBID);
 			m_pView->db->exec(query, data);
 			int memo_id = 0;
 			int parent_id = 0;
@@ -1264,10 +1272,11 @@ void widgetLeftView::clearMemo()
 
 void widgetLeftView::AddMemoControl(MemoData* new_memo, MemoData* parent_memo)
 {
-	MemoControls* memo = new MemoControls(this, new_memo->m_level);
-	memo->setObjectName("mymemo");
-	memo->setStyleSheet("QWidget#mymemo{background:white; border: 1px solid red;}");
-	memo->setDate(new_memo->m_datetime.toString("yyyy-MM-dd  HH:mm:ss"));
+	widgetMemo* memo = new widgetMemo(this);
+	memo->setLevel(new_memo->m_level);
+	//memo->setObjectName("mymemo");
+	//memo->setStyleSheet("QWidget#mymemo{background:white; border: 1px solid red;}");
+	memo->setDate(new_memo->m_datetime.toString("yyyy-MM-dd HH:mm:ss"));
 	memo->setMemo(new_memo->m_memo);
 	memo->setUserName(new_memo->m_username);
 	memo->memo_id = new_memo->m_id;
@@ -1291,47 +1300,56 @@ void widgetLeftView::AddMemoControl(MemoData* new_memo, MemoData* parent_memo)
 
 void widgetLeftView::doAddMemo()
 {
+	if (m_pView->m_loginUserID == "admin")
+	{
+		QMessageBox::information(this, QString("확인"), QString("admin 계정으로는 메모를 작성할 수 없습니다."));
+		return;
+	}
+
+	if (m_pView->DBConnected() == false)
+	{
+		QMessageBox::information(this, QString("확인"), QString("데이터베이스를 먼저 생성하세요."));
+		return;
+	}
+
 	if (m_pView->m_iCurrentFileDBID > 0)
 	{
 		QString memo_str = memoText->toPlainText();
 		if (memo_str != "")
 		{
-			if (m_pView->DBConnected())
+			QVariantList data;
+			QString query = QString("INSERT INTO reply_info VALUES (NULL, %1, %2, \"%3\", \"%4\", datetime('now', 'localtime'))")
+				.arg(m_pView->m_iCurrentFileDBID)
+				.arg(parent_memo_id)
+				.arg(m_pView->m_loginUserID)
+				.arg(memo_str);
+			m_pView->db->exec(query);
+
+			query = QString("SELECT max(id) FROM reply_info");
+			m_pView->db->exec(query, data);
+			int memo_id = 0;
+			for (const auto& item : data)
 			{
-				QVariantList data;
-				QString query = QString("INSERT INTO reply_info VALUES (NULL, %1, %2, \"%3\", \"%4\", datetime('now', 'localtime'))")
-					.arg(m_pView->m_iCurrentFileDBID)
-					.arg(parent_memo_id)
-					.arg(m_pView->m_loginUserID)
-					.arg(memo_str);
-				m_pView->db->exec(query);
-
-				query = QString("SELECT max(id) FROM reply_info");
-				m_pView->db->exec(query, data);
-				int memo_id = 0;
-				for (const auto& item : data)
-				{
-					auto map = item.toMap();
-					memo_id = map["max(id)"].toInt();
-				}
-				QString memo_date = QDateTime::currentDateTime().toString("yyyy-MM-dd  HH:mm:ss");
-				MemoData* new_memo = new MemoData(memo_id, parent_memo_id, m_pView->m_loginUserID, m_pView->m_loginUserName, memo_str, memo_date);
-				memoDatas[memo_id] = new_memo;
-				MemoData* parent_memo = NULL;
-				if (parent_memo_id > 0)
-				{
-					if (memoDatas.contains(parent_memo_id))
-					{
-						parent_memo = memoDatas[parent_memo_id];
-						new_memo->m_level = memoDatas[parent_memo_id]->m_level + 1;
-						memoDatas[parent_memo_id]->chileMemo.append(new_memo);
-					}
-				}
-
-				AddMemoControl(new_memo, parent_memo);
-
-				memoText->clear();
+				auto map = item.toMap();
+				memo_id = map["max(id)"].toInt();
 			}
+			QString memo_date = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
+			MemoData* new_memo = new MemoData(memo_id, parent_memo_id, m_pView->m_loginUserID, m_pView->m_loginUserName, memo_str, memo_date);
+			memoDatas[memo_id] = new_memo;
+			MemoData* parent_memo = NULL;
+			if (parent_memo_id > 0)
+			{
+				if (memoDatas.contains(parent_memo_id))
+				{
+					parent_memo = memoDatas[parent_memo_id];
+					new_memo->m_level = memoDatas[parent_memo_id]->m_level + 1;
+					memoDatas[parent_memo_id]->chileMemo.append(new_memo);
+				}
+			}
+
+			AddMemoControl(new_memo, parent_memo);
+
+			memoText->clear();
 		}
 	}
 }
@@ -1354,49 +1372,58 @@ void widgetLeftView::onSearchMVAdd()
 
 void widgetLeftView::onSearchTagAdd()
 {
+	if (m_pView->DBConnected() == false)
+	{
+		QMessageBox::information(this, QString("확인"), QString("데이터베이스를 먼저 생성하세요."));
+		return;
+	}
+
 	QString tag_str = tagSearchEdit->text();
 	if (tag_str != "")
 	{
-		if (m_pView->DBConnected())
+		QVariantList data;
+		//	tag가 존재하는지 확인
+		QString query = QString("SELECT id FROM hsah_tags WHERE tags=\"%1\"")
+			.arg(tag_str);
+		m_pView->db->exec(query, data);
+		int tag_id = 0;
+		for (const auto& item : data)
 		{
-			QVariantList data;
-			//	tag가 존재하는지 확인
-			QString query = QString("SELECT id FROM hsah_tags WHERE tags=\"%1\"")
-				.arg(tag_str);
-			m_pView->db->exec(query, data);
-			int tag_id = 0;
-			for (const auto& item : data)
-			{
-				auto map = item.toMap();
-				tag_id = map["id"].toInt();
-			}
-
-			if (tag_id < 1)
-			{
-				//	tag가 존재하지 않음
-				return;
-			}
-
-			if (!searchTagDatas.contains(tag_id))
-			{
-				searchTagDatas[tag_id] = tag_str;
-
-				int row = searchTagModel->rowCount();
-				searchTagModel->insertRow(row);
-				QModelIndex _index = searchTagModel->index(row);
-				QString new_tag = "#" + tag_str;
-				searchTagModel->setData(_index, new_tag);
-
-				searchTagToIndex[new_tag] = tag_id;
-			}
-
-			tagSearchEdit->clear();
+			auto map = item.toMap();
+			tag_id = map["id"].toInt();
 		}
+
+		if (tag_id < 1)
+		{
+			//	tag가 존재하지 않음
+			return;
+		}
+
+		if (!searchTagDatas.contains(tag_id))
+		{
+			searchTagDatas[tag_id] = tag_str;
+
+			int row = searchTagModel->rowCount();
+			searchTagModel->insertRow(row);
+			QModelIndex _index = searchTagModel->index(row);
+			QString new_tag = "#" + tag_str;
+			searchTagModel->setData(_index, new_tag);
+
+			searchTagToIndex[new_tag] = tag_id;
+		}
+
+		tagSearchEdit->clear();
 	}
 }
 
 void widgetLeftView::doAddTag()
 {
+	if (m_pView->DBConnected() == false)
+	{
+		QMessageBox::information(this, QString("확인"), QString("데이터베이스를 먼저 생성하세요."));
+		return;
+	}
+
 	if (m_pView->m_iCurrentFileDBID > 0)
 	{
 		QString tag_str = tagEdit->text();
@@ -1509,6 +1536,12 @@ void widgetLeftView::refreshMVList()
 
 void widgetLeftView::doAddMV()
 {
+	if (m_pView->DBConnected() == false)
+	{
+		QMessageBox::information(this, QString("확인"), QString("데이터베이스를 먼저 생성하세요."));
+		return;
+	}
+
 	if (m_pView->m_iCurrentFileDBID > 0)
 	{
 		QTime mv_time = mvTime->time();
@@ -1524,40 +1557,48 @@ void widgetLeftView::doAddMV()
 			}
 			else
 			{
-				if (m_pView->DBConnected())
-				{
+				QString query = QString("INSERT INTO play_info VALUES (NULL, %1, %2, \"%3\")")
+					.arg(m_pView->m_iCurrentFileDBID)
+					.arg(seconds)
+					.arg(mv_title);
+				m_pView->db->exec(query);
 
-					QString query = QString("INSERT INTO play_info VALUES (NULL, %1, %2, \"%3\")")
-						.arg(m_pView->m_iCurrentFileDBID)
-						.arg(seconds)
-						.arg(mv_title);
-					m_pView->db->exec(query);
+				timeToMemo[seconds] = mv_title;
 
-					timeToMemo[seconds] = mv_title;
+				refreshMVList();
 
-					refreshMVList();
-
-					mvText->clear();
-				}
+				mvText->clear();
 			}
 		}
 	}
 }
 
-void widgetLeftView::OnMemoClicked(MemoControls* pmemo)
+void widgetLeftView::clearMemoSelection()
+{
+	for (int i = 0; i < memo_control_list.count(); i++)
+	{
+		memo_control_list[i]->setSelect(false);
+	}
+}
+
+void widgetLeftView::OnMemoClicked(widgetMemo* pmemo)
 {
 	if (pmemo)
 	{
 		if (pmemo->memo_id > 0)
 		{
+			clearMemoSelection();
+			//memo->setStyleSheet("QWidget#mymemo{background:white; border: 1px solid red;}");
+			pmemo->setSelect(true);
 			parent_memo_id = pmemo->memo_id;
-			noteParent->setText("답글");
+			noteParent->setText("답글 > " + pmemo->user_name);
 		}
 	}
 }
 
 void widgetLeftView::doNewMemo()
 {
+	clearMemoSelection();
 	parent_memo_id = 0;
 	noteParent->setText("새글");
 }
@@ -1573,18 +1614,12 @@ void widgetLeftView::setUserList()
 {
 	if (m_pView->DBConnected())
 	{
-		QStringList table_list = m_pView->db->tables();
-		if (!table_list.contains("user_info"))
-		{
-			m_pView->db->exec("CREATE TABLE user_info (id INTEGER PRIMARY KEY, user_id TEXT, user_pass TEXT, user_name TEXT, read_only INTEGER)");
-		}
-
 		userTable->setRowCount(0);
-		userTable->setColumnCount(2);
-		userTable->setHorizontalHeaderLabels(QStringList() << "ID" << "이름");
+		userTable->setColumnCount(3);
+		userTable->setHorizontalHeaderLabels(QStringList() << "ID" << "이름" << "관리자");
 		QVariantList data;
 		//	tag가 존재하는지 확인
-		QString query = QString("SELECT user_id, user_name FROM user_info ORDER BY user_id");
+		QString query = QString("SELECT user_id, user_name, read_only FROM user_info ORDER BY user_id");
 		int row_count = 0;
 		m_pView->db->exec(query, data);
 		for (const auto& item : data)
@@ -1592,27 +1627,41 @@ void widgetLeftView::setUserList()
 			auto map = item.toMap();
 			QString tag_id = map["user_id"].toString();
 			QString tag_str = map["user_name"].toString();
+			int read_only = map["read_only"].toInt();
 
 			row_count++;
 			userTable->setRowCount(row_count);
 			userTable->setItem(row_count - 1, 0, new QTableWidgetItem(tag_id));
 			userTable->setItem(row_count - 1, 1, new QTableWidgetItem(tag_str));
+			if (read_only == 1)
+			{
+				userTable->setItem(row_count - 1, 2, new QTableWidgetItem("관리자"));
+			}
+			else
+			{
+				userTable->setItem(row_count - 1, 2, new QTableWidgetItem("-"));
+			}
 		}
 	}
 }
 
 void widgetLeftView::doAddUser()
 {
+	if(m_pView->DBConnected() == false)
+	{
+		QMessageBox::information(this, QString("확인"), QString("데이터베이스를 먼저 생성하세요."));
+		return;
+	}
+
 	widgetAddUser login_dlg(this);
-	login_dlg.setModal(true);
-	login_dlg.setWindowFlags(Qt::FramelessWindowHint);
+	login_dlg.setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
 	login_dlg.move(this->rect().center() - QPoint(login_dlg.width() / 2, login_dlg.height() / 2));
-	login_dlg.setFocus();
 	if (login_dlg.exec() == QDialog::Accepted)
 	{
 		QString user_id = login_dlg.user_id;
 		QString user_pass = login_dlg.user_pass;
 		QString user_name = login_dlg.user_name;
+		bool user_super = login_dlg.user_super;
 
 		bool user_exist = false;
 		QString prev_user_name;
@@ -1633,10 +1682,11 @@ void widgetLeftView::doAddUser()
 				QMessageBox::Yes | QMessageBox::No);
 			if (reply == QMessageBox::Yes)
 			{
-				QString query = QString("UPDATE user_info SET user_pass=\"%2\", user_name=\"%3\" WHERE user_id=\"%1\"")
+				QString query = QString("UPDATE user_info SET user_pass=\"%2\", user_name=\"%3\", read_only=%4 WHERE user_id=\"%1\"")
 					.arg(user_id)
 					.arg(user_pass)
-					.arg(user_name);
+					.arg(user_name)
+					.arg(user_super ? 1 : 0);
 				m_pView->db->exec(query);
 
 				setUserList();
@@ -1644,10 +1694,11 @@ void widgetLeftView::doAddUser()
 		}
 		else
 		{
-			query = QString("INSERT INTO user_info VALUES (NULL, \"%1\", \"%2\", \"%3\", 1)")
+			query = QString("INSERT INTO user_info VALUES (NULL, \"%1\", \"%2\", \"%3\", %4)")
 				.arg(user_id)
 				.arg(user_pass)
-				.arg(user_name);
+				.arg(user_name)
+				.arg(user_super ? 1 : 0);
 			m_pView->db->exec(query);
 
 			setUserList();
@@ -1657,6 +1708,12 @@ void widgetLeftView::doAddUser()
 
 void widgetLeftView::doDelUser()
 {
+	if (m_pView->DBConnected() == false)
+	{
+		QMessageBox::information(this, QString("확인"), QString("데이터베이스를 먼저 생성하세요."));
+		return;
+	}
+
 	QModelIndexList selection = userTable->selectionModel()->selectedRows();
 	if (selection.count() > 0)
 	{
