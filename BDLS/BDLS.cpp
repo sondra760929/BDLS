@@ -5,6 +5,7 @@
 #include "xlsxchart.h"
 #include "xlsxrichstring.h"
 #include "xlsxworkbook.h"
+#include <QtCore5Compat/QTextCodec>
 
 QString m_strKey = QString("HKEY_CURRENT_USER\\SOFTWARE\\DIGIBOOK\\PDFIndexExplorer\\Settings");
 QSettings m(m_strKey, QSettings::Registry64Format);
@@ -140,12 +141,265 @@ void BDLS::SelectFileFromTree(QString file_path)
 			m_iCurrentSelectedItemType = 3;
 			_widgetRightView->ViewMovie(file_path);
 		}
+		else if (ext == "txt")
+		{
+			if (f_info.fileName() == "old_db.txt")
+			{
+				LoadOldDB(file_path);
+			}
+		}
 		else
 		{
 			m_iCurrentSelectedItemType = 4;
 			m_strCurrentFolderPath = file_path;
 		}
 	//}
+}
+
+void BDLS::LoadOldDB(QString file_path)
+{
+	//QProcess::execute("iconv", QStringList() << "-c" << "-f" << "euc-kr" << "-t" << "utf-8" << file_path << ">" << "old_db_utf.txt");
+
+	QFile file(file_path);
+	if (!file.open(QIODevice::ReadOnly))
+	{
+		QMessageBox::information(0, "error", file.errorString());
+		return;
+	}
+	QTextStream in(&file);
+	int status = 0;
+	QStringList header_list;
+	QStringList temp_list;
+	QList<QStringList> index_info;
+	QMap<QString, QList<QStringList>> page_info;
+	int col_size = 0;
+	header_list.append("No");
+	while (!in.atEnd())
+	{
+		QString line = in.readLine();
+		if (line == "[headers]")
+		{
+			status = 1;
+		}
+		else if (line == "[index_info]")
+		{
+			status = 2;
+		}
+		else if (line == "[page_info]")
+		{
+			status = 4;
+		}
+		else
+		{
+			switch (status)
+			{
+			case 1:
+			{
+				QStringList fields = line.split(",");
+				header_list.append(fields[1]);
+			}
+			break;
+			case 2:
+			{
+				col_size = line.toInt();
+				status = 3;
+				QStringList new_list;
+				index_info.append(new_list);
+			}
+			break;
+			case 3:
+			{
+				index_info[index_info.count() - 1].append(line);
+				col_size--;
+				if (col_size == 0)
+				{
+					status = 2;
+				}
+			}
+			break;
+			case 4:
+			{
+				col_size = line.toInt();
+				status = 5;
+				temp_list.clear();
+			}
+			break;
+			case 5:
+			{
+				temp_list.append(line);
+				col_size--;
+				if (col_size == 0)
+				{
+					page_info[temp_list[1]].append(temp_list);
+					status = 4;
+				}
+			}
+			break;
+			}
+		}
+	}
+
+	QString temp_string;
+	bool db_file_exist = false;
+	QString str_file_path = m_strCurrentFolderPath + "\\index2.db3";
+	if (QFile::exists(str_file_path))
+	{
+		db_file_exist = true;
+		QMessageBox::StandardButton reply = QMessageBox::question(this, QString("확인"), QString("DB 파일이 존재합니다. 새로 저장하시겠습니까?"), QMessageBox::Yes | QMessageBox::No);
+		if (reply != QMessageBox::Yes)
+		{
+			return;
+		}
+	}
+
+	m_strDBfilepath = str_file_path;
+	QFileInfo f_info(m_strDBfilepath);
+	m_strDBfolderpath = f_info.absolutePath();
+
+	BeginProgress();
+	int col_count = header_list.count();
+	int file_name_index = col_count - 1;
+	int row_count = index_info.count();
+	int total = row_count;
+	QString status_string;
+	if (InitDB(m_strDBfilepath))
+	{
+		if (!db_file_exist)
+		{
+			db->exec("DROP TABLE IF EXISTS headers");
+			db->exec("CREATE TABLE headers (id INTEGER PRIMARY KEY, value TEXT)");
+			for (int j = 3; j < col_count; j++)
+			{
+				temp_string = QString("INSERT INTO headers VALUES (NULL, \"%1\")").arg(header_list[j]);
+				//temp_string = m_Grid.QuickGetText(j, -1);
+				//sprintf_s(input_query, "INSERT INTO headers VALUES (NULL, \"%s\")", temp_string);
+				db->exec(temp_string);
+			}
+			db->exec("CREATE TABLE file_info (id INTEGER PRIMARY KEY, file_name TEXT, file_path TEXT, m_no TEXT)");
+			db->exec("CREATE TABLE header_info (file_id INTEGER, header_id INTEGER, value TEXT, PRIMARY KEY(file_id, header_id))");
+			db->exec("CREATE TABLE page_info (id INTEGER PRIMARY KEY, file_id INTEGER, page_no INTEGER, block_no INTEGER, block_text TEXT)");
+			db->exec("CREATE TABLE hsah_tags (id INTEGER PRIMARY KEY, tags TEXT)");
+			db->exec("CREATE TABLE file_to_hash (id INTEGER PRIMARY KEY, file_id INTEGER, tag_id INTEGER)");
+			db->exec("CREATE TABLE reply_info (id INTEGER PRIMARY KEY, file_id INTEGER, parent_id INTEGER, user_id TEXT, value TEXT, date_time TEXT)");
+			db->exec("CREATE TABLE play_info (id INTEGER PRIMARY KEY, file_id INTEGER, s_time INTEGER, s_title TEXT)");
+			db->exec("CREATE TABLE user_info (id INTEGER PRIMARY KEY, user_id TEXT, user_pass TEXT, user_name TEXT, read_only INTEGER)");
+		}
+		//CreateDirectory(m_strCurrentFolderPath + "\\pdf_txt", NULL);
+
+		QString managed_file_no("");
+
+		QVariantList data;
+		db->exec("SELECT max(m_no) FROM file_info", data);
+		if (data.count() > 0)
+		{
+			//	존재할 경우
+			auto map = data[0].toMap();
+			if (!map["m_no"].isNull())
+				managed_file_no = map["m_no"].toString();
+		}
+
+		for (int i = 0; i < row_count; i++)
+		{
+			QString file_name = index_info[i][file_name_index];
+			QString file_name_only = file_name;
+			file_name_only.chop(4);
+
+			QString file_path = m_strDBfolderpath + "\\" + file_name;
+			QString target_file_path = m_strDBfolderpath + "\\" + file_name_only + ".txt";
+
+			QString cell_string = ("");
+			QString cell_string1 = ("");
+			//if (IsPDF(file_path))
+			//{
+			//	cell_string = "O";
+			//	if (CheckEncrypted(file_path))
+			//	{
+			//		cell_string1 = "V";
+			//	}
+			//	m_lstGridText[i][2] = cell_string;
+			//	m_lstGridText[i][1] = cell_string1;
+			//	if (m_lstGridIndex[i] > -1)
+			//	{
+			//		m_Grid.QuickSetText(2, m_lstGridIndex[i], cell_string);
+			//		m_Grid.QuickSetText(1, m_lstGridIndex[i], cell_string1);
+			//	}
+			//}
+
+			status_string = QString("%1 행 저장 중").arg(i + 1);
+			UpdateProgress(status_string, i + 1, total);
+
+			int file_db_id = 0;
+			//	file id 확인
+			db->exec(QString("SELECT id FROM file_info WHERE file_path=\"%1\"").arg(file_path), data);
+			if (data.count() > 0)
+			{
+				//	존재할 경우
+				auto map = data[0].toMap();
+				file_db_id = map["id"].toInt();
+				for (int j = 3; j < col_count; j++)
+				{
+					QString header_name = index_info[i][j];
+					temp_string = QString("UPDATE header_info SET value=\"%3\" WHERE file_id=%1 AND header_id=%2").arg(file_db_id).arg(j - 2).arg(header_name);
+					db->exec(temp_string);
+				}
+			}
+			else
+			{
+				//	존재하지 않을 경우
+				//	insert file_info
+				managed_file_no = NextFileMNO(managed_file_no);
+				temp_string = QString("INSERT INTO file_info VALUES (NULL, \"%1\", \"%2\", \"%3\")").arg(file_name).arg(file_path).arg(managed_file_no);
+				db->exec(temp_string);
+
+				//	file id 확인
+				db->exec(QString("SELECT id FROM file_info WHERE file_path=\"%1\"").arg(file_path), data);
+				if (data.count() > 0)
+				{
+					//	존재할 경우
+					auto map = data[0].toMap();
+					file_db_id = map["id"].toInt();
+
+					for (int j = 3; j < col_count; j++)
+					{
+						QString header_name = index_info[i][j];
+						temp_string = QString("INSERT INTO header_info VALUES (%1, %2, \"%3\")").arg(file_db_id).arg(j - 2).arg(header_name);
+						db->exec(temp_string);
+					}
+				}
+				else
+				{
+					//	저장이 잘 안됐나?
+				}
+			}
+
+			//	file id 확인
+			db->exec(QString("SELECT page_no FROM page_info WHERE file_id=%1").arg(file_db_id), data);
+			if (data.count() > 0)
+			{
+				//	존재할 경우
+			}
+			else
+			{
+				if (page_info.contains(file_name))
+				{
+					int block_count = page_info[file_name].count();
+					for (int j = 0; j < block_count; j++)
+					{
+						status_string = QString("page[%1] block[%2s] 저장 중").arg(page_info[file_name][j][2]).arg(page_info[file_name][j][3]);
+						UpdateProgress2(status_string, j + 1, block_count);
+
+						temp_string = QString("INSERT INTO page_info VALUES (NULL, %1, %2, %3, \"%4\")")
+							.arg(file_db_id)
+							.arg(page_info[file_name][j][2])
+							.arg(page_info[file_name][j][3])
+							.arg(page_info[file_name][j][4]);
+						db->exec(temp_string);
+					}
+				}
+			}
+		}
+	}
+	EndProgress();
 }
 
 bool BDLS::InitDB(QString db_file_path)
@@ -1347,6 +1601,16 @@ void BDLS::UpdateProgress(QString status, int pos, int total)
 	{
 		_widgetProgress->SetStatus1(status);
 		_widgetProgress->SetProgress1(pos * 100 / total);
+		qApp->processEvents();
+	}
+}
+
+void BDLS::UpdateProgress2(QString status, int pos, int total)
+{
+	if (_widgetProgress)
+	{
+		_widgetProgress->SetStatus2(status);
+		_widgetProgress->SetProgress2(pos * 100 / total);
 		qApp->processEvents();
 	}
 }

@@ -213,9 +213,6 @@
     <QtMoc Include="SearchControls.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="MemoControls.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <QtMoc Include="widgetLogin.h">
       <Filter>Header Files</Filter>
     </QtMoc>

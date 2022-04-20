@@ -83,7 +83,9 @@ public:
     widgetProgress* _widgetProgress;
     void BeginProgress();
     void UpdateProgress(QString status, int pos, int total);
+    void UpdateProgress2(QString status, int pos, int total);
     void EndProgress();
+    void LoadOldDB(QString file_path);
 
     void readSettings();
     void writeSettings();
