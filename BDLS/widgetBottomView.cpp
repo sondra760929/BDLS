@@ -49,6 +49,7 @@ widgetBottomView::~widgetBottomView()
 void widgetBottomView::AddResult(QTreeWidgetItem* item)
 {
 	m_outputTree->addTopLevelItem(item);
+	m_outputTree->expandAll();
 }
 
 void widgetBottomView::onPlus()

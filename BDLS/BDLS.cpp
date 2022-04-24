@@ -272,8 +272,6 @@ void BDLS::LoadOldDB(QString file_path)
 	}
 
 	m_strDBfilepath = str_file_path;
-	QFileInfo f_info(m_strDBfilepath);
-	m_strDBfolderpath = f_info.absolutePath();
 
 	BeginProgress();
 	int col_count = header_list.count();
@@ -429,6 +427,8 @@ bool BDLS::InitDB(QString db_file_path)
 	{
 		db = new db_manager(db_file_path);
 	}
+	QFileInfo f_info(db_file_path);
+	m_strDBfolderpath = f_info.absolutePath();
 
 	return db->Connect(db_file_path);
 }

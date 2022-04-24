@@ -600,13 +600,21 @@ void widgetLeftView::doSearch1()
 				if (total_file_to_block2.contains(file_id))
 				{
 					QString file_contents;
-					query = QString("SELECT block_text FROM page_info WHERE file_id=%1 ORDER BY page_no, block_no").arg(file_id);
+					QMap<int, QMap<int, int> > page_block_to_index;
+					QList<int> page_block_to_index_order;
+					query = QString("SELECT block_text, page_no, block_no FROM page_info WHERE file_id=%1 ORDER BY page_no, block_no").arg(file_id);
 					m_pView->db->exec(query, data);
 					for (const auto& item : data)
 					{
 						auto map = item.toMap();
 						if (file_contents != "")
 							file_contents += " ";
+
+						int temp_page_no = map["page_no"].toInt();
+						int temp_block_no = map["block_no"].toInt();
+						page_block_to_index[temp_page_no][temp_block_no] = file_contents.length();
+						page_block_to_index_order.append(file_contents.length());
+
 						file_contents += map["block_text"].toString();
 					}
 
@@ -620,9 +628,16 @@ void widgetLeftView::doSearch1()
 							QStringList search_words = total_file_to_block2[file_id][page_no_keys[j]][block_no_keys[k]];
 							for (int l = 0; l < search_words.size(); l++)
 							{
-								int search_index = file_contents.indexOf(search_words[l]);
+								int start_index = page_block_to_index[page_no_keys[j]][block_no_keys[k]];
+								int next_index = page_block_to_index_order.indexOf(start_index) + 1;
+								int end_index = file_contents.length();
+								if (next_index < page_block_to_index_order.count())
+								{
+									end_index = page_block_to_index_order[next_index];
+								}
+								int search_index = file_contents.indexOf(search_words[l], start_index);
 								int search_word_count = search_words[l].length();
-								while (search_index > -1)
+								while (search_index > -1 && search_index < end_index)
 								{
 									int temp_length = file_length - search_index - search_word_count;
 									if (temp_length > 100)
@@ -648,7 +663,11 @@ void widgetLeftView::doSearch1()
 						}
 					}
 				}
-				this_file->setText(0, QString("%1 [%2]").arg(file_name).arg(file_count));
+				QString temp_info_str = QString("<font color=\"blue\">%1 [%2]</font>").arg(file_name).arg(file_count);
+				QLabel* temp_label = new QLabel();
+				temp_label->setText(temp_info_str);
+				m_pView->_widgetBottomView->m_outputTree->setItemWidget(this_file, 0, temp_label);
+				//this_file->setText(0, QString("<font color=\"blue\">%1 [%2]</font>").arg(file_name).arg(file_count));
 				this_file->setExpanded(true);
 			}
 		}
