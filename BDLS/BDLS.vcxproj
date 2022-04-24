@@ -39,6 +39,7 @@
     <QtInstall>6.3.0_msvc2019_64</QtInstall>
     <QtModules>core;sql;gui;multimedia;widgets;multimediawidgets;webenginewidgets</QtModules>
     <QtBuildConfig>release</QtBuildConfig>
+    <QtQMLDebugEnable>true</QtQMLDebugEnable>
   </PropertyGroup>
   <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') or !Exists('$(QtMsBuild)\qt.props')">
     <Message Importance="High" Text="QtMsBuild: could not locate qt.targets, qt.props; project may not build correctly." />
@@ -71,6 +72,9 @@
     <Link>
       <AdditionalDependencies>Qt6Pdf.lib;Qt6PdfWidgets.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <QtRcc>
+      <QmlCacheGenerate>true</QmlCacheGenerate>
+    </QtRcc>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
     <ClCompile>
@@ -132,6 +136,9 @@
     <ClCompile Include="..\QXlsx\source\xlsxworksheet.cpp" />
     <ClCompile Include="..\QXlsx\source\xlsxzipreader.cpp" />
     <ClCompile Include="..\QXlsx\source\xlsxzipwriter.cpp" />
+    <ClCompile Include="ExtendedTableWidget.cpp" />
+    <ClCompile Include="FilterLineEdit.cpp" />
+    <ClCompile Include="FilterTableHeader.cpp" />
     <ClCompile Include="MySortFilterProxyModel.cpp" />
     <ClCompile Include="pageselector.cpp" />
     <ClCompile Include="playercontrols.cpp" />
@@ -206,6 +213,9 @@
     <ClInclude Include="..\QXlsx\header\xlsxsharedstrings_p.h" />
     <ClInclude Include="..\QXlsx\header\xlsxsimpleooxmlfile_p.h" />
     <ClInclude Include="db_manager.h" />
+    <QtMoc Include="FilterLineEdit.h" />
+    <QtMoc Include="ExtendedTableWidget.h" />
+    <QtMoc Include="FilterTableHeader.h" />
     <QtMoc Include="widgetProgress.h" />
     <QtMoc Include="widgetMemo.h" />
     <QtMoc Include="widgetAddUser.h" />

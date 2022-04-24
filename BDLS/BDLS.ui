@@ -31,38 +31,7 @@
      <number>2</number>
     </property>
     <item>
-     <widget class="QTreeView" name="treeView">
-      <property name="styleSheet">
-       <string notr="true"> QTreeView {
-     show-decoration-selected: 1;
- }
-
- QTreeView::item {
-      border: 1px solid #d9d9d9;
-     border-top-color: transparent;
-     border-bottom-color: transparent;
- }
-
- QTreeView::item:hover {
-     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #e7effd, stop: 1 #cbdaf1);
-     border: 1px solid #bfcde4;
- }
-
- QTreeView::item:selected {
-     border: 1px solid #567dbc;
- }
-
- QTreeView::item:selected:active{
-     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #6ea1f1, stop: 1 #567dbc);
- }
-
- QTreeView::item:selected:!active {
-     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #6b9be8, stop: 1 #577fbf);
- }
-
-QHeaderView::section{background-color: rgb(200, 200, 200);font:bold;}</string>
-      </property>
-     </widget>
+     <widget class="ExtendedTableWidget" name="tableView"/>
     </item>
    </layout>
   </widget>
@@ -218,6 +187,13 @@ QHeaderView::section{background-color: rgb(200, 200, 200);font:bold;}</string>
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>ExtendedTableWidget</class>
+   <extends>QTableView</extends>
+   <header>ExtendedTableWidget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="BDLS.qrc"/>
  </resources>

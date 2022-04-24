@@ -283,18 +283,38 @@ widgetLeftView::widgetLeftView(QWidget* parent)
 	temp_add = new QHBoxLayout;
 	QPushButton* userAdd = new QPushButton(this);
 	userAdd->setText("추가 / 변경");
-	QPushButton* userUpdate = new QPushButton(this);
-	userUpdate->setText("파일 목록 갱신");
 	QPushButton* userDel = new QPushButton(this);
 	userDel->setText("삭제");
 	temp_add->addWidget(userAdd);
 	temp_add->addWidget(userDel);
-	temp_add->addWidget(userUpdate);
+	userViewLayout->addLayout(temp_add);
+
+	label = new QLabel(this);
+	label->setText("2. 허용 파일 목록");
+	userViewLayout->addWidget(label);
+
+	fileTable = new QTableWidget(this);
+	userViewLayout->addWidget(fileTable);
+	utTag.setVerticalStretch(2);
+	fileTable->setSizePolicy(utTag);
+	fileTable->setSelectionMode(QAbstractItemView::MultiSelection);
+	fileTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+	fileTable->horizontalHeader()->setStretchLastSection(true);
+
+	temp_add = new QHBoxLayout;
+	QPushButton* fileAdd = new QPushButton(this);
+	fileAdd->setText("추가");
+	QPushButton* fileDel = new QPushButton(this);
+	fileDel->setText("삭제");
+	temp_add->addWidget(fileAdd);
+	temp_add->addWidget(fileDel);
 	userViewLayout->addLayout(temp_add);
 
 	connect(userAdd, &QPushButton::clicked, this, &widgetLeftView::doAddUser);
 	connect(userDel, &QPushButton::clicked, this, &widgetLeftView::doDelUser);
-	connect(userUpdate, &QPushButton::clicked, this, &widgetLeftView::doUpdateUser);
+	connect(fileAdd, &QPushButton::clicked, this, &widgetLeftView::doAddFile);
+	connect(fileDel, &QPushButton::clicked, this, &widgetLeftView::doDelFile);
+	connect(userTable->selectionModel(), SIGNAL(selectionChanged(QItemSelection, QItemSelection)), this, SLOT(onUserChanged(QItemSelection, QItemSelection)));
 }
 
 widgetLeftView::~widgetLeftView()
@@ -1645,6 +1665,76 @@ void widgetLeftView::setUserList()
 	}
 }
 
+void widgetLeftView::doAddFile()
+{
+	QModelIndexList selection = userTable->selectionModel()->selectedRows();
+	if (selection.count() > 0)
+	{
+		QModelIndex index = selection.at(0);
+		QString user_id = userTable->item(index.row(), 0)->text();
+		m_pView->AddFileList(user_id);
+		setFileList(user_id);
+	}
+}
+
+void widgetLeftView::setFileList(QString user_id)
+{
+	if (m_pView->DBConnected())
+	{
+		userTable_user_id = user_id;
+		fileTable->setRowCount(0);
+		fileTable->setColumnCount(2);
+		fileTable->setHorizontalHeaderLabels(QStringList() << "파일명" << "경로");
+		QVariantList data;
+		//	tag가 존재하는지 확인
+		QString query = QString("SELECT file_info.file_name, file_info.id FROM file_info INNER JOIN user_file_info on file_info.id = user_file_info.file_id WHERE user_file_info.user_id = \"%1\"").arg(user_id);
+		int row_count = 0;
+		m_pView->db->exec(query, data);
+		for (const auto& item : data)
+		{
+			auto map = item.toMap();
+			QString file_path = map["file_name"].toString();
+			QString file_id = map["id"].toString();
+			QFileInfo f_info(file_path);
+			QString file_name = f_info.fileName();
+			QString file_dir = file_path.left(file_path.length() - file_name.length());
+			row_count++;
+			fileTable->setRowCount(row_count);
+			QTableWidgetItem* file_item = new QTableWidgetItem(file_name);
+			file_item->setData(Qt::AccessibleTextRole, file_id);
+			fileTable->setItem(row_count - 1, 0, file_item);
+			fileTable->setItem(row_count - 1, 1, new QTableWidgetItem(file_dir));
+		}
+	}
+}
+
+void widgetLeftView::doDelFile()
+{
+	if (m_pView->DBConnected())
+	{
+		QModelIndexList selection = fileTable->selectionModel()->selectedRows();
+		if (selection.count() > 0)
+		{
+			QMessageBox::StandardButton reply;
+			reply = QMessageBox::question(this, QString("확인"), QString("[%1]개 파일을 삭제하시겠습니까?").arg(selection.count()),
+				QMessageBox::Yes | QMessageBox::No);
+			if (reply == QMessageBox::Yes)
+			{
+				for (int i = 0; i < selection.count(); i++)
+				{
+					QModelIndex index = selection.at(i);
+					QString file_id = fileTable->item(index.row(), 0)->data(Qt::AccessibleTextRole).toString();
+					QString query = QString("DELETE FROM user_file_info WHERE user_id=\"%1\" AND file_id=%2")
+						.arg(userTable_user_id)
+						.arg(file_id);
+					m_pView->db->exec(query);
+				}
+				setFileList(userTable_user_id);
+			}
+		}
+	}
+}
+
 void widgetLeftView::doAddUser()
 {
 	if(m_pView->DBConnected() == false)
@@ -1734,7 +1824,20 @@ void widgetLeftView::doDelUser()
 	}
 }
 
-void widgetLeftView::doUpdateUser()
+void widgetLeftView::onUserChanged(const QItemSelection& current, const QItemSelection& prev)
 {
+	if (current.indexes().size() > 0)
+	{
+		QModelIndex index = current.indexes()[0];
+		QString user_id = userTable->item(index.row(), 0)->text();
+		setFileList(user_id);
+	}
+}
 
+
+void widgetLeftView::clearAll()
+{
+	clearMemo();
+	clearTags();
+	clearMVs();
 }

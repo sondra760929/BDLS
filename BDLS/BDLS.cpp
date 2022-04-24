@@ -6,6 +6,7 @@
 #include "xlsxrichstring.h"
 #include "xlsxworkbook.h"
 #include <QtCore5Compat/QTextCodec>
+#include "FilterTableHeader.h"
 
 QString m_strKey = QString("HKEY_CURRENT_USER\\SOFTWARE\\DIGIBOOK\\PDFIndexExplorer\\Settings");
 QSettings m(m_strKey, QSettings::Registry64Format);
@@ -28,11 +29,30 @@ BDLS::BDLS(QWidget* parent)
 	originModel = new QStandardItemModel(this);
 	proxyModel->setSourceModel(originModel);
 
-	ui.treeView->setModel(proxyModel);
-	ui.treeView->setAlternatingRowColors(true);
-	ui.treeView->setIndentation(0);
+	ui.tableView->setModel(proxyModel);
+	ui.tableView->setAlternatingRowColors(true);
+	ui.tableView->setSortingEnabled(true);
 
-	connect(ui.treeView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)), this, SLOT(onTableCellClicked(const QItemSelection&, const QItemSelection&)));
+	connect(ui.tableView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)), this, SLOT(onTableCellClicked(const QItemSelection&, const QItemSelection&)));
+
+	connect(ui.tableView->filterHeader(), &FilterTableHeader::filterChanged, this, &BDLS::updateFilter);
+	//connect(ui.tableView->filterHeader(), &FilterTableHeader::addCondFormat, this, &TableBrowser::addCondFormatFromFilter);
+	//connect(ui.tableView->filterHeader(), &FilterTableHeader::allCondFormatsCleared, this, &TableBrowser::clearAllCondFormats);
+	//connect(ui.tableView->filterHeader(), &FilterTableHeader::condFormatsEdited, this, &TableBrowser::editCondFormats);
+	//connect(ui.tableView, &ExtendedTableWidget::editCondFormats, this, &TableBrowser::editCondFormats);
+	//connect(ui.tableView, &ExtendedTableWidget::dataAboutToBeEdited, this, &TableBrowser::dataAboutToBeEdited);
+
+	//connect(ui.tableView, &ExtendedTableWidget::doubleClicked, this, &TableBrowser::selectionChangedByDoubleClick);
+	//connect(ui.tableView->filterHeader(), &FilterTableHeader::sectionClicked, this, &TableBrowser::headerClicked);
+	//connect(ui.tableView->filterHeader(), &QHeaderView::sectionDoubleClicked, ui.tableView, &QTableView::selectColumn);
+	//connect(ui.tableView->verticalScrollBar(), &QScrollBar::valueChanged, this, &TableBrowser::updateRecordsetLabel);
+	//connect(ui.tableView->horizontalHeader(), &QHeaderView::sectionResized, this, &TableBrowser::updateRecordsetLabel);
+	//connect(ui.tableView->verticalHeader(), &QHeaderView::sectionResized, this, &TableBrowser::updateRecordsetLabel);
+	//connect(ui.tableView->horizontalHeader(), &QHeaderView::sectionResized, this, &TableBrowser::updateColumnWidth);
+	//connect(ui.tableView->horizontalHeader(), &QHeaderView::customContextMenuRequested, this, &TableBrowser::showDataColumnPopupMenu);
+	//connect(ui.tableView->verticalHeader(), &QHeaderView::customContextMenuRequested, this, &TableBrowser::showRecordPopupMenu);
+	//connect(ui.tableView, &ExtendedTableWidget::openFileFromDropEvent, this, &TableBrowser::requestFileOpen);
+	//connect(ui.tableView, &ExtendedTableWidget::selectedRowsToBeDeleted, this, &TableBrowser::deleteRecord);
 
 	createDockWindows();
 	createActions();
@@ -132,7 +152,6 @@ void BDLS::SelectFileFromTree(QString file_path)
 			char strUtf8[512] = { 0, };
 			m_strDBfilepath = file_path;
 			m_strCurrentFolderPath = f_info.absolutePath();
-			m_strDBfolderpath = m_strCurrentFolderPath;
 			m.setValue("QSettings", file_path);
 			InitFromDB();
 		}
@@ -283,6 +302,8 @@ void BDLS::LoadOldDB(QString file_path)
 			db->exec("CREATE TABLE reply_info (id INTEGER PRIMARY KEY, file_id INTEGER, parent_id INTEGER, user_id TEXT, value TEXT, date_time TEXT)");
 			db->exec("CREATE TABLE play_info (id INTEGER PRIMARY KEY, file_id INTEGER, s_time INTEGER, s_title TEXT)");
 			db->exec("CREATE TABLE user_info (id INTEGER PRIMARY KEY, user_id TEXT, user_pass TEXT, user_name TEXT, read_only INTEGER)");
+			db->exec("CREATE TABLE user_file_info (id INTEGER PRIMARY KEY, user_id TEXT, file_id INTEGER)");
+			db->exec("CREATE TABLE log_info (id INTEGER PRIMARY KEY, log_type TEXT, log_content TEXT, date_time TEXT)");
 		}
 		//CreateDirectory(m_strCurrentFolderPath + "\\pdf_txt", NULL);
 
@@ -420,6 +441,15 @@ bool BDLS::DBConnected()
 	return db->Connected();
 }
 
+void BDLS::CloseDB()
+{
+	if (DBConnected())
+	{
+		db->Close();
+	}
+	m_strDBfilepath = "";
+}
+
 void BDLS::InitFromDB()
 {
 	QString temp_string;
@@ -475,7 +505,15 @@ void BDLS::InitFromDB()
 								originModel->setHeaderData(col_size - 1, Qt::Horizontal, "파일 경로");
 							}
 
-							db->exec("SELECT id, file_name, file_path FROM file_info ORDER BY id", data);
+							if (m_UserLevel == ADMIN)
+							{
+								db->exec("SELECT id, file_name, file_path FROM file_info ORDER BY id", data);
+							}
+							else
+							{
+								QString query = QString("SELECT file_info.id, file_info.file_name, file_info.file_path FROM file_info INNER JOIN user_file_info on file_info.id = user_file_info.file_id WHERE user_file_info.user_id = \"%1\" ORDER BY file_info.id").arg(m_loginUserID);
+								db->exec(query, data);
+							}
 							QStringList file_name_list;
 							QStringList file_path_list;
 							QList<int> file_id_list;
@@ -496,6 +534,7 @@ void BDLS::InitFromDB()
 							{
 								originModel->insertRow(i);
 								originModel->setData(originModel->index(i, 0), i + 1);
+								originModel->setData(originModel->index(i, 0), file_id_list[i], Qt::AccessibleTextRole);
 
 								db->exec(QString("SELECT file_id, header_id, value FROM header_info WHERE file_id=%1").arg(file_id_list[i]), data);
 								for (const auto& item : data)
@@ -513,10 +552,12 @@ void BDLS::InitFromDB()
 						}
 						proxyModel->invalidate();
 						for (int i = 0; i < proxyModel->columnCount(); ++i)
-							ui.treeView->resizeColumnToContents(i);
+							ui.tableView->resizeColumnToContents(i);
 
+						generateFilters();
 						setSearchCombo();
 						setTagList();
+						_widgetLeftView->clearAll();
 					}
 					else
 					{
@@ -596,7 +637,7 @@ void BDLS::OnOpenSingle()
 		if (ext == "xls" || ext == "xlsx")
 		{
 			int data_row_count = originModel->rowCount();
-			if (m_strDBfilepath != "" && data_row_count > 0)
+			if (DBConnected() && data_row_count > 0)
 			{
 				//	db를 읽은 상태임
 				QMessageBox::StandardButton reply;
@@ -605,13 +646,17 @@ void BDLS::OnOpenSingle()
 				if (reply == QMessageBox::Yes)
 				{
 					//	추가로 로딩
-					if (m_strCurrentFolderPath != folder_path)
+					if (m_strDBfolderpath != folder_path)
 					{
-						reply = QMessageBox::question(this, QString("확인"), QString("현재 DB파일과 다른 폴더에 있는 엑셀파일입니다.기존 파일 링크가 해제될 수 있습니다.계속 진행하시겠습니까 ? "), QMessageBox::Yes | QMessageBox::No);
+						reply = QMessageBox::question(this, QString("확인"), QString("현재 DB파일과 다른 폴더에 있는 엑셀파일입니다. 신규 파일 링크가 변경될 수 있습니다.계속 진행하시겠습니까 ? "), QMessageBox::Yes | QMessageBox::No);
 						if (reply != QMessageBox::Yes)
 						{
 							//	폴더가 달라서 취소
 							return;
+						}
+						else
+						{
+							//	다른 폴더 열었을 때 링크 맞추기
 						}
 					}
 					//	추가로 읽기
@@ -696,9 +741,9 @@ void BDLS::OnOpenSingle()
 							//m_lstGridSelected.resize(data_row_count);
 							//m_lstGridKey.resize(data_row_count);
 
-							no = QString::number(data_row_count);
+							//no = QString::number(data_row_count);
 
-							originModel->setData(originModel->index(0, 0), no);
+							originModel->setData(originModel->index(0, 0), data_row_count);
 							//SetItemData(grid_row_count - 1, 0, no);
 							//m_lstGridText[data_row_count - 1][0] = no;
 							//m_lstGridIndex[data_row_count - 1] = grid_row_count - 1;
@@ -800,8 +845,7 @@ void BDLS::OnOpenSingle()
 			//m_lstGridIndex.clear();
 			//m_lstGridSelected.clear();
 			//m_lstGridKey.clear();
-			m_strDBfilepath = "";
-
+			CloseDB();
 			ClearTable();
 			//m_Grid.SetPaintMode(FALSE);
 			//if (is_fitGrid)
@@ -930,7 +974,8 @@ void BDLS::OnOpenSingle()
 
 			proxyModel->invalidate();
 			for (int i = 0; i < proxyModel->columnCount(); ++i)
-				ui.treeView->resizeColumnToContents(i);
+				ui.tableView->resizeColumnToContents(i);
+			generateFilters();
 			//m_Grid.SetPaintMode(TRUE);
 			//if (is_fitGrid)
 			//{
@@ -948,7 +993,9 @@ void BDLS::OnOpenSingle()
 
 void BDLS::SetCurrentFile(QString file_name, QString file_info)
 {
-	QString file_path = m_strDBfolderpath + "\\" + file_name;
+	QString file_path = m_strCurrentFolderPath + "\\" + file_name;
+	if(DBConnected())
+		file_path = m_strDBfolderpath + "\\" + file_name;
 	m_iCurrentFileDBID = map_file_to_id[file_name];
 	_widgetLeftView->UpdateMemo();
 	if (IsPDF(file_path))
@@ -975,7 +1022,9 @@ void BDLS::onTableCellClicked(const QItemSelection& selected, const QItemSelecti
 			QModelIndex index = selected.indexes()[0];
 			int col_size = proxyModel->columnCount();
 			QString file_name = proxyModel->data(proxyModel->index(index.row(), col_size - 1)).toString();
-			QString file_path = m_strDBfolderpath + "\\" + file_name;
+			QString file_path = m_strCurrentFolderPath + "\\" + file_name;
+			if (DBConnected())
+				file_path = m_strDBfolderpath + "\\" + file_name;
 			if (file_path != m_strCurrentSelectedItemPath)
 			{
 				SetCurrentFile(file_name);
@@ -1107,21 +1156,30 @@ void BDLS::doLogin()
 		QString user_id = login_dlg.user_name;
 		QString user_pass = login_dlg.user_pass;
 
-		if (user_id == "admin" && user_pass == "ceohwang")
+		if (user_id == "admin")
 		{
-			m_UserLevel = ADMIN;
-			m_bIsLogin = true;
-			m_loginUserID = user_id;
-			m_loginUserPass = user_pass;
-			m_loginUserName = "CEO";
+			if (user_pass == "ceohwang")
+			{
+				m_UserLevel = ADMIN;
+				m_bIsLogin = true;
+				m_loginUserID = user_id;
+				m_loginUserPass = user_pass;
+				m_loginUserName = "CEO";
 
-			ui.actionAddFolder->setEnabled(true);
-			ui.actionAddRow->setEnabled(true);
-			ui.actionDelRow->setEnabled(true);
-			ui.actionDBUpdate->setEnabled(true);
-			_widgetLeftView->ViewUser(true);
+				setWindowTitle("BDLS [admin]");
 
-			SelectFileFromTree(m_strCurrentSelectedItemPath);
+				ui.actionAddFolder->setEnabled(true);
+				ui.actionAddRow->setEnabled(true);
+				ui.actionDelRow->setEnabled(true);
+				ui.actionDBUpdate->setEnabled(true);
+				_widgetLeftView->ViewUser(true);
+
+				SelectFileFromTree(m_strCurrentSelectedItemPath);
+			}
+			else
+			{
+				QMessageBox::information(this, QString("확인"), QString("암호가 일치하지 않습니다."));
+			}
 		}
 		else
 		{
@@ -1166,11 +1224,14 @@ void BDLS::doLogin()
 						{
 							m_UserLevel = SUPER;
 							_widgetLeftView->ViewUser(true);
+							setWindowTitle(QString("BDLS [%1] - 관리자").arg(user_id));
 						}
 						else
 						{
 							m_UserLevel = NORMAL;
 							_widgetLeftView->ViewUser(false);
+							setWindowTitle("BDLS [admin]");
+							setWindowTitle(QString("BDLS [%1] - 사용자").arg(user_id));
 						}
 
 						if (m_bIsLogin)
@@ -1202,9 +1263,9 @@ void BDLS::doAddFolder()
 				{
 					proxyModel->invalidate();
 					for (int i = 0; i < proxyModel->columnCount(); ++i)
-						ui.treeView->resizeColumnToContents(i);
+						ui.tableView->resizeColumnToContents(i);
 
-					ui.treeView->scrollTo(proxyModel->mapFromSource(originModel->index(originModel->rowCount() - 1, 0)));
+					//ui.tableView->scrollTo(proxyModel->mapFromSource(originModel->index(originModel->rowCount() - 1, 0)));
 				}
 			}
 		}
@@ -1221,9 +1282,9 @@ void BDLS::doAddFolder()
 
 				proxyModel->invalidate();
 				for (int i = 0; i < proxyModel->columnCount(); ++i)
-					ui.treeView->resizeColumnToContents(i);
+					ui.tableView->resizeColumnToContents(i);
 
-				ui.treeView->scrollTo(proxyModel->mapFromSource(originModel->index(originModel->rowCount() - 1, 0)));
+				//ui.tableView->scrollTo(proxyModel->mapFromSource(originModel->index(originModel->rowCount() - 1, 0)));
 			}
 			//}
 		}
@@ -1238,7 +1299,7 @@ void BDLS::doAddRow()
 		originModel->insertRow(new_index);
 		originModel->setData(originModel->index(new_index, 0), new_index + 1);
 		proxyModel->invalidate();
-		ui.treeView->scrollTo(proxyModel->mapFromSource(originModel->index(new_index, 0)));
+		//ui.tableView->scrollTo(proxyModel->mapFromSource(originModel->index(new_index, 0)));
 	}
 }
 
@@ -1283,7 +1344,7 @@ void BDLS::doDellRow()
 {
 	if (proxyModel)
 	{
-		originModel->removeRow(proxyModel->mapToSource(ui.treeView->selectionModel()->currentIndex()).row());
+		originModel->removeRow(proxyModel->mapToSource(ui.tableView->selectionModel()->currentIndex()).row());
 		proxyModel->invalidate();
 	}
 }
@@ -1325,7 +1386,7 @@ void BDLS::doDBUpdate()
 	{
 		if (!DBConnected())
 		{
-			QString str_file_path = m_strCurrentFolderPath + "\\index.db3";
+			QString str_file_path = m_strCurrentFolderPath + "\\index2.db3";
 			if (QFile::exists(str_file_path))
 			{
 				db_file_exist = true;
@@ -1377,6 +1438,8 @@ void BDLS::doDBUpdate()
 					db->exec("CREATE TABLE reply_info (id INTEGER PRIMARY KEY, file_id INTEGER, parent_id INTEGER, user_id TEXT, value TEXT, date_time TEXT)");
 					db->exec("CREATE TABLE play_info (id INTEGER PRIMARY KEY, file_id INTEGER, s_time INTEGER, s_title TEXT)");
 					db->exec("CREATE TABLE user_info (id INTEGER PRIMARY KEY, user_id TEXT, user_pass TEXT, user_name TEXT, read_only INTEGER)");
+					db->exec("CREATE TABLE user_file_info (id INTEGER PRIMARY KEY, user_id TEXT, file_id INTEGER)");
+					db->exec("CREATE TABLE log_info (id INTEGER PRIMARY KEY, log_type TEXT, log_content TEXT, date_time TEXT)");
 				}
 				//CreateDirectory(m_strCurrentFolderPath + "\\pdf_txt", NULL);
 
@@ -1420,6 +1483,7 @@ void BDLS::doDBUpdate()
 					//}
 
 					status_string = QString("%1 행 저장 중").arg(i + 1);
+					UpdateProgress2("", 0, 100, false);
 					UpdateProgress(status_string, i + 1, total);
 
 					int file_db_id = 0;
@@ -1477,7 +1541,7 @@ void BDLS::doDBUpdate()
 						if ((!QFile::exists(target_file_path)) && QFile::exists(file_path))
 						{
 							//status_string.Format(_T("%d 행 저장 중 (텍스트 추출)"), i + 1);
-							UpdateProgress(status_string, i + 1, total);
+							UpdateProgress2("(텍스트 추출)", 0, 100);
 
 							QStringList arguments;
 							arguments.append(file_path);
@@ -1502,14 +1566,19 @@ void BDLS::doDBUpdate()
 							else
 							{
 								QTextStream in(&file);
-								int total_file_size = file.size();
+								in.setAutoDetectUnicode(true);
+
 								int page_no, block_no;
 								int page_index = 1;
 
-								while (!in.atEnd())
+								QStringList listOfLines = in.readAll().split("\n");
+
+								int index = 0;
+								while (index < listOfLines.count() - 1)
 								{
-									QString line = in.readLine();
-									QString line_info = in.readLine();
+									UpdateProgress2("텍스트 저장", index + 1, listOfLines.count());
+									QString line = listOfLines[index]; index++;
+									QString line_info = listOfLines[index]; index++;
 									QStringList fields = line_info.split(",");
 									if (fields.count() > 1)
 									{
@@ -1530,10 +1599,36 @@ void BDLS::doDBUpdate()
 										.arg(block_no)
 										.arg(line);
 									db->exec(temp_string);
-
-									//int cur_file_pos = ftell(extrect_fp);
-									//UpdateProgress2(cur_file_pos, total_file_size);
 								}
+
+								//while (!in.atEnd())
+								//{
+								//	QString line = in.readLine();
+								//	QString line_info = in.readLine();
+								//	QStringList fields = line_info.split(",");
+								//	if (fields.count() > 1)
+								//	{
+								//		QStringList page_info = fields[0].split(":");
+								//		QStringList block_info = fields[1].split(":");
+
+								//		page_no = page_info[1].toInt();
+								//		block_no = block_info[1].toInt();
+								//	}
+
+								//	line = line.replace("'", "");
+								//	line = line.replace("\n", " ");
+								//	line = line.replace("\"", " ");
+
+								//	temp_string = QString("INSERT INTO page_info VALUES (NULL, %1, %2, %3, \"%4\")")
+								//		.arg(file_db_id)
+								//		.arg(page_no)
+								//		.arg(block_no)
+								//		.arg(line);
+								//	db->exec(temp_string);
+
+								//	//int cur_file_pos = ftell(extrect_fp);
+								//	//UpdateProgress2(cur_file_pos, total_file_size);
+								//}
 							}
 						}
 					}
@@ -1592,26 +1687,44 @@ void BDLS::BeginProgress()
 		_widgetProgress->setWindowFlags(Qt::Window | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
 		_widgetProgress->move(this->rect().center() - QPoint(_widgetProgress->width() / 2, _widgetProgress->height() / 2));
 		_widgetProgress->show();
+		check_time.start();
+		check_time_ms = check_time.elapsed();
 	}
 }
 
-void BDLS::UpdateProgress(QString status, int pos, int total)
+void BDLS::UpdateProgress(QString status, int pos, int total, bool update)
 {
 	if (_widgetProgress)
 	{
 		_widgetProgress->SetStatus1(status);
 		_widgetProgress->SetProgress1(pos * 100 / total);
-		qApp->processEvents();
+		if (update)
+		{
+			qint64 current_check_time = check_time.elapsed();
+			if ((current_check_time - check_time_ms) > 1000)
+			{
+				qApp->processEvents();
+				check_time_ms = current_check_time;
+			}
+		}
 	}
 }
 
-void BDLS::UpdateProgress2(QString status, int pos, int total)
+void BDLS::UpdateProgress2(QString status, int pos, int total, bool update)
 {
 	if (_widgetProgress)
 	{
 		_widgetProgress->SetStatus2(status);
 		_widgetProgress->SetProgress2(pos * 100 / total);
-		qApp->processEvents();
+		if (update)
+		{
+			qint64 current_check_time = check_time.elapsed();
+			if ((current_check_time - check_time_ms) > 1000)
+			{
+				qApp->processEvents();
+				check_time_ms = current_check_time;
+			}
+		}
 	}
 }
 
@@ -1621,5 +1734,64 @@ void BDLS::EndProgress()
 	if (_widgetProgress)
 	{
 		_widgetProgress->hide();
+	}
+}
+
+void BDLS::generateFilters()
+{
+	// Generate a new row of filter line edits
+	ui.tableView->generateFilters(static_cast<size_t>(proxyModel->columnCount()), 0);
+
+	// Apply the stored filter strings to the new row of line edits
+	// Set filters blocking signals for this since the filter is already applied to the browse table model
+	//FilterTableHeader* filterHeader = qobject_cast<FilterTableHeader*>(ui.tableView->horizontalHeader());
+	//bool oldState = filterHeader->blockSignals(true);
+	//for (auto filterIt = settings.filterValues.cbegin(); filterIt != settings.filterValues.cend(); ++filterIt)
+	//	ui.tableView->setFilter(sqlb::getFieldNumber(obj, filterIt->first) + 1, filterIt->second);
+	//filterHeader->blockSignals(oldState);
+
+	//ui.tableView->setEnabled(m_model->filterCount() > 0 || !ui->editGlobalFilter->text().isEmpty());
+}
+
+void BDLS::updateFilter(size_t column, const QString& value)
+{
+	// Set minimum width to the vertical header in order to avoid flickering while a filter is being updated.
+	ui.tableView->verticalHeader()->setMinimumWidth(ui.tableView->verticalHeader()->width());
+
+	// Update the filter in the model and its query
+	const std::string column_name = proxyModel->headerData(static_cast<int>(column), Qt::Horizontal, Qt::EditRole).toString().toStdString();
+	proxyModel->updateFilter(static_cast<int>(column), value);
+}
+
+void BDLS::AddFileList(QString user_id)
+{
+	if (DBConnected())
+	{
+		QModelIndexList setected_indexes = ui.tableView->selectionModel()->selectedIndexes();
+		for (int i = 0; i < setected_indexes.count(); i++)
+		{
+			QString file_id = proxyModel->data(proxyModel->index(setected_indexes[i].row(), 0), Qt::AccessibleTextRole).toString();
+			QString file_name = proxyModel->data(proxyModel->index(setected_indexes[i].row(), 3)).toString();
+			if (file_id != "")
+			{
+				QVariantList data;
+				db->exec(QString("SELECT file_id FROM user_file_info WHERE user_id=\"%1\" AND file_id=%2").arg(user_id).arg(file_id), data);
+				if (data.count() > 0)
+				{
+					//	존재
+				}
+				else
+				{
+					QString temp_string = QString("INSERT INTO user_file_info VALUES (NULL, \"%1\", %2)").arg(user_id).arg(file_id);
+					db->exec(temp_string);
+				}
+			}
+			else
+			{
+				db->exec("CREATE TABLE log_info (id INTEGER PRIMARY KEY, log_type TEXT, log_content TEXT, date_time TEXT)");
+				QString temp_string = QString("INSERT INTO log_info VALUES (NULL, \"%1\", \"%2\", datetime('now', 'localtime'))").arg("error").arg(file_name + "의 file_id가 존재하지 않습니다. 사용자 파일 추가에 실패했습니다.");
+				db->exec(temp_string);
+			}
+		}
 	}
 }

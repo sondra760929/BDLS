@@ -41,6 +41,8 @@ public:
 	void setMVPos(int secs);
 	void ViewUser(bool show);
 	void setUserList();
+	void setFileList(QString user_id);
+	void clearAll();
 
 private:
 	Ui::widgetLeftView ui;
@@ -84,6 +86,9 @@ private:
 	QBoxLayout* userViewLayout;
 	QTableWidget* userTable;
 
+	QTableWidget* fileTable;
+	QString userTable_user_id;
+
 private slots:
 	void onCurrentChanged(const QItemSelection& current, const QItemSelection& prev);
 	void onSearchAdd();
@@ -107,5 +112,7 @@ private slots:
 	void onFileMVDClicked(QListWidgetItem* item);
 	void doAddUser();
 	void doDelUser();
-	void doUpdateUser();
+	void doAddFile();
+	void doDelFile();
+	void onUserChanged(const QItemSelection& current, const QItemSelection& prev);
 };

@@ -11,11 +11,15 @@ public:
     MySortFilterProxyModel(QObject *parent);
 	~MySortFilterProxyModel();
 
+    void updateFilter(int index, QString value);
+
     QDate filterMinimumDate() const { return minDate; }
     void setFilterMinimumDate(QDate date);
 
     QDate filterMaximumDate() const { return maxDate; }
     void setFilterMaximumDate(QDate date);
+
+    QMap<int, QRegularExpression> mapFilters;
 
 protected:
     bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const override;

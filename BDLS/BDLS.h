@@ -43,6 +43,9 @@ public:
     QAbstractItemModel* originModel;
     MySortFilterProxyModel* proxyModel;
 
+    void generateFilters();
+    void updateFilter(size_t column, const QString& value);
+
     QString m_strDBfilepath;
     QString m_strDBfolderpath;
     QString m_strCurrentSelectedItemPath;
@@ -59,6 +62,9 @@ public:
     bool InitDB(QString db_file_path);
     bool DBConnected();
     bool include_pass_status;
+    void CloseDB();
+    QElapsedTimer check_time;
+    qint64 check_time_ms;
 
     void SelectFileFromTree(QString file_path);
     void InitFromDB();
@@ -82,10 +88,12 @@ public:
     bool AddFile(int new_index, int col_size, QString file_path);
     widgetProgress* _widgetProgress;
     void BeginProgress();
-    void UpdateProgress(QString status, int pos, int total);
-    void UpdateProgress2(QString status, int pos, int total);
+    void UpdateProgress(QString status, int pos, int total, bool update = true);
+    void UpdateProgress2(QString status, int pos, int total, bool update = true);
     void EndProgress();
     void LoadOldDB(QString file_path);
+
+    void AddFileList(QString user_id);
 
     void readSettings();
     void writeSettings();

@@ -13,6 +13,15 @@ public:
             my_db.close();
     }
 
+    void Close()
+    {
+        if (is_connected)
+        {
+            my_db.close();
+            is_connected = false;
+        }
+    }
+
     bool Connect(QString path)
     {
         if (is_connected)
@@ -20,8 +29,7 @@ public:
             if (path.toLower() != db_path.toLower())
             {
                 //  다른 경로로 연결 시도
-                my_db.close();
-                is_connected = false;
+                Close();
 
                 my_db.setDatabaseName(path);
 
