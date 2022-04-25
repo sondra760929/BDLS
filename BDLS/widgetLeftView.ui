@@ -30,9 +30,9 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QTabWidget" name="tabWidget">
+    <widget class="MyTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="fileview">
       <attribute name="title">
@@ -61,7 +61,7 @@
      </widget>
      <widget class="QWidget" name="searchview">
       <attribute name="title">
-       <string>검색</string>
+       <string>상세 검색</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="noteview">
@@ -79,6 +79,14 @@
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>MyTabWidget</class>
+   <extends>QTabWidget</extends>
+   <header>mytabwidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

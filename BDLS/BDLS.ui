@@ -13,8 +13,12 @@
   <property name="windowTitle">
    <string>BDLS</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="BDLS.qrc">
+    <normaloff>:/BDLS/icons/database_search_icon.ico</normaloff>:/BDLS/icons/database_search_icon.ico</iconset>
+  </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
+   <layout class="QVBoxLayout" name="verticalLayout">
     <property name="spacing">
      <number>2</number>
     </property>
@@ -68,7 +72,7 @@
   <action name="actionAddRow">
    <property name="icon">
     <iconset resource="BDLS.qrc">
-     <normaloff>:/BDLS/icons/ic_fluent_add_square_24_regular.png</normaloff>:/BDLS/icons/ic_fluent_add_square_24_regular.png</iconset>
+     <normaloff>:/BDLS/icons/add_row2.png</normaloff>:/BDLS/icons/add_row2.png</iconset>
    </property>
    <property name="text">
     <string>행 추가</string>
@@ -80,7 +84,7 @@
   <action name="actionDelRow">
    <property name="icon">
     <iconset resource="BDLS.qrc">
-     <normaloff>:/BDLS/icons/ic_fluent_subtract_square_24_regular.png</normaloff>:/BDLS/icons/ic_fluent_subtract_square_24_regular.png</iconset>
+     <normaloff>:/BDLS/icons/del_row2.png</normaloff>:/BDLS/icons/del_row2.png</iconset>
    </property>
    <property name="text">
     <string>행 삭제</string>
@@ -92,7 +96,7 @@
   <action name="actionDBUpdate">
    <property name="icon">
     <iconset resource="BDLS.qrc">
-     <normaloff>:/BDLS/icons/ic_fluent_save_24_regular.png</normaloff>:/BDLS/icons/ic_fluent_save_24_regular.png</iconset>
+     <normaloff>:/BDLS/icons/save.png</normaloff>:/BDLS/icons/save.png</iconset>
    </property>
    <property name="text">
     <string>DB 저장</string>
@@ -164,7 +168,7 @@
   <action name="actionLogin">
    <property name="icon">
     <iconset resource="BDLS.qrc">
-     <normaloff>:/BDLS/icons/ic_fluent_accessibility_24_regular.png</normaloff>:/BDLS/icons/ic_fluent_accessibility_24_regular.png</iconset>
+     <normaloff>:/BDLS/icons/enter_login_right_arrow_forward_icon.png</normaloff>:/BDLS/icons/enter_login_right_arrow_forward_icon.png</iconset>
    </property>
    <property name="text">
     <string>로그인</string>
@@ -176,7 +180,7 @@
   <action name="actionAddFolder">
    <property name="icon">
     <iconset resource="BDLS.qrc">
-     <normaloff>:/BDLS/icons/ic_fluent_folder_add_24_regular.png</normaloff>:/BDLS/icons/ic_fluent_folder_add_24_regular.png</iconset>
+     <normaloff>:/BDLS/icons/add_folder.png</normaloff>:/BDLS/icons/add_folder.png</iconset>
    </property>
    <property name="text">
     <string>폴더 추가</string>

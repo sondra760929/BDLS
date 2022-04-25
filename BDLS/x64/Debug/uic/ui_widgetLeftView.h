@@ -12,10 +12,10 @@
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QHeaderView>
-#include <QtWidgets/QTabWidget>
 #include <QtWidgets/QTreeView>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
+#include "mytabwidget.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -23,7 +23,7 @@ class Ui_widgetLeftView
 {
 public:
     QVBoxLayout *verticalLayout;
-    QTabWidget *tabWidget;
+    MyTabWidget *tabWidget;
     QWidget *fileview;
     QVBoxLayout *verticalLayout_2;
     QTreeView *tvFiles;
@@ -41,7 +41,7 @@ public:
         verticalLayout->setContentsMargins(11, 11, 11, 11);
         verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
         verticalLayout->setContentsMargins(0, 0, 0, 0);
-        tabWidget = new QTabWidget(widgetLeftView);
+        tabWidget = new MyTabWidget(widgetLeftView);
         tabWidget->setObjectName(QString::fromUtf8("tabWidget"));
         fileview = new QWidget();
         fileview->setObjectName(QString::fromUtf8("fileview"));
@@ -71,7 +71,7 @@ public:
 
         retranslateUi(widgetLeftView);
 
-        tabWidget->setCurrentIndex(0);
+        tabWidget->setCurrentIndex(1);
 
 
         QMetaObject::connectSlotsByName(widgetLeftView);
@@ -81,7 +81,7 @@ public:
     {
         widgetLeftView->setWindowTitle(QCoreApplication::translate("widgetLeftView", "widgetLeftView", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(fileview), QCoreApplication::translate("widgetLeftView", "\355\214\214\354\235\274", nullptr));
-        tabWidget->setTabText(tabWidget->indexOf(searchview), QCoreApplication::translate("widgetLeftView", "\352\262\200\354\203\211", nullptr));
+        tabWidget->setTabText(tabWidget->indexOf(searchview), QCoreApplication::translate("widgetLeftView", "\354\203\201\354\204\270 \352\262\200\354\203\211", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(noteview), QCoreApplication::translate("widgetLeftView", "\353\205\270\355\212\270", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(userview), QCoreApplication::translate("widgetLeftView", "\354\202\254\354\232\251\354\236\220", nullptr));
     } // retranslateUi

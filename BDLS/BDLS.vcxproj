@@ -140,9 +140,11 @@
     <ClCompile Include="FilterLineEdit.cpp" />
     <ClCompile Include="FilterTableHeader.cpp" />
     <ClCompile Include="MySortFilterProxyModel.cpp" />
+    <ClCompile Include="MyTabWidget.cpp" />
     <ClCompile Include="pageselector.cpp" />
     <ClCompile Include="playercontrols.cpp" />
     <ClCompile Include="SearchControls.cpp" />
+    <ClCompile Include="TitleBar.cpp" />
     <ClCompile Include="videowidget.cpp" />
     <ClCompile Include="widgetAddUser.cpp" />
     <ClCompile Include="widgetBottomView.cpp" />
@@ -213,6 +215,8 @@
     <ClInclude Include="..\QXlsx\header\xlsxsharedstrings_p.h" />
     <ClInclude Include="..\QXlsx\header\xlsxsimpleooxmlfile_p.h" />
     <ClInclude Include="db_manager.h" />
+    <QtMoc Include="TitleBar.h" />
+    <QtMoc Include="MyTabWidget.h" />
     <QtMoc Include="FilterLineEdit.h" />
     <QtMoc Include="ExtendedTableWidget.h" />
     <QtMoc Include="FilterTableHeader.h" />

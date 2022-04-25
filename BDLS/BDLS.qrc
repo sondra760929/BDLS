@@ -1,5 +1,15 @@
 <RCC>
   <qresource prefix="BDLS">
+    <file>icons/enter_login_right_arrow_forward_icon.png</file>
+    <file>icons/add_folder.png</file>
+    <file>icons/add_row2.png</file>
+    <file>icons/del_row2.png</file>
+    <file>icons/lock2.png</file>
+    <file>icons/save.png</file>
+    <file>icons/window_close_icon.png</file>
+    <file>icons/window_maximize_icon.png</file>
+    <file>icons/window_minimize_solid_icon.png</file>
+    <file>icons/database_search_icon.ico</file>
     <file>icons/ic_fluent_folder_add_24_regular.png</file>
     <file>icons/ic_fluent_person_add_24_regular.png</file>
     <file>icons/ic_fluent_person_available_24_regular.png</file>

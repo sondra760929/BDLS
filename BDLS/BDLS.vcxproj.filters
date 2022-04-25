@@ -190,6 +190,12 @@
     <ClCompile Include="FilterLineEdit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MyTabWidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TitleBar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="widgetLeftView.h">
@@ -241,6 +247,12 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="FilterLineEdit.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="MyTabWidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="TitleBar.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

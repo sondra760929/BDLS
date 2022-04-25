@@ -16,6 +16,55 @@ BDLS::BDLS(QWidget* parent)
 	, db(NULL)
 {
 	ui.setupUi(this);
+	style = QStyleFactory::create("Fusion");
+	QApplication::setStyle(style);
+
+	QString color_theme = m.value("THEME").toString();
+	if (color_theme == "")
+	{
+		setColor3();
+	}
+	else if (color_theme == "1")
+	{
+		setColor1();
+	}
+	else if (color_theme == "2")
+	{
+		setColor2();
+	}
+	else if (color_theme == "3")
+	{
+		setColor3();
+	}
+
+	m_titleBar = new TitleBar(this);
+	setMenuWidget(m_titleBar);
+	title_string = "BDLS (Big Data Library System)";
+	setWindowTitle(title_string);
+	m_titleBar->SetTitleBarIcon(":/BDLS/icons/database_search_icon.ico");
+
+	QPushButton* btnColor1 = new QPushButton(this);
+	btnColor1->setFixedSize(20, 20);
+	//btnColor1->setFlat(true);
+	btnColor1->setStyleSheet("background-color:white");
+
+	QPushButton* btnColor2 = new QPushButton(this);
+	btnColor2->setFixedSize(20, 20);
+	//btnColor2->setFlat(true);
+	btnColor2->setStyleSheet("background-color:black");
+
+	QPushButton* btnColor3 = new QPushButton(this);
+	btnColor3->setFixedSize(20, 20);
+	//btnColor3->setFlat(true);
+	btnColor3->setStyleSheet("background-color:rgb(196, 218, 250)");
+
+	ui.statusBar->addPermanentWidget(btnColor1);
+	ui.statusBar->addPermanentWidget(btnColor2);
+	ui.statusBar->addPermanentWidget(btnColor3);
+
+	connect(btnColor1, &QPushButton::clicked, this, &BDLS::setColor1);
+	connect(btnColor2, &QPushButton::clicked, this, &BDLS::setColor2);
+	connect(btnColor3, &QPushButton::clicked, this, &BDLS::setColor3);
 
 	media_file_format.append("mp4");
 	media_file_format.append("mov");
@@ -70,7 +119,6 @@ BDLS::BDLS(QWidget* parent)
 
 	QString m_strExcelTempFile = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation);
 	m_strExcelTempFile += "/backup.xlsx";
-
 
 	QString file_path = m.value("CURRENT_PATH").toString();
 	if (QFile::exists(file_path))
@@ -1166,7 +1214,7 @@ void BDLS::doLogin()
 				m_loginUserPass = user_pass;
 				m_loginUserName = "CEO";
 
-				setWindowTitle("BDLS [admin]");
+				setWindowTitle(title_string + " > [admin]");
 
 				ui.actionAddFolder->setEnabled(true);
 				ui.actionAddRow->setEnabled(true);
@@ -1224,14 +1272,13 @@ void BDLS::doLogin()
 						{
 							m_UserLevel = SUPER;
 							_widgetLeftView->ViewUser(true);
-							setWindowTitle(QString("BDLS [%1] - 관리자").arg(user_id));
+							setWindowTitle(QString("%1 > [%2] - 관리자").arg(title_string).arg(user_id));
 						}
 						else
 						{
 							m_UserLevel = NORMAL;
 							_widgetLeftView->ViewUser(false);
-							setWindowTitle("BDLS [admin]");
-							setWindowTitle(QString("BDLS [%1] - 사용자").arg(user_id));
+							setWindowTitle(QString("%1 > [%2] - 사용자").arg(title_string).arg(user_id));
 						}
 
 						if (m_bIsLogin)
@@ -1794,4 +1841,57 @@ void BDLS::AddFileList(QString user_id)
 			}
 		}
 	}
+}
+
+void BDLS::setWindowTitle(const QString& title)
+{
+	m_titleBar->setWindowTitle(title);
+}
+
+void BDLS::setWindowTitleHeight(int h)
+{
+	m_titleBar->setFixedHeight(h);
+}
+
+void BDLS::setColor1()
+{
+	qApp->setPalette(style->standardPalette());
+	m.setValue("THEME", "1");
+}
+
+void BDLS::setColor2()
+{
+	QPalette palette;
+	palette.setColor(QPalette::Window, QColor(53, 53, 53));
+	palette.setColor(QPalette::WindowText, Qt::white);
+	palette.setColor(QPalette::Base, QColor(15, 15, 15));
+	palette.setColor(QPalette::AlternateBase, QColor(53, 53, 53));
+	palette.setColor(QPalette::ToolTipBase, Qt::white);
+	palette.setColor(QPalette::ToolTipText, Qt::white);
+	palette.setColor(QPalette::Text, Qt::white);
+	palette.setColor(QPalette::Button, QColor(53, 53, 53));
+	palette.setColor(QPalette::ButtonText, Qt::white);
+	palette.setColor(QPalette::BrightText, Qt::red);
+
+	palette.setColor(QPalette::Highlight, QColor(142, 45, 197).lighter());
+	palette.setColor(QPalette::HighlightedText, Qt::black);
+	qApp->setPalette(palette);
+	m.setValue("THEME", "2");
+}
+
+void BDLS::setColor3()
+{
+	QPalette palette;
+	palette.setColor(QPalette::Window, QColor(196, 218, 250));
+	palette.setColor(QPalette::WindowText, QColor(0, 0, 0));
+	palette.setColor(QPalette::Base, QColor(255, 255, 255));
+	palette.setColor(QPalette::AlternateBase, QColor(225, 236, 252));
+	palette.setColor(QPalette::ToolTipBase, QColor(255, 255, 220));
+	palette.setColor(QPalette::ToolTipText, QColor(0, 0, 0));
+	palette.setColor(QPalette::Text, QColor(0, 0, 0));
+	palette.setColor(QPalette::Button, QColor(196, 218, 250));
+	palette.setColor(QPalette::ButtonText, QColor(0, 0, 0));
+	palette.setColor(QPalette::BrightText, QColor(255, 255, 255));
+	qApp->setPalette(palette);
+	m.setValue("THEME", "3");
 }

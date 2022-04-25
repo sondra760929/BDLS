@@ -15,6 +15,7 @@
 #include "MySortFilterProxyModel.h"
 #include "db_manager.h"
 #include "widgetProgress.h"
+#include "TitleBar.h"
 
 enum USER_LEVEL
 {
@@ -29,6 +30,10 @@ class BDLS : public QMainWindow
 
 public:
     BDLS(QWidget *parent = Q_NULLPTR);
+
+    void setWindowTitle(const QString& title);
+    void setWindowTitleHeight(int h);
+    TitleBar* m_titleBar;//Title Block
 
     USER_LEVEL m_UserLevel = NORMAL;
     bool m_bIsLogin = false;
@@ -95,6 +100,13 @@ public:
     void LoadOldDB(QString file_path);
 
     void AddFileList(QString user_id);
+
+    void setColor1();
+    void setColor2();
+    void setColor3();
+    QStyle* style;
+
+    QString title_string;
 
     void readSettings();
     void writeSettings();
