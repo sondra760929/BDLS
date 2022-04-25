@@ -28,7 +28,7 @@ public:
 
 	QList< widgetMemo* > memo_control_list;
 	void SetCurrentFile(QString file_path);
-	void setSearchCombo(QMap<QString, int>& map_h_to_i);
+	void setSearchCombo(QList<QString>& h_list, QMap<QString, int>& map_h_to_i);
 	void OnMemoClicked(widgetMemo* pmemo);
 	void clearMemoSelection();
 	void UpdateMemo();

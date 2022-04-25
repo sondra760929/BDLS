@@ -466,7 +466,6 @@ void BDLS::InitFromDB()
 					{
 						ClearTable();
 
-						QStringList header_list;
 						// Compile a SQL query, containing one parameter (index 1)
 						QVariantList data;
 						db->exec("SELECT id, value FROM headers ORDER BY id", data);
@@ -474,15 +473,15 @@ void BDLS::InitFromDB()
 						{
 							auto map = item.toMap();
 							//map["id"].toInt();
-							header_list.append(map["value"].toString());
+							title_list.append(map["value"].toString());
 							map_title_to_index[map["value"].toString()] = map["id"].toInt();
 						}
 
-						if (header_list.size() > 0)
+						if (title_list.size() > 0)
 						{
 							m_iCurrentSelectedItemType = 1;
 							int row = 1;
-							int col_size = header_list.size() + 5;	//	no, ?, !, 검색결과, 파일경로
+							int col_size = title_list.size() + 5;	//	no, ?, !, 검색결과, 파일경로
 							QString no;
 
 							originModel->insertColumn(0);
@@ -491,10 +490,10 @@ void BDLS::InitFromDB()
 							originModel->setHeaderData(1, Qt::Horizontal, "?");
 							originModel->insertColumn(2);
 							originModel->setHeaderData(2, Qt::Horizontal, "!");
-							for (int i = 0; i < header_list.size(); i++)
+							for (int i = 0; i < title_list.size(); i++)
 							{
 								originModel->insertColumn(i + 3);
-								originModel->setHeaderData(i + 3, Qt::Horizontal, header_list[i]);
+								originModel->setHeaderData(i + 3, Qt::Horizontal, title_list[i]);
 							}
 							originModel->insertColumn(col_size - 2);
 							originModel->setHeaderData(col_size - 2, Qt::Horizontal, "검색 결과");
@@ -608,13 +607,14 @@ void BDLS::ClearTable()
 		originModel->removeColumns(0, col_size);
 	}
 	map_title_to_index.clear();
+	title_list.clear();
 	map_file_to_id.clear();
 	m_iCurrentFileDBID = 0;
 }
 
 void BDLS::setSearchCombo()
 {
-	_widgetLeftView->setSearchCombo(map_title_to_index);
+	_widgetLeftView->setSearchCombo(title_list, map_title_to_index);
 }
 
 void BDLS::setTagList()
@@ -678,10 +678,10 @@ void BDLS::OnOpenSingle()
 						QString title_string;
 						bool total_check_title = true;
 						QXlsx::Cell* cell = xlsx.cellAt(row, col_size - 2);
-						while (cell != NULL && cell->readValue().toString() != "")
+						while (cell != NULL && cell->value().toString() != "")
 						{
 							cell = xlsx.cellAt(1, col_size - 2);
-							QString cell_string = cell->readValue().toString();
+							QString cell_string = cell->value().toString();
 
 							title_string = originModel->headerData(col_size, Qt::Horizontal).toString();
 							if (title_string == cell_string)
@@ -730,7 +730,7 @@ void BDLS::OnOpenSingle()
 						grid_row_count++;
 						data_row_count++;
 						cell = xlsx.cellAt(row, 1);
-						while (cell != NULL && cell->readValue().toString() != "")
+						while (cell != NULL && cell->value().toString() != "")
 						{
 							originModel->insertRow(0);
 							//m_lstGridText.resize(data_row_count);
@@ -756,7 +756,7 @@ void BDLS::OnOpenSingle()
 								{
 									if (new_col_index[i - 3] > -1)
 									{
-										QString cell_string = cell->readValue().toString();
+										QString cell_string = cell->value().toString();
 										originModel->setData(originModel->index(0, new_col_index[i - 3]), cell_string);
 										//m_lstGridText[data_row_count - 1][new_col_index[i - 3]] = cell_string;
 									}
@@ -767,7 +767,7 @@ void BDLS::OnOpenSingle()
 							QString cell_string;
 							if (cell != NULL)
 							{
-								cell_string = cell->readValue().toString();
+								cell_string = cell->value().toString();
 							}
 							//if (m_bIsAdmin)
 							//{
@@ -871,13 +871,13 @@ void BDLS::OnOpenSingle()
 				//SetItemData(row - 2, 2, "!");
 
 				QXlsx::Cell* cell = xlsx.cellAt(row, col_size - 2);
-				while (cell != NULL && cell->readValue().toString() != "")
+				while (cell != NULL && cell->value().toString() != "")
 				{
 					//ui.treeView->setColumnCount(col_size + 1);
 					//m_Grid.SetNumberCols(col_size + 1);
-					header_label << cell->readValue().toString();
+					header_label << cell->value().toString();
 					originModel->insertColumn(0);
-					//SetItemData(row - 2, col_size, cell->readValue().toString());
+					//SetItemData(row - 2, col_size, cell->value().toString());
 					col_size++;
 					cell = xlsx.cellAt(row, col_size - 2);
 				}
@@ -906,7 +906,7 @@ void BDLS::OnOpenSingle()
 				row++;
 				cell = xlsx.cellAt(row, 1);
 				int row_index = 0;
-				while (cell != NULL && cell->readValue().toString() != "")
+				while (cell != NULL && cell->value().toString() != "")
 				{
 					originModel->insertRow(row_index);
 					//ui.treeView->setRowCount(row - 1);
@@ -928,8 +928,8 @@ void BDLS::OnOpenSingle()
 						cell = xlsx.cellAt(row, i - 2);
 						if (cell != NULL)
 						{
-							//SetItemData(row - 2, i, cell->readValue().toString());
-							originModel->setData(originModel->index(row_index, i), cell->readValue().toString());
+							//SetItemData(row - 2, i, cell->value().toString());
+							originModel->setData(originModel->index(row_index, i), cell->value().toString());
 							//m_lstGridText[row - 2][i] = cell_string;
 						}
 					}
@@ -937,7 +937,7 @@ void BDLS::OnOpenSingle()
 					QString cell_string;
 					if (cell != NULL)
 					{
-						cell_string = cell->readValue().toString();
+						cell_string = cell->value().toString();
 					}
 					//if (m_bIsAdmin)
 					//{

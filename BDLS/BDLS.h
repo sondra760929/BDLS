@@ -82,6 +82,7 @@ public:
     void SetCurrentFile(QString file_name, QString file_info = "");
     void setTagList();
     QMap<QString, int> map_title_to_index;
+    QList<QString> title_list;
     QMap<QString, int> map_file_to_id;
     int m_iCurrentFileDBID;
     bool AddFolder(QString folder_path);

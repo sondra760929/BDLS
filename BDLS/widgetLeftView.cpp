@@ -357,20 +357,20 @@ void widgetLeftView::setTagList()
 	tagSearchEdit->setCompleter(search_completer);
 }
 
-void widgetLeftView::setSearchCombo(QMap<QString, int>& map_h_to_i)
+void widgetLeftView::setSearchCombo(QList<QString>& h_list, QMap<QString, int>& map_h_to_i)
 {
 	header_to_index.clear();
-	QStringList key_list = map_h_to_i.keys();
-	for (int i = 0; i < key_list.size(); i++)
+	for (int i = 0; i < h_list.size(); i++)
 	{
-		header_to_index[key_list[i]] = map_h_to_i[key_list[i]];
+		header_to_index[h_list[i]] = map_h_to_i[h_list[i]];
 	}
 	header_to_index["내용 검색"] = 0;
 
 	for (int i = 0; i < search_list.size(); i++)
 	{
 		search_list[i]->m_searchTitle->clear();
-		search_list[i]->m_searchTitle->addItems(header_to_index.keys());
+		search_list[i]->m_searchTitle->addItems(h_list);
+		search_list[i]->m_searchTitle->insertItem(0, "내용 검색");
 	}
 }
 
