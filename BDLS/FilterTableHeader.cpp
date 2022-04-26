@@ -26,7 +26,7 @@ FilterTableHeader::FilterTableHeader(QTableView* parent) :
     connect(parent->verticalScrollBar(), &QScrollBar::valueChanged, this, &FilterTableHeader::adjustPositions);
 
     // Set custom context menu handling
-    setContextMenuPolicy(Qt::CustomContextMenu);
+    //setContextMenuPolicy(Qt::CustomContextMenu);
 }
 
 void FilterTableHeader::generateFilters(size_t number, size_t number_of_hidden_filters)

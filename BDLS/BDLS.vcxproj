@@ -148,6 +148,7 @@
     <ClCompile Include="videowidget.cpp" />
     <ClCompile Include="widgetAddUser.cpp" />
     <ClCompile Include="widgetBottomView.cpp" />
+    <ClCompile Include="widgetDBTextView.cpp" />
     <ClCompile Include="widgetLeftView.cpp" />
     <ClCompile Include="widgetLogin.cpp" />
     <ClCompile Include="widgetMemo.cpp" />
@@ -161,6 +162,7 @@
     <ClCompile Include="main.cpp" />
     <QtUic Include="widgetAddUser.ui" />
     <QtUic Include="widgetBottomView.ui" />
+    <QtUic Include="widgetDBTextView.ui" />
     <QtUic Include="widgetLeftView.ui" />
     <QtUic Include="widgetLogin.ui" />
     <QtUic Include="widgetMemo.ui" />
@@ -215,6 +217,7 @@
     <ClInclude Include="..\QXlsx\header\xlsxsharedstrings_p.h" />
     <ClInclude Include="..\QXlsx\header\xlsxsimpleooxmlfile_p.h" />
     <ClInclude Include="db_manager.h" />
+    <QtMoc Include="widgetDBTextView.h" />
     <QtMoc Include="TitleBar.h" />
     <QtMoc Include="MyTabWidget.h" />
     <QtMoc Include="FilterLineEdit.h" />

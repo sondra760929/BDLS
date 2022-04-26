@@ -78,6 +78,7 @@ BDLS::BDLS(QWidget* parent)
 	originModel = new QStandardItemModel(this);
 	proxyModel->setSourceModel(originModel);
 
+	ui.tableView->m_pView = this;
 	ui.tableView->setModel(proxyModel);
 	ui.tableView->setAlternatingRowColors(true);
 	ui.tableView->setSortingEnabled(true);

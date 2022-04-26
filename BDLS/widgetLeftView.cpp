@@ -371,6 +371,7 @@ void widgetLeftView::setSearchCombo(QList<QString>& h_list, QMap<QString, int>& 
 		search_list[i]->m_searchTitle->clear();
 		search_list[i]->m_searchTitle->addItems(h_list);
 		search_list[i]->m_searchTitle->insertItem(0, "내용 검색");
+		search_list[i]->m_searchTitle->setSizeAdjustPolicy(QComboBox::AdjustToContents);
 	}
 }
 

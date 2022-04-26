@@ -23,6 +23,8 @@
 
 #include <limits>
 #include "MySortFilterProxyModel.h"
+#include "widgetDBTextView.h"
+#include "BDLS.h"
 
 using BufferRow = std::vector<QByteArray>;
 std::vector<BufferRow> ExtendedTableWidget::m_buffer;
@@ -154,8 +156,9 @@ ExtendedTableWidget::ExtendedTableWidget(QWidget* parent) :
     //verticalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
 
     // Set up table view context menu
-    //m_contextMenu = new QMenu(this);
+    m_contextMenu = new QMenu(this);
 
+    QAction* textViewAction = new QAction(tr("DB Text Viewer"), m_contextMenu);
     //QAction* filterAction = new QAction(QIcon(":/icons/filter"), tr("Use as Exact Filter"), m_contextMenu);
     //QAction* containingAction = new QAction(tr("Containing"), m_contextMenu);
     //QAction* notContainingAction = new QAction(tr("Not containing"), m_contextMenu);
@@ -176,6 +179,7 @@ ExtendedTableWidget::ExtendedTableWidget(QWidget* parent) :
     //QAction* pasteAction = new QAction(QIcon(":/icons/paste"), tr("Paste"), m_contextMenu);
     //QAction* printAction = new QAction(QIcon(":/icons/print"), tr("Print..."), m_contextMenu);
 
+    m_contextMenu->addAction(textViewAction);
     //m_contextMenu->addAction(filterAction);
     //QMenu* filterMenu = m_contextMenu->addMenu(tr("Use in Filter Expression"));
     //filterMenu->addAction(containingAction);
@@ -199,7 +203,7 @@ ExtendedTableWidget::ExtendedTableWidget(QWidget* parent) :
     //m_contextMenu->addAction(pasteAction);
     //m_contextMenu->addSeparator();
     //m_contextMenu->addAction(printAction);
-    //setContextMenuPolicy(Qt::CustomContextMenu);
+    setContextMenuPolicy(Qt::CustomContextMenu);
 
     //// This is only for displaying the shortcut in the context menu.
     //// An entry in keyPressEvent is still needed.
@@ -211,35 +215,39 @@ ExtendedTableWidget::ExtendedTableWidget(QWidget* parent) :
     //pasteAction->setShortcut(QKeySequence::Paste);
     //printAction->setShortcut(QKeySequence::Print);
 
+	connect(textViewAction, &QAction::triggered, this, [&]() {
+		textView(currentIndex());
+		});
+
     // Set up context menu actions
-    //connect(this, &QTableView::customContextMenuRequested, this,
-    //    [=](const QPoint& pos)
-    //    {
-    //        // Deactivate context menu options if there is no model set
-    //        bool enabled = model();
-    //        filterAction->setEnabled(enabled);
-    //        filterMenu->setEnabled(enabled);
-    //        copyAction->setEnabled(enabled);
-    //        copyWithHeadersAction->setEnabled(enabled);
-    //        copyAsSQLAction->setEnabled(enabled);
-    //        printAction->setEnabled(enabled);
-    //        condFormatAction->setEnabled(enabled);
+    connect(this, &QTableView::customContextMenuRequested, this,
+        [=](const QPoint& pos)
+        {
+            // Deactivate context menu options if there is no model set
+            bool enabled = model();
+            textViewAction->setEnabled(enabled);
+            //filterMenu->setEnabled(enabled);
+            //copyAction->setEnabled(enabled);
+            //copyWithHeadersAction->setEnabled(enabled);
+            //copyAsSQLAction->setEnabled(enabled);
+            //printAction->setEnabled(enabled);
+            //condFormatAction->setEnabled(enabled);
 
-    //        // Hide filter actions when there isn't any filters
-    //        bool hasFilters = m_tableHeader->hasFilters();
-    //        filterAction->setVisible(hasFilters);
-    //        filterMenu->menuAction()->setVisible(hasFilters);
-    //        condFormatAction->setVisible(hasFilters);
+            //// Hide filter actions when there isn't any filters
+            //bool hasFilters = m_tableHeader->hasFilters();
+            //filterAction->setVisible(hasFilters);
+            //filterMenu->menuAction()->setVisible(hasFilters);
+            //condFormatAction->setVisible(hasFilters);
 
-    //        // Try to find out whether the current view is editable and (de)activate menu options according to that
-    //        bool editable = editTriggers() != QAbstractItemView::NoEditTriggers;
-    //        nullAction->setEnabled(enabled && editable);
-    //        cutAction->setEnabled(enabled && editable);
-    //        pasteAction->setEnabled(enabled && editable);
+            //// Try to find out whether the current view is editable and (de)activate menu options according to that
+            //bool editable = editTriggers() != QAbstractItemView::NoEditTriggers;
+            //nullAction->setEnabled(enabled && editable);
+            //cutAction->setEnabled(enabled && editable);
+            //pasteAction->setEnabled(enabled && editable);
 
-    //        // Show menu
-    //        m_contextMenu->popup(viewport()->mapToGlobal(pos));
-    //    });
+            // Show menu
+            m_contextMenu->popup(viewport()->mapToGlobal(pos));
+        });
     //connect(filterAction, &QAction::triggered, this, [&]() {
     //    useAsFilter(QString("="));
     //    });
@@ -987,4 +995,14 @@ void ExtendedTableWidget::setFilter(size_t column, const QString& value)
     filterHeader()->setFilter(column, value);
     if (m_frozen_table_view)
         m_frozen_table_view->filterHeader()->setFilter(column, value);
+}
+
+void ExtendedTableWidget::textView(QModelIndex index)
+{
+    QString file_id = model()->data(model()->index(index.row(), 0), Qt::AccessibleTextRole).toString();
+
+    widgetDBTextView db_text(m_pView, file_id);
+    //login_dlg.setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+    db_text.move(this->rect().center() - QPoint(db_text.width() / 2, db_text.height() / 2));
+    db_text.exec();
 }

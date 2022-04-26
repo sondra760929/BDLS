@@ -8,6 +8,7 @@
 
 class FilterTableHeader;
 class ItemBorderDelegate;
+class BDLS;
 
 class UniqueFilterModel : public QSortFilterProxyModel
 {
@@ -44,6 +45,7 @@ public:
 
     FilterTableHeader* filterHeader() { return m_tableHeader; }
     void generateFilters(size_t number, bool show_rowid);
+    BDLS* m_pView;
 
 public:
     // Get set of selected columns (all cells in column has to be selected)
@@ -65,6 +67,7 @@ public slots:
     void selectTableLine(int lineToSelect);
     void selectTableLines(int firstLine, int count);
     void setFilter(size_t column, const QString& value);
+    void textView(QModelIndex index);
 
 signals:
     void switchTable(bool next);    // 'next' parameter is set to true if next table should be selected and to false if previous table should be selected
