@@ -75,14 +75,13 @@ void widgetBottomView::itemChanged(QTreeWidgetItem* current, QTreeWidgetItem* pr
 		QStringList data_list = data_str.split("/");
 		if (data_list.count() == 3)
 		{
-			db_manager db(m_pView->m_strDBfilepath);
-			if (db.Connected())
+			if (m_pView->db->Connected())
 			{
 				QString file_path;
 				QString file_name;
 				QString query = QString("SELECT file_name, file_path FROM file_info WHERE id=%1").arg(data_list[0]);
 				QVariantList data;
-				db.exec(query, data);
+				m_pView->db->exec(query, data);
 				for (const auto& item : data)
 				{
 					auto map = item.toMap();

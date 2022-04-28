@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="BDLS">
+    <file>icons/database_search_icon.png</file>
     <file>icons/enter_login_right_arrow_forward_icon.png</file>
     <file>icons/add_folder.png</file>
     <file>icons/add_row2.png</file>

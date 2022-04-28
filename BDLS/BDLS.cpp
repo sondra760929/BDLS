@@ -41,7 +41,7 @@ BDLS::BDLS(QWidget* parent)
 	setMenuWidget(m_titleBar);
 	title_string = "BDLS (Big Data Library System)";
 	setWindowTitle(title_string);
-	m_titleBar->SetTitleBarIcon(":/BDLS/icons/database_search_icon.ico");
+	m_titleBar->SetTitleBarIcon(":/BDLS/icons/database_search_icon.png");
 
 	QPushButton* btnColor1 = new QPushButton(this);
 	btnColor1->setFixedSize(20, 20);
