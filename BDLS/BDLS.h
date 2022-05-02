@@ -8,10 +8,6 @@
 #include "widgetBottomView.h"
 #include "widgetLogin.h"
 #include <QtDebug>
-#include <QSqlDatabase>
-#include <QSqlQuery>
-#include <QSqlRecord>
-#include <qsqlfield.h>
 #include "MySortFilterProxyModel.h"
 #include "db_manager.h"
 #include "widgetProgress.h"
@@ -47,6 +43,13 @@ public:
     widgetBottomView* _widgetBottomView;
     QAbstractItemModel* originModel;
     MySortFilterProxyModel* proxyModel;
+    QDockWidget* dockLeft;
+    QDockWidget* dockRight;
+    QDockWidget* dockBottom;
+
+    void toogleViewLeft();
+    void toogleViewRight();
+    void toogleViewBottom();
 
     void generateFilters();
     void updateFilter(size_t column, const QString& value);
@@ -84,7 +87,7 @@ public:
     QString NextFileMNO(QString last_mno);
     void ClearTable();
     void setSearchCombo();
-    void SetCurrentFile(QString file_name, QString file_info = "");
+    void SetCurrentFile(SEARCH_TYPE search_type, QString file_name, QString file_info1 = "", QString file_info2 = "", QString file_info3 = "");
     void setTagList();
     QMap<QString, int> map_title_to_index;
     QList<QString> title_list;
@@ -121,4 +124,5 @@ private:
 private slots:
     void DoAutoSave();
     void onTableCellClicked(const QItemSelection& selected, const QItemSelection& deselected);
+    void onTableDoubleClicked(const QModelIndex& index);
 };

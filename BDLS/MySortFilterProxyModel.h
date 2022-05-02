@@ -21,6 +21,8 @@ public:
 
     QMap<int, QRegularExpression> mapFilters;
 
+    Qt::ItemFlags flags(const QModelIndex& index) const override;
+
 protected:
     bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const override;
     bool lessThan(const QModelIndex& left, const QModelIndex& right) const override;

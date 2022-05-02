@@ -91,3 +91,13 @@ void MySortFilterProxyModel::setFilterMaximumDate(QDate date)
     maxDate = date;
     invalidateFilter();
 }
+Qt::ItemFlags MySortFilterProxyModel::flags(const QModelIndex& index) const
+{
+    if (!index.isValid())
+        return Qt::NoItemFlags;
+    if (index.column() == 0)
+    {
+        return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+    }
+    return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
+}

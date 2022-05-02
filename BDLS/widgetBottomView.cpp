@@ -39,6 +39,7 @@ widgetBottomView::widgetBottomView(QWidget *parent)
 	connect(btn_clear, &QPushButton::clicked, this, &widgetBottomView::onClear);
 
 	connect(m_outputTree, &QTreeWidget::currentItemChanged, this, &widgetBottomView::itemChanged);
+	connect(m_outputTree, &QTreeWidget::doubleClicked, this, &widgetBottomView::onDoubleClicked);
 }
 
 widgetBottomView::~widgetBottomView()
@@ -73,7 +74,7 @@ void widgetBottomView::itemChanged(QTreeWidgetItem* current, QTreeWidgetItem* pr
 	{
 		QString data_str = current->data(0, Qt::AccessibleTextRole).toString();
 		QStringList data_list = data_str.split("/");
-		if (data_list.count() == 3)
+		if (data_list.count() >= 2)
 		{
 			if (m_pView->db->Connected())
 			{
@@ -89,10 +90,49 @@ void widgetBottomView::itemChanged(QTreeWidgetItem* current, QTreeWidgetItem* pr
 					file_path = map["file_path"].toString();
 				}
 
-				if (QFile::exists(file_path))
+				if (data_list.count() == 2)
 				{
-					m_pView->SetCurrentFile(file_name, data_list[1]);
+					//	content
+					m_pView->SetCurrentFile(HASHTAG, file_name, data_list[1]);
 				}
+				else if (data_list.count() == 3)
+				{
+					//	content
+					m_pView->SetCurrentFile(CONTENT, file_name, data_list[1], data_list[2]);
+				}
+				else if (data_list.count() == 4)
+				{
+					//	memo
+					m_pView->SetCurrentFile(MEMO, file_name, data_list[1], data_list[2], data_list[3]);
+				}
+			}
+		}
+	}
+}
+
+void widgetBottomView::onDoubleClicked(const QModelIndex& index)
+{
+	QString data_str = index.data(Qt::AccessibleTextRole).toString();
+	QStringList data_list = data_str.split("/");
+	if (data_list.count() == 3)
+	{
+		if (m_pView->db->Connected())
+		{
+			QString file_path;
+			QString file_name;
+			QString query = QString("SELECT file_name, file_path FROM file_info WHERE id=%1").arg(data_list[0]);
+			QVariantList data;
+			m_pView->db->exec(query, data);
+			for (const auto& item : data)
+			{
+				auto map = item.toMap();
+				file_name = map["file_name"].toString();
+				file_path = map["file_path"].toString();
+			}
+
+			if (QFile::exists(file_path))
+			{
+				::ShellExecuteA(0, "open", file_path.toStdString().c_str(), nullptr, nullptr, SW_SHOW);
 			}
 		}
 	}

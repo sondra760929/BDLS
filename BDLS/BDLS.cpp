@@ -84,7 +84,7 @@ BDLS::BDLS(QWidget* parent)
 	ui.tableView->setSortingEnabled(true);
 
 	connect(ui.tableView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)), this, SLOT(onTableCellClicked(const QItemSelection&, const QItemSelection&)));
-
+	connect(ui.tableView, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(onTableDoubleClicked(const QModelIndex&)));
 	connect(ui.tableView->filterHeader(), &FilterTableHeader::filterChanged, this, &BDLS::updateFilter);
 	//connect(ui.tableView->filterHeader(), &FilterTableHeader::addCondFormat, this, &TableBrowser::addCondFormatFromFilter);
 	//connect(ui.tableView->filterHeader(), &FilterTableHeader::allCondFormatsCleared, this, &TableBrowser::clearAllCondFormats);
@@ -151,29 +151,27 @@ void BDLS::DoAutoSave()
 
 void BDLS::createDockWindows()
 {
-	QDockWidget* dock;
-
 	setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
 	setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
 
-	dock = new QDockWidget(tr("검색결과"), this);
-	_widgetBottomView = new widgetBottomView(dock);
-	dock->setWidget(_widgetBottomView);
-	addDockWidget(Qt::BottomDockWidgetArea, dock);
+	dockBottom = new QDockWidget(tr("검색결과"), this);
+	_widgetBottomView = new widgetBottomView(dockBottom);
+	dockBottom->setWidget(_widgetBottomView);
+	addDockWidget(Qt::BottomDockWidgetArea, dockBottom);
 	_widgetBottomView->m_pView = this;
 
-	dock = new QDockWidget(tr("관리"), this);
-	dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-	_widgetLeftView = new widgetLeftView(dock);
-	dock->setWidget(_widgetLeftView);
-	addDockWidget(Qt::LeftDockWidgetArea, dock);
+	dockLeft = new QDockWidget(tr("관리"), this);
+	dockLeft->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+	_widgetLeftView = new widgetLeftView(dockLeft);
+	dockLeft->setWidget(_widgetLeftView);
+	addDockWidget(Qt::LeftDockWidgetArea, dockLeft);
 	//viewMenu->addAction(dock->toggleViewAction());
 	_widgetLeftView->m_pView = this;
 
-	dock = new QDockWidget(tr("미리보기"), this);
-	_widgetRightView = new widgetRightView(dock);
-	dock->setWidget(_widgetRightView);
-	addDockWidget(Qt::RightDockWidgetArea, dock);
+	dockRight = new QDockWidget(tr("미리보기"), this);
+	_widgetRightView = new widgetRightView(dockRight);
+	dockRight->setWidget(_widgetRightView);
+	addDockWidget(Qt::RightDockWidgetArea, dockRight);
 	//viewMenu->addAction(dock->toggleViewAction());
 	_widgetRightView->m_pView = this;
 }
@@ -352,6 +350,50 @@ void BDLS::LoadOldDB(QString file_path)
 			db->exec("CREATE TABLE user_file_info (id INTEGER PRIMARY KEY, user_id TEXT, file_id INTEGER)");
 			db->exec("CREATE TABLE log_info (id INTEGER PRIMARY KEY, log_type TEXT, log_content TEXT, date_time TEXT)");
 		}
+		else
+		{
+			QStringList table_list = db->tables();
+			if (!table_list.contains("file_info"))
+			{
+				db->exec("CREATE TABLE file_info (id INTEGER PRIMARY KEY, file_name TEXT, file_path TEXT, m_no TEXT)");
+			}
+			if (!table_list.contains("header_info"))
+			{
+				db->exec("CREATE TABLE header_info (file_id INTEGER, header_id INTEGER, value TEXT, PRIMARY KEY(file_id, header_id))");
+			}
+			if (!table_list.contains("page_info"))
+			{
+				db->exec("CREATE TABLE page_info (id INTEGER PRIMARY KEY, file_id INTEGER, page_no INTEGER, block_no INTEGER, block_text TEXT)");
+			}
+			if (!table_list.contains("hsah_tags"))
+			{
+				db->exec("CREATE TABLE hsah_tags (id INTEGER PRIMARY KEY, tags TEXT)");
+			}
+			if (!table_list.contains("file_to_hash"))
+			{
+				db->exec("CREATE TABLE file_to_hash (id INTEGER PRIMARY KEY, file_id INTEGER, tag_id INTEGER)");
+			}
+			if (!table_list.contains("reply_info"))
+			{
+				db->exec("CREATE TABLE reply_info (id INTEGER PRIMARY KEY, file_id INTEGER, parent_id INTEGER, user_id TEXT, value TEXT, date_time TEXT)");
+			}
+			if (!table_list.contains("play_info"))
+			{
+				db->exec("CREATE TABLE play_info (id INTEGER PRIMARY KEY, file_id INTEGER, s_time INTEGER, s_title TEXT)");
+			}
+			if (!table_list.contains("user_info"))
+			{
+				db->exec("CREATE TABLE user_info (id INTEGER PRIMARY KEY, user_id TEXT, user_pass TEXT, user_name TEXT, read_only INTEGER)");
+			}
+			if (!table_list.contains("user_file_info"))
+			{
+				db->exec("CREATE TABLE user_file_info (id INTEGER PRIMARY KEY, user_id TEXT, file_id INTEGER)");
+			}
+			if (!table_list.contains("log_info"))
+			{
+				db->exec("CREATE TABLE log_info (id INTEGER PRIMARY KEY, log_type TEXT, log_content TEXT, date_time TEXT)");
+			}
+		}
 		//CreateDirectory(m_strCurrentFolderPath + "\\pdf_txt", NULL);
 
 		QString managed_file_no("");
@@ -508,6 +550,49 @@ void BDLS::InitFromDB()
 		{
 			if (InitDB(m_strDBfilepath))
 			{
+				QStringList table_list = db->tables();
+				if (!table_list.contains("file_info"))
+				{
+					db->exec("CREATE TABLE file_info (id INTEGER PRIMARY KEY, file_name TEXT, file_path TEXT, m_no TEXT)");
+				}
+				if (!table_list.contains("header_info"))
+				{
+					db->exec("CREATE TABLE header_info (file_id INTEGER, header_id INTEGER, value TEXT, PRIMARY KEY(file_id, header_id))");
+				}
+				if (!table_list.contains("page_info"))
+				{
+					db->exec("CREATE TABLE page_info (id INTEGER PRIMARY KEY, file_id INTEGER, page_no INTEGER, block_no INTEGER, block_text TEXT)");
+				}
+				if (!table_list.contains("hsah_tags"))
+				{
+					db->exec("CREATE TABLE hsah_tags (id INTEGER PRIMARY KEY, tags TEXT)");
+				}
+				if (!table_list.contains("file_to_hash"))
+				{
+					db->exec("CREATE TABLE file_to_hash (id INTEGER PRIMARY KEY, file_id INTEGER, tag_id INTEGER)");
+				}
+				if (!table_list.contains("reply_info"))
+				{
+					db->exec("CREATE TABLE reply_info (id INTEGER PRIMARY KEY, file_id INTEGER, parent_id INTEGER, user_id TEXT, value TEXT, date_time TEXT)");
+				}
+				if (!table_list.contains("play_info"))
+				{
+					db->exec("CREATE TABLE play_info (id INTEGER PRIMARY KEY, file_id INTEGER, s_time INTEGER, s_title TEXT)");
+				}
+				if (!table_list.contains("user_info"))
+				{
+					db->exec("CREATE TABLE user_info (id INTEGER PRIMARY KEY, user_id TEXT, user_pass TEXT, user_name TEXT, read_only INTEGER)");
+				}
+				if (!table_list.contains("user_file_info"))
+				{
+					db->exec("CREATE TABLE user_file_info (id INTEGER PRIMARY KEY, user_id TEXT, file_id INTEGER)");
+				}
+				if (!table_list.contains("log_info"))
+				{
+					db->exec("CREATE TABLE log_info (id INTEGER PRIMARY KEY, log_type TEXT, log_content TEXT, date_time TEXT)");
+				}
+
+
 				if (m_bIsLogin)
 				{
 					QStringList table_list = db->tables();
@@ -609,7 +694,6 @@ void BDLS::InitFromDB()
 					}
 					else
 					{
-						//AddOutput(_T("error"), _T("headers not exists"), 0, 0);
 					}
 				}
 			}
@@ -1040,25 +1124,42 @@ void BDLS::OnOpenSingle()
 	}
 }
 
-void BDLS::SetCurrentFile(QString file_name, QString file_info)
+void BDLS::SetCurrentFile(SEARCH_TYPE search_type, QString file_name, QString file_info1, QString file_info2, QString file_info3)
 {
 	QString file_path = m_strCurrentFolderPath + "\\" + file_name;
 	if(DBConnected())
 		file_path = m_strDBfolderpath + "\\" + file_name;
 	m_iCurrentFileDBID = map_file_to_id[file_name];
-	_widgetLeftView->UpdateMemo();
+	_widgetLeftView->UpdateMemo(search_type, file_info1, file_info2, file_info3);
 	if (IsPDF(file_path))
 	{
 		m_strCurrentSelectedItemPath = file_path;
 		m_iCurrentSelectedItemType = 2;
-		_widgetRightView->ViewPDF(file_path, file_info);
+		_widgetRightView->ViewPDF(file_path, file_info1);
 		//m_pFrame->m_wndProperties.DoPreview(file_path, 1, m_bViewThumbInPreview);
 	}
 	else if (IsMV(file_path))
 	{
 		m_strCurrentSelectedItemPath = file_path;
 		m_iCurrentSelectedItemType = 3;
-		_widgetRightView->ViewMovie(file_path, file_info);
+		_widgetRightView->ViewMovie(file_path, file_info1);
+	}
+}
+
+void BDLS::onTableDoubleClicked(const QModelIndex& index)
+{
+	if (index.column() == 0)
+	{
+		int col_size = proxyModel->columnCount();
+		QString file_name = proxyModel->data(proxyModel->index(index.row(), col_size - 1)).toString();
+		QString file_path = m_strCurrentFolderPath + "\\" + file_name;
+		if (DBConnected())
+			file_path = m_strDBfolderpath + "\\" + file_name;
+
+		if (QFile::exists(file_path))
+		{
+			::ShellExecuteA(0, "open", file_path.toStdString().c_str(), nullptr, nullptr, SW_SHOW);
+		}
 	}
 }
 
@@ -1076,7 +1177,7 @@ void BDLS::onTableCellClicked(const QItemSelection& selected, const QItemSelecti
 				file_path = m_strDBfolderpath + "\\" + file_name;
 			if (file_path != m_strCurrentSelectedItemPath)
 			{
-				SetCurrentFile(file_name);
+				SetCurrentFile(NONE, file_name);
 			}
 		}
 	}
@@ -1193,6 +1294,17 @@ void BDLS::createActions()
 	connect(ui.actionDBUpdate, &QAction::triggered, this, &BDLS::doDBUpdate);
 	ui.mainToolBar->addAction(ui.actionDBUpdate);
 	ui.actionDBUpdate->setEnabled(false);
+
+	ui.mainToolBar->addSeparator();
+
+	connect(dockLeft->toggleViewAction(), &QAction::triggered, this, &BDLS::toogleViewLeft);
+	ui.mainToolBar->addAction(dockLeft->toggleViewAction());
+
+	connect(dockRight->toggleViewAction(), &QAction::triggered, this, &BDLS::toogleViewRight);
+	ui.mainToolBar->addAction(dockRight->toggleViewAction());
+
+	connect(dockBottom->toggleViewAction(), &QAction::triggered, this, &BDLS::toogleViewBottom);
+	ui.mainToolBar->addAction(dockBottom->toggleViewAction());
 }
 
 void BDLS::doLogin()
@@ -1836,7 +1948,6 @@ void BDLS::AddFileList(QString user_id)
 			}
 			else
 			{
-				db->exec("CREATE TABLE log_info (id INTEGER PRIMARY KEY, log_type TEXT, log_content TEXT, date_time TEXT)");
 				QString temp_string = QString("INSERT INTO log_info VALUES (NULL, \"%1\", \"%2\", datetime('now', 'localtime'))").arg("error").arg(file_name + "의 file_id가 존재하지 않습니다. 사용자 파일 추가에 실패했습니다.");
 				db->exec(temp_string);
 			}
@@ -1895,4 +2006,16 @@ void BDLS::setColor3()
 	palette.setColor(QPalette::BrightText, QColor(255, 255, 255));
 	qApp->setPalette(palette);
 	m.setValue("THEME", "3");
+}
+
+void BDLS::toogleViewLeft()
+{
+}
+
+void BDLS::toogleViewRight()
+{
+}
+
+void BDLS::toogleViewBottom()
+{
 }

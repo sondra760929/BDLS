@@ -42,6 +42,7 @@ public:
 		, m_memo(memo)
 	{
 		m_datetime = QDateTime::fromString(date, "yyyy-MM-dd HH:mm:ss");
+		m_str_datetime = date;
 	}
 
 	int m_id;
@@ -49,6 +50,7 @@ public:
 	QString m_userid;
 	QString m_username;
 	QString m_memo;
+	QString m_str_datetime;
 	QDateTime m_datetime;
 	int m_level = 0;
 

@@ -25,4 +25,6 @@ private slots:
 	void onMinus();
 	void onClear();
 	void itemChanged(QTreeWidgetItem* current, QTreeWidgetItem* previous);
+	void onDoubleClicked(const QModelIndex& index);
+
 };

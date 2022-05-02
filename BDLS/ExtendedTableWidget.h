@@ -113,4 +113,6 @@ protected:
     FilterTableHeader* m_tableHeader;
     QMenu* m_contextMenu;
     ExtendedTableWidgetEditorDelegate* m_editorDelegate;
+
+    void keyPressEvent(QKeyEvent* event);
 };

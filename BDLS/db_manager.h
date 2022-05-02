@@ -1,4 +1,17 @@
 #pragma once
+#include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QSqlRecord>
+#include <qsqlfield.h>
+
+enum SEARCH_TYPE
+{
+    NONE,
+    CONTENT,
+    MEMO,
+    HASHTAG
+};
+
 
 class db_manager {
 public:

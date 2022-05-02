@@ -7,6 +7,7 @@
 #include <QtWidgets>
 #include "SearchControls.h"
 #include "widgetMemo.h"
+#include "db_manager.h"
 
 class BDLS;
 class widgetMemo;
@@ -23,6 +24,7 @@ public:
 	BDLS* m_pView;
 
 	QMap<QString, int> header_to_index;
+	QList<QString> header_list;
 	QList< SearchControls*> search_list;
 	QList< SearchControls*> memo_list;
 
@@ -31,8 +33,8 @@ public:
 	void setSearchCombo(QList<QString>& h_list, QMap<QString, int>& map_h_to_i);
 	void OnMemoClicked(widgetMemo* pmemo);
 	void clearMemoSelection();
-	void UpdateMemo();
-	void AddMemoControl(MemoData* new_memo, MemoData* parent_memo = NULL);
+	void UpdateMemo(SEARCH_TYPE search_type, QString file_info1 = "", QString file_info2 = "", QString file_info3 = "");
+	widgetMemo* AddMemoControl(MemoData* new_memo, int search_memo_id = -1, MemoData* parent_memo = NULL);
 	void clearMemo();
 	void setTagList();
 	void clearTags();
@@ -55,6 +57,7 @@ private:
 	QLineEdit* tagSearchEdit;
 	QListWidget* mvSearchList;
 	QLineEdit* mvSearchEdit;
+	QScrollArea* techScroll;
 
 	QBoxLayout* noteViewLayout;
 	QPushButton* noteParent;
@@ -63,11 +66,12 @@ private:
 	QWidget* memoList;
 	QMap<int, MemoData*> memoDatas;
 
-	QListView* tagList;
+	//QListView* tagList;
+	QListWidget* tagList;
 	QCompleter* completer = NULL;
 	QLineEdit* tagEdit = NULL;
 	QStringList tags;
-	QStringListModel* fileTagModel = NULL;
+	//QStringListModel* fileTagModel = NULL;
 	QMap<int, QString> tagDatas;
 
 	QMap<int, QString> searchTagDatas;
@@ -115,4 +119,5 @@ private slots:
 	void doAddFile();
 	void doDelFile();
 	void onUserChanged(const QItemSelection& current, const QItemSelection& prev);
+	void on_treeView_doubleClicked(const QModelIndex& index);
 };
