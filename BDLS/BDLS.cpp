@@ -5,7 +5,7 @@
 #include "xlsxchart.h"
 #include "xlsxrichstring.h"
 #include "xlsxworkbook.h"
-#include <QtCore5Compat/QTextCodec>
+#include <QTextCodec>
 #include "FilterTableHeader.h"
 
 QString m_strKey = QString("HKEY_CURRENT_USER\\SOFTWARE\\DIGIBOOK\\PDFIndexExplorer\\Settings");
@@ -37,11 +37,13 @@ BDLS::BDLS(QWidget* parent)
 		setColor3();
 	}
 
-	m_titleBar = new TitleBar(this);
-	setMenuWidget(m_titleBar);
-	title_string = "BDLS (Big Data Library System)";
-	setWindowTitle(title_string);
-	m_titleBar->SetTitleBarIcon(":/BDLS/icons/database_search_icon.png");
+	//m_titleBar = new TitleBar(this);
+	//setMenuWidget(m_titleBar);
+	//title_string = "BDLS (Big Data Library System)";
+	//setWindowTitle(title_string);
+	//m_titleBar->SetTitleBarIcon(":/BDLS/icons/database_search_icon.png");
+
+	setWindowTitle("BDLS(Big Data Library System)");
 
 	QPushButton* btnColor1 = new QPushButton(this);
 	btnColor1->setFixedSize(20, 20);
@@ -142,7 +144,7 @@ BDLS::BDLS(QWidget* parent)
 	QString auto_save = m.value("AUTO_SAVE").toString();
 	m_bAutoSave = (auto_save == "T") ? true : false;
 
-	readSettings();
+	//readSettings();
 }
 
 void BDLS::DoAutoSave()
@@ -154,13 +156,13 @@ void BDLS::createDockWindows()
 	setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
 	setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
 
-	dockBottom = new QDockWidget(tr("검색결과"), this);
+	dockBottom = new QDockWidget(QString::fromLocal8Bit("검색결과"), this);
 	_widgetBottomView = new widgetBottomView(dockBottom);
 	dockBottom->setWidget(_widgetBottomView);
 	addDockWidget(Qt::BottomDockWidgetArea, dockBottom);
 	_widgetBottomView->m_pView = this;
 
-	dockLeft = new QDockWidget(tr("관리"), this);
+	dockLeft = new QDockWidget(QString::fromLocal8Bit("관리"), this);
 	dockLeft->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	_widgetLeftView = new widgetLeftView(dockLeft);
 	dockLeft->setWidget(_widgetLeftView);
@@ -168,7 +170,7 @@ void BDLS::createDockWindows()
 	//viewMenu->addAction(dock->toggleViewAction());
 	_widgetLeftView->m_pView = this;
 
-	dockRight = new QDockWidget(tr("미리보기"), this);
+	dockRight = new QDockWidget(QString::fromLocal8Bit("미리보기"), this);
 	_widgetRightView = new widgetRightView(dockRight);
 	dockRight->setWidget(_widgetRightView);
 	addDockWidget(Qt::RightDockWidgetArea, dockRight);
@@ -311,7 +313,7 @@ void BDLS::LoadOldDB(QString file_path)
 	if (QFile::exists(str_file_path))
 	{
 		db_file_exist = true;
-		QMessageBox::StandardButton reply = QMessageBox::question(this, QString("확인"), QString("DB 파일이 존재합니다. 새로 저장하시겠습니까?"), QMessageBox::Yes | QMessageBox::No);
+		QMessageBox::StandardButton reply = QMessageBox::question(this, QString::fromLocal8Bit("확인"), QString::fromLocal8Bit("DB 파일이 존재합니다. 새로 저장하시겠습니까?"), QMessageBox::Yes | QMessageBox::No);
 		if (reply != QMessageBox::Yes)
 		{
 			return;
@@ -435,7 +437,7 @@ void BDLS::LoadOldDB(QString file_path)
 			//	}
 			//}
 
-			status_string = QString("%1 행 저장 중").arg(i + 1);
+			status_string = QString::fromLocal8Bit("%1 행 저장 중").arg(i + 1);
 			UpdateProgress(status_string, i + 1, total);
 
 			int file_db_id = 0;
@@ -774,14 +776,14 @@ void BDLS::OnOpenSingle()
 			{
 				//	db를 읽은 상태임
 				QMessageBox::StandardButton reply;
-				reply = QMessageBox::question(this, QString("확인"), QString("현재 테이블에 추가하시겠습니까? [아니오]를 선택하시면 엑셀을 새로 로딩합니다."),
+				reply = QMessageBox::question(this, QString::fromLocal8Bit("확인"), QString::fromLocal8Bit("현재 테이블에 추가하시겠습니까? [아니오]를 선택하시면 엑셀을 새로 로딩합니다."),
 					QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
 				if (reply == QMessageBox::Yes)
 				{
 					//	추가로 로딩
 					if (m_strDBfolderpath != folder_path)
 					{
-						reply = QMessageBox::question(this, QString("확인"), QString("현재 DB파일과 다른 폴더에 있는 엑셀파일입니다. 신규 파일 링크가 변경될 수 있습니다.계속 진행하시겠습니까 ? "), QMessageBox::Yes | QMessageBox::No);
+						reply = QMessageBox::question(this, QString::fromLocal8Bit("확인"), QString::fromLocal8Bit("현재 DB파일과 다른 폴더에 있는 엑셀파일입니다. 신규 파일 링크가 변경될 수 있습니다.계속 진행하시겠습니까 ? "), QMessageBox::Yes | QMessageBox::No);
 						if (reply != QMessageBox::Yes)
 						{
 							//	폴더가 달라서 취소
@@ -847,8 +849,8 @@ void BDLS::OnOpenSingle()
 						if (total_check_title == false)
 						{
 							reply = QMessageBox::question(this,
-								QString("확인"),
-								QString("동일하지 않은 항목이 존재합니다. 기존 항목과 동일하지 않은 항목은 무시됩니다. 계속 진행하시겠습니까?"),
+								QString::fromLocal8Bit("확인"),
+								QString::fromLocal8Bit("동일하지 않은 항목이 존재합니다. 기존 항목과 동일하지 않은 항목은 무시됩니다. 계속 진행하시겠습니까?"),
 								QMessageBox::Yes | QMessageBox::No);
 							if (reply != QMessageBox::Yes)
 							{
@@ -1014,7 +1016,7 @@ void BDLS::OnOpenSingle()
 					col_size++;
 					cell = xlsx.cellAt(row, col_size - 2);
 				}
-				header_label << QString("검색 결과");
+				header_label << QString::fromLocal8Bit("검색 결과");
 				originModel->insertColumn(0);
 				//ui.treeView->setColumnCount(col_size + 1);
 				//SetItemData(row - 2, col_size, QString("검색 결과"));
@@ -1023,7 +1025,7 @@ void BDLS::OnOpenSingle()
 				//if (m_bIsAdmin)
 				//{
 					//ui.treeView->setColumnCount(col_size + 1);
-				header_label << QString("파일 경로");
+				header_label << QString::fromLocal8Bit("파일 경로");
 				//SetItemData(row - 2, col_size, QString("파일 경로"));
 			//}
 				originModel->insertColumn(0);
@@ -1339,7 +1341,7 @@ void BDLS::doLogin()
 			}
 			else
 			{
-				QMessageBox::information(this, QString("확인"), QString("암호가 일치하지 않습니다."));
+				QMessageBox::information(this, QString::fromLocal8Bit("확인"), QString::fromLocal8Bit("암호가 일치하지 않습니다."));
 			}
 		}
 		else
@@ -1366,13 +1368,13 @@ void BDLS::doLogin()
 
 				if (db_user_pass == "")
 				{
-					QMessageBox::information(this, QString("확인"), QString("아이디가 존재하지 않습니다."));
+					QMessageBox::information(this, QString::fromLocal8Bit("확인"), QString::fromLocal8Bit("아이디가 존재하지 않습니다."));
 				}
 				else
 				{
 					if (db_user_pass != user_pass)
 					{
-						QMessageBox::information(this, QString("확인"), QString("암호가 일치하지 않습니다."));
+						QMessageBox::information(this, QString::fromLocal8Bit("확인"), QString::fromLocal8Bit("암호가 일치하지 않습니다."));
 					}
 					else
 					{
@@ -1385,13 +1387,13 @@ void BDLS::doLogin()
 						{
 							m_UserLevel = SUPER;
 							_widgetLeftView->ViewUser(true);
-							setWindowTitle(QString("%1 > [%2] - 관리자").arg(title_string).arg(user_id));
+							setWindowTitle(QString::fromLocal8Bit("%1 > [%2] - 관리자").arg(title_string).arg(user_id));
 						}
 						else
 						{
 							m_UserLevel = NORMAL;
 							_widgetLeftView->ViewUser(false);
-							setWindowTitle(QString("%1 > [%2] - 사용자").arg(title_string).arg(user_id));
+							setWindowTitle(QString::fromLocal8Bit("%1 > [%2] - 사용자").arg(title_string).arg(user_id));
 						}
 
 						if (m_bIsLogin)
@@ -1403,7 +1405,7 @@ void BDLS::doLogin()
 			}
 			else
 			{
-				QMessageBox::information(this, QString("확인"), QString("데이터베이스에 연결되지 않았습니다."));
+				QMessageBox::information(this, QString::fromLocal8Bit("확인"), QString::fromLocal8Bit("데이터베이스에 연결되지 않았습니다."));
 			}
 		}
 	}
@@ -1416,7 +1418,7 @@ void BDLS::doAddFolder()
 		QFileInfo f_info(m_strCurrentSelectedItemPath);
 		if (f_info.isDir())
 		{
-			QMessageBox::StandardButton reply = QMessageBox::question(this, QString("확인"), QString("[%1]\n폴더 하위 파일을 목록에 추가하시겠습니까?").arg(m_strCurrentSelectedItemPath), QMessageBox::Yes | QMessageBox::No);
+			QMessageBox::StandardButton reply = QMessageBox::question(this, QString::fromLocal8Bit("확인"), QString::fromLocal8Bit("[%1]\n폴더 하위 파일을 목록에 추가하시겠습니까?").arg(m_strCurrentSelectedItemPath), QMessageBox::Yes | QMessageBox::No);
 			if (reply == QMessageBox::Yes)
 			{
 				if (AddFolder(m_strCurrentSelectedItemPath))
@@ -1550,7 +1552,7 @@ void BDLS::doDBUpdate()
 			if (QFile::exists(str_file_path))
 			{
 				db_file_exist = true;
-				QMessageBox::StandardButton reply = QMessageBox::question(this, QString("확인"), QString("DB 파일이 존재합니다. 새로 저장하시겠습니까?"), QMessageBox::Yes | QMessageBox::No);
+				QMessageBox::StandardButton reply = QMessageBox::question(this, QString::fromLocal8Bit("확인"), QString::fromLocal8Bit("DB 파일이 존재합니다. 새로 저장하시겠습니까?"), QMessageBox::Yes | QMessageBox::No);
 				if (reply != QMessageBox::Yes)
 				{
 					return;
@@ -1568,7 +1570,7 @@ void BDLS::doDBUpdate()
 		col_count--;
 
 		bool update_pass_status = 
-			(QMessageBox::question(this, QString("확인"), QString("파일 암호 설정 상태를 업데이트 하시겠습니까? 저장 시간이 늘어날 수 있습니다."), 
+			(QMessageBox::question(this, QString::fromLocal8Bit("확인"), QString::fromLocal8Bit("파일 암호 설정 상태를 업데이트 하시겠습니까? 저장 시간이 늘어날 수 있습니다."),
 				QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes);
 		QString temp_string;
 		QString temp_string1;
@@ -1642,7 +1644,7 @@ void BDLS::doDBUpdate()
 					//	}
 					//}
 
-					status_string = QString("%1 행 저장 중").arg(i + 1);
+					status_string = QString::fromLocal8Bit("%1 행 저장 중").arg(i + 1);
 					UpdateProgress2("", 0, 100, false);
 					UpdateProgress(status_string, i + 1, total);
 
@@ -1701,7 +1703,7 @@ void BDLS::doDBUpdate()
 						if ((!QFile::exists(target_file_path)) && QFile::exists(file_path))
 						{
 							//status_string.Format(_T("%d 행 저장 중 (텍스트 추출)"), i + 1);
-							UpdateProgress2("(텍스트 추출)", 0, 100);
+							UpdateProgress2(QString::fromLocal8Bit("(텍스트 추출)"), 0, 100);
 
 							QStringList arguments;
 							arguments.append(file_path);
@@ -1736,7 +1738,7 @@ void BDLS::doDBUpdate()
 								int index = 0;
 								while (index < listOfLines.count() - 1)
 								{
-									UpdateProgress2("텍스트 저장", index + 1, listOfLines.count());
+									UpdateProgress2(QString::fromLocal8Bit("텍스트 저장"), index + 1, listOfLines.count());
 									QString line = listOfLines[index]; index++;
 									QString line_info = listOfLines[index]; index++;
 									QStringList fields = line_info.split(",");
@@ -1798,14 +1800,14 @@ void BDLS::doDBUpdate()
 			include_pass_status = true;
 			//QString cell_string(utf_to_unicode(m_strDBfilepath).c_str());
 			m.setValue("CURRENT_PATH", m_strDBfilepath);
-			QMessageBox::information(this, QString("확인"), QString("데이터베이스에 저장되었습니다."));
+			QMessageBox::information(this, QString::fromLocal8Bit("확인"), QString::fromLocal8Bit("데이터베이스에 저장되었습니다."));
 		}
 		catch (std::exception& e)
 		{
 			//temp_string.Format(_T("db exception : %S"), e.what());
 			//AddOutput(_T("error"), temp_string, 0, 0);
 			//EndProgress();
-			QMessageBox::information(this, QString("확인"), QString("데이터베이스에 저장에 실패했습니다."));
+			QMessageBox::information(this, QString::fromLocal8Bit("확인"), QString::fromLocal8Bit("데이터베이스에 저장에 실패했습니다."));
 		}
 	}
 }
@@ -1955,15 +1957,15 @@ void BDLS::AddFileList(QString user_id)
 	}
 }
 
-void BDLS::setWindowTitle(const QString& title)
-{
-	m_titleBar->setWindowTitle(title);
-}
-
-void BDLS::setWindowTitleHeight(int h)
-{
-	m_titleBar->setFixedHeight(h);
-}
+//void BDLS::setWindowTitle(const QString& title)
+//{
+//	m_titleBar->setWindowTitle(title);
+//}
+//
+//void BDLS::setWindowTitleHeight(int h)
+//{
+//	m_titleBar->setFixedHeight(h);
+//}
 
 void BDLS::setColor1()
 {

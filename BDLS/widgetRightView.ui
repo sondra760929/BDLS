@@ -29,10 +29,10 @@
    <item>
     <widget class="QStackedWidget" name="stackedWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="page">
-      <layout class="QVBoxLayout" name="verticalLayout" stretch="0,100">
+      <layout class="QVBoxLayout" name="verticalLayout" stretch="">
        <property name="spacing">
         <number>0</number>
        </property>
@@ -48,93 +48,6 @@
        <property name="bottomMargin">
         <number>2</number>
        </property>
-       <item>
-        <widget class="QWidget" name="widget" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout">
-          <property name="spacing">
-           <number>0</number>
-          </property>
-          <property name="leftMargin">
-           <number>2</number>
-          </property>
-          <property name="topMargin">
-           <number>2</number>
-          </property>
-          <property name="rightMargin">
-           <number>2</number>
-          </property>
-          <property name="bottomMargin">
-           <number>2</number>
-          </property>
-          <item>
-           <widget class="QPushButton" name="pushButton">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="BDLS.qrc">
-              <normaloff>:/BDLS/icons/zoom-out-32.png</normaloff>:/BDLS/icons/zoom-out-32.png</iconset>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pushButton_2">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="BDLS.qrc">
-              <normaloff>:/BDLS/icons/zoom-out-32.png</normaloff>:/BDLS/icons/zoom-out-32.png</iconset>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QSplitter" name="splitter">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <widget class="QTabWidget" name="tabWidget">
-          <property name="tabPosition">
-           <enum>QTabWidget::West</enum>
-          </property>
-          <property name="currentIndex">
-           <number>0</number>
-          </property>
-          <widget class="QWidget" name="bookmarkTab">
-           <attribute name="title">
-            <string>Bookmarks</string>
-           </attribute>
-           <widget class="QTreeView" name="bookmarkView">
-            <property name="geometry">
-             <rect>
-              <x>20</x>
-              <y>60</y>
-              <width>171</width>
-              <height>411</height>
-             </rect>
-            </property>
-           </widget>
-          </widget>
-         </widget>
-         <widget class="QPdfView" name="pdfView" native="true"/>
-        </widget>
-       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="page_2"/>
@@ -178,14 +91,6 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <customwidgets>
-  <customwidget>
-   <class>QPdfView</class>
-   <extends>QWidget</extends>
-   <header>qpdfview.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources>
   <include location="BDLS.qrc"/>
  </resources>

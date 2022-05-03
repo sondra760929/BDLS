@@ -31,13 +31,13 @@
     <Import Project="$(QtMsBuild)\qt_defaults.props" />
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
-    <QtInstall>6.3.0_msvc2019_64</QtInstall>
-    <QtModules>core;sql;gui;multimedia;widgets;multimediawidgets;webenginewidgets;charts</QtModules>
+    <QtInstall>5.15.0</QtInstall>
+    <QtModules>core;sql;gui;multimedia;widgets;multimediawidgets;charts</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
-    <QtInstall>6.3.0_msvc2019_64</QtInstall>
-    <QtModules>core;sql;gui;multimedia;widgets;multimediawidgets;webenginewidgets</QtModules>
+    <QtInstall>5.15.0</QtInstall>
+    <QtModules>core;sql;gui;multimedia;widgets;multimediawidgets</QtModules>
     <QtBuildConfig>release</QtBuildConfig>
   </PropertyGroup>
   <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') or !Exists('$(QtMsBuild)\qt.props')">
@@ -55,25 +55,26 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <IncludePath>E:\source\BDLS\QXlsx\header;$(QTDIR)\include\;$(QTDIR)\include\QtGui\6.3.0;$(QTDIR)\include\QtGui\6.3.0\QtGui;$(QTDIR)\include\QtCore\6.3.0;$(QTDIR)\include\QtCore\6.3.0\QtCore;E:\Library\Qt\6.3.0\msvc2019_64\include\QtPdf;E:\Library\Qt\6.3.0\msvc2019_64\include\QtPdfWidgets;$(IncludePath)</IncludePath>
-    <LibraryPath>E:\Library\Qt\6.3.0\msvc2019_64\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>E:\source\BDLS\QXlsx\header;$(QTDIR)\include\;$(QTDIR)\include\QtGui\5.15.0;$(QTDIR)\include\QtGui\5.15.0\QtGui;$(QTDIR)\include\QtCore\5.15.0;$(QTDIR)\include\QtCore\5.15.0\QtCore;$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <IncludePath>E:\source\BDLS\QXlsx\header;$(QTDIR)\include\;$(QTDIR)\include\QtGui\6.3.0;$(QTDIR)\include\QtGui\6.3.0\QtGui;$(QTDIR)\include\QtCore\6.3.0;$(QTDIR)\include\QtCore\6.3.0\QtCore;E:\Library\Qt\6.3.0\msvc2019_64\include\QtPdf;E:\Library\Qt\6.3.0\msvc2019_64\include\QtPdfWidgets;$(IncludePath)</IncludePath>
-    <LibraryPath>E:\Library\Qt\6.3.0\msvc2019_64\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>E:\source\BDLS\QXlsx\header;$(QTDIR)\include\;$(QTDIR)\include\QtGui\5.15.0;$(QTDIR)\include\QtGui\5.15.0\QtGui;$(QTDIR)\include\QtCore\5.15.0;$(QTDIR)\include\QtCore\5.15.0\QtCore;$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
-      <AdditionalDependencies>Qt6Pdfd.lib;Qt6PdfWidgetsd.lib;Qt6Core5Compatd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Link>
-      <AdditionalDependencies>Qt6Pdf.lib;Qt6PdfWidgets.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <QtRcc>
       <QmlCacheGenerate>true</QmlCacheGenerate>
     </QtRcc>
+    <ClCompile />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
     <ClCompile>
@@ -140,7 +141,6 @@
     <ClCompile Include="FilterTableHeader.cpp" />
     <ClCompile Include="MySortFilterProxyModel.cpp" />
     <ClCompile Include="MyTabWidget.cpp" />
-    <ClCompile Include="pageselector.cpp" />
     <ClCompile Include="playercontrols.cpp" />
     <ClCompile Include="SearchControls.cpp" />
     <ClCompile Include="TitleBar.cpp" />
@@ -153,7 +153,6 @@
     <ClCompile Include="widgetMemo.cpp" />
     <ClCompile Include="widgetProgress.cpp" />
     <ClCompile Include="widgetRightView.cpp" />
-    <ClCompile Include="zoomselector.cpp" />
     <QtRcc Include="BDLS.qrc" />
     <QtUic Include="BDLS.ui" />
     <QtMoc Include="BDLS.h" />
@@ -229,8 +228,6 @@
     <QtMoc Include="SearchControls.h" />
     <QtMoc Include="videowidget.h" />
     <QtMoc Include="playercontrols.h" />
-    <QtMoc Include="zoomselector.h" />
-    <QtMoc Include="pageselector.h" />
     <QtMoc Include="MySortFilterProxyModel.h" />
     <QtMoc Include="..\QXlsx\header\xlsxdocument.h" />
     <ClInclude Include="..\QXlsx\header\xlsxstyles_p.h" />

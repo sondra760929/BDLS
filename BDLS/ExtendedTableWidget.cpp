@@ -13,8 +13,8 @@
 #include <QMenu>
 #include <QDateTime>
 #include <QLineEdit>
-#include <QPrinter>
-#include <QPrintPreviewDialog>
+//#include <QPrinter>
+//#include <QPrintPreviewDialog>
 #include <QTextDocument>
 #include <QCompleter>
 #include <QComboBox>

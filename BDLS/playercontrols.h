@@ -67,43 +67,43 @@ class PlayerControls : public QWidget
 public:
     explicit PlayerControls(QWidget *parent = nullptr);
 
-    QMediaPlayer::PlaybackState state() const;
-    float volume() const;
-    bool isMuted() const;
-    qreal playbackRate() const;
+    //QMediaPlayer::PlaybackState state() const;
+    //float volume() const;
+    //bool isMuted() const;
+    //qreal playbackRate() const;
 
 public slots:
-    void setState(QMediaPlayer::PlaybackState state);
-    void setVolume(float volume);
-    void setMuted(bool muted);
-    void setPlaybackRate(float rate);
+    //void setState(QMediaPlayer::PlaybackState state);
+    //void setVolume(float volume);
+    //void setMuted(bool muted);
+    //void setPlaybackRate(float rate);
 
 signals:
-    void play();
-    void pause();
-    void stop();
-    void next();
-    void previous();
-    void changeVolume(float volume);
-    void changeMuting(bool muting);
-    void changeRate(qreal rate);
+    //void play();
+    //void pause();
+    //void stop();
+    //void next();
+    //void previous();
+    //void changeVolume(float volume);
+    //void changeMuting(bool muting);
+    //void changeRate(qreal rate);
 
 private slots:
-    void playClicked();
-    void muteClicked();
-    void updateRate();
-    void onVolumeSliderValueChanged();
+    //void playClicked();
+    //void muteClicked();
+    //void updateRate();
+    //void onVolumeSliderValueChanged();
 
 private:
-    QMediaPlayer::PlaybackState m_playerState = QMediaPlayer::StoppedState;
-    bool m_playerMuted = false;
-    QAbstractButton *m_playButton = nullptr;
-    QAbstractButton *m_stopButton = nullptr;
-    QAbstractButton *m_nextButton = nullptr;
-    QAbstractButton *m_previousButton = nullptr;
-    QAbstractButton *m_muteButton = nullptr;
-    QAbstractSlider *m_volumeSlider = nullptr;
-    QComboBox *m_rateBox = nullptr;
+    //QMediaPlayer::PlaybackState m_playerState = QMediaPlayer::StoppedState;
+    //bool m_playerMuted = false;
+    //QAbstractButton *m_playButton = nullptr;
+    //QAbstractButton *m_stopButton = nullptr;
+    //QAbstractButton *m_nextButton = nullptr;
+    //QAbstractButton *m_previousButton = nullptr;
+    //QAbstractButton *m_muteButton = nullptr;
+    //QAbstractSlider *m_volumeSlider = nullptr;
+    //QComboBox *m_rateBox = nullptr;
 };
 
 #endif // PLAYERCONTROLS_H

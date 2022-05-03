@@ -62,7 +62,7 @@ private:
 	QBoxLayout* noteViewLayout;
 	QPushButton* noteParent;
 	int parent_memo_id;
-	QTextEdit* memoText;
+	QPlainTextEdit* memoText;
 	QWidget* memoList;
 	QMap<int, MemoData*> memoDatas;
 

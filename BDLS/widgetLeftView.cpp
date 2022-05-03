@@ -5,7 +5,7 @@
 #include "widgetMemo.h"
 #include "widgetAddUser.h"
 
-QStringList memo_combo_header = { "내용", "날짜" };
+QStringList memo_combo_header = { QString::fromLocal8Bit("내용"), QString::fromLocal8Bit("날짜") };
 widgetLeftView::widgetLeftView(QWidget* parent)
 	: QWidget(parent)
 {
@@ -35,7 +35,7 @@ widgetLeftView::widgetLeftView(QWidget* parent)
 
 	QBoxLayout* temp_add = new QHBoxLayout;
 	QLabel* label = new QLabel(this);
-	label->setText("1. 메타 및 본문 검색");
+	label->setText(QString::fromLocal8Bit("1. 메타 및 본문 검색"));
 	btn_add = new QPushButton(this);
 	btn_add->setText("+");
 	btn_add->setFixedSize(20, 20);
@@ -53,7 +53,7 @@ widgetLeftView::widgetLeftView(QWidget* parent)
 	searchViewLayout->addWidget(sc);
 
 	QPushButton* btn_search = new QPushButton(this);
-	btn_search->setText("검색");
+	btn_search->setText(QString::fromLocal8Bit("검색"));
 	searchViewLayout->addWidget(btn_search);
 
 	label = new QLabel(this);
@@ -62,7 +62,7 @@ widgetLeftView::widgetLeftView(QWidget* parent)
 
 	temp_add = new QHBoxLayout;
 	label = new QLabel(this);
-	label->setText("2. 메모 검색");
+	label->setText(QString::fromLocal8Bit("2. 메모 검색"));
 	btn_memo_add = new QPushButton(this);
 	btn_memo_add->setText("+");
 	btn_memo_add->setFixedSize(20, 20);
@@ -81,7 +81,7 @@ widgetLeftView::widgetLeftView(QWidget* parent)
 	searchViewLayout->addWidget(sc);
 
 	QPushButton* btn_search2 = new QPushButton(this);
-	btn_search2->setText("검색");
+	btn_search2->setText(QString::fromLocal8Bit("검색"));
 	searchViewLayout->addWidget(btn_search2);
 
 	label = new QLabel(this);
@@ -89,7 +89,7 @@ widgetLeftView::widgetLeftView(QWidget* parent)
 	searchViewLayout->addWidget(label);
 
 	label = new QLabel(this);
-	label->setText("3. 해시태그 검색");
+	label->setText(QString::fromLocal8Bit("3. 해시태그 검색"));
 	searchViewLayout->addWidget(label);
 
 	tagSearchList = new QListView(this);
@@ -100,13 +100,13 @@ widgetLeftView::widgetLeftView(QWidget* parent)
 	temp_add = new QHBoxLayout;
 	tagSearchEdit = new QLineEdit(this);
 	QPushButton* tagSearchAdd = new QPushButton(this);
-	tagSearchAdd->setText("추가");
+	tagSearchAdd->setText(QString::fromLocal8Bit("추가"));
 	temp_add->addWidget(tagSearchEdit);
 	temp_add->addWidget(tagSearchAdd);
 	searchViewLayout->addLayout(temp_add);
 
 	QPushButton* btn_search3 = new QPushButton(this);
-	btn_search3->setText("검색");
+	btn_search3->setText(QString::fromLocal8Bit("검색"));
 	searchViewLayout->addWidget(btn_search3);
 
 	label = new QLabel(this);
@@ -114,7 +114,7 @@ widgetLeftView::widgetLeftView(QWidget* parent)
 	searchViewLayout->addWidget(label);
 
 	label = new QLabel(this);
-	label->setText("4. 동영상 목차 검색");
+	label->setText(QString::fromLocal8Bit("4. 동영상 목차 검색"));
 	searchViewLayout->addWidget(label);
 
 	mvSearchList = new QListWidget(this);
@@ -123,13 +123,13 @@ widgetLeftView::widgetLeftView(QWidget* parent)
 	temp_add = new QHBoxLayout;
 	mvSearchEdit = new QLineEdit(this);
 	QPushButton* mvSearchAdd = new QPushButton(this);
-	mvSearchAdd->setText("추가");
+	mvSearchAdd->setText(QString::fromLocal8Bit("추가"));
 	temp_add->addWidget(mvSearchEdit);
 	temp_add->addWidget(mvSearchAdd);
 	searchViewLayout->addLayout(temp_add);
 
 	QPushButton* btn_search4 = new QPushButton(this);
-	btn_search4->setText("검색");
+	btn_search4->setText(QString::fromLocal8Bit("검색"));
 	searchViewLayout->addWidget(btn_search4);
 
 	searchViewLayout->addStretch(1);
@@ -156,7 +156,7 @@ widgetLeftView::widgetLeftView(QWidget* parent)
 	ui.noteview->setLayout(noteViewLayout);
 
 	label = new QLabel(this);
-	label->setText("1. 메모");
+	label->setText(QString::fromLocal8Bit("1. 메모"));
 	noteViewLayout->addWidget(label);
 
 	techScroll = new QScrollArea(this);
@@ -181,11 +181,11 @@ widgetLeftView::widgetLeftView(QWidget* parent)
 
 	temp_add = new QHBoxLayout;
 	noteParent = new QPushButton(this);
-	noteParent->setText("새글");
-	memoText = new QTextEdit(this);
+	noteParent->setText(QString::fromLocal8Bit("새글"));
+	memoText = new QPlainTextEdit(this);
 	memoText->setMaximumHeight(50);
 	QPushButton* noteAdd = new QPushButton(this);
-	noteAdd->setText("등록");
+	noteAdd->setText(QString::fromLocal8Bit("등록"));
 	temp_add->addWidget(noteParent);
 	temp_add->addWidget(memoText);
 	temp_add->addWidget(noteAdd);
@@ -196,7 +196,7 @@ widgetLeftView::widgetLeftView(QWidget* parent)
 	noteViewLayout->addWidget(label);
 
 	label = new QLabel(this);
-	label->setText("2. 해시태그");
+	label->setText(QString::fromLocal8Bit("2. 해시태그"));
 	noteViewLayout->addWidget(label);
 
 	tagList = new QListWidget(this);
@@ -210,7 +210,7 @@ widgetLeftView::widgetLeftView(QWidget* parent)
 	temp_add = new QHBoxLayout;
 	tagEdit = new QLineEdit(this);
 	QPushButton* tagAdd = new QPushButton(this);
-	tagAdd->setText("등록");
+	tagAdd->setText(QString::fromLocal8Bit("등록"));
 	temp_add->addWidget(tagEdit);
 	temp_add->addWidget(tagAdd);
 	noteViewLayout->addLayout(temp_add);
@@ -220,7 +220,7 @@ widgetLeftView::widgetLeftView(QWidget* parent)
 	noteViewLayout->addWidget(label);
 
 	label = new QLabel(this);
-	label->setText("3. 동영상 목차");
+	label->setText(QString::fromLocal8Bit("3. 동영상 목차"));
 	noteViewLayout->addWidget(label);
 
 	mvList = new QListWidget(this);
@@ -237,7 +237,7 @@ widgetLeftView::widgetLeftView(QWidget* parent)
 
 	mvText = new QLineEdit(this);
 	QPushButton* mvAdd = new QPushButton(this);
-	mvAdd->setText("등록");
+	mvAdd->setText(QString::fromLocal8Bit("등록"));
 	temp_add->addWidget(mvTime);
 	temp_add->addWidget(mvText);
 	temp_add->addWidget(mvAdd);
@@ -268,7 +268,7 @@ widgetLeftView::widgetLeftView(QWidget* parent)
 	ui.userview->setLayout(userViewLayout);
 
 	label = new QLabel(this);
-	label->setText("1. 사용자");
+	label->setText(QString::fromLocal8Bit("1. 사용자"));
 	userViewLayout->addWidget(label);
 
 	userTable = new QTableWidget(this);
@@ -282,15 +282,15 @@ widgetLeftView::widgetLeftView(QWidget* parent)
 
 	temp_add = new QHBoxLayout;
 	QPushButton* userAdd = new QPushButton(this);
-	userAdd->setText("추가 / 변경");
+	userAdd->setText(QString::fromLocal8Bit("추가 / 변경"));
 	QPushButton* userDel = new QPushButton(this);
-	userDel->setText("삭제");
+	userDel->setText(QString::fromLocal8Bit("삭제"));
 	temp_add->addWidget(userAdd);
 	temp_add->addWidget(userDel);
 	userViewLayout->addLayout(temp_add);
 
 	label = new QLabel(this);
-	label->setText("2. 허용 파일 목록");
+	label->setText(QString::fromLocal8Bit("2. 허용 파일 목록"));
 	userViewLayout->addWidget(label);
 
 	fileTable = new QTableWidget(this);
@@ -303,9 +303,9 @@ widgetLeftView::widgetLeftView(QWidget* parent)
 
 	temp_add = new QHBoxLayout;
 	QPushButton* fileAdd = new QPushButton(this);
-	fileAdd->setText("추가");
+	fileAdd->setText(QString::fromLocal8Bit("추가"));
 	QPushButton* fileDel = new QPushButton(this);
-	fileDel->setText("삭제");
+	fileDel->setText(QString::fromLocal8Bit("삭제"));
 	temp_add->addWidget(fileAdd);
 	temp_add->addWidget(fileDel);
 	userViewLayout->addLayout(temp_add);
@@ -366,13 +366,12 @@ void widgetLeftView::setSearchCombo(QList<QString>& h_list, QMap<QString, int>& 
 		header_to_index[h_list[i]] = map_h_to_i[h_list[i]];
 		header_list.append(h_list[i]);
 	}
-	header_to_index["내용 검색"] = 0;
-
+	header_to_index[QString::fromLocal8Bit("내용 검색")] = 0;
+	h_list.insert(0, QString::fromLocal8Bit("내용 검색"));
 	for (int i = 0; i < search_list.size(); i++)
 	{
 		search_list[i]->m_searchTitle->clear();
 		search_list[i]->m_searchTitle->addItems(h_list);
-		search_list[i]->m_searchTitle->insertItem(0, "내용 검색");
 		search_list[i]->m_searchTitle->setSizeAdjustPolicy(QComboBox::AdjustToContents);
 	}
 }
@@ -703,7 +702,7 @@ void widgetLeftView::doSearch2()
 
 				QList< int > search_file_index;
 
-				if (sc->m_searchTitle->currentText() == "내용")
+				if (sc->m_searchTitle->currentText() == QString::fromLocal8Bit("내용"))
 				{
 					query = QString("SELECT reply_info.id, reply_info.file_id, reply_info.parent_id, reply_info.user_id, reply_info.value, reply_info.date_time, user_info.user_name FROM reply_info INNER JOIN user_info ON reply_info.user_id = user_info.user_id WHERE reply_info.value LIKE \"%%1%\"").arg(search_word);
 					m_pView->db->exec(query, data);
@@ -733,7 +732,7 @@ void widgetLeftView::doSearch2()
 						}
 					}
 				}
-				else if (sc->m_searchTitle->currentText() == "날짜")
+				else if (sc->m_searchTitle->currentText() == QString::fromLocal8Bit("날짜"))
 				{
 					QDateTime search_time = QDateTime::fromString(search_word, "yyyy-MM-dd");
 					query = QString("SELECT reply_info.id, reply_info.file_id, reply_info.parent_id, reply_info.user_id, reply_info.value, reply_info.date_time, user_info.user_name FROM reply_info INNER JOIN user_info ON reply_info.user_id = user_info.user_id WHERE reply_info.date_time LIKE \"%%1%\"").arg(search_time.toString("yyyy-MM-dd"));
@@ -978,7 +977,7 @@ void widgetLeftView::onSearchMVClicked(QListWidgetItem* item)
 	if (item != NULL)
 	{
 		QString tag_str = item->text();
-		QMessageBox::StandardButton reply = QMessageBox::question(this, QString("확인"), QString("[%1]을 삭제하시겠습니까?").arg(tag_str),
+		QMessageBox::StandardButton reply = QMessageBox::question(this, QString::fromLocal8Bit("확인"), QString::fromLocal8Bit("[%1]을 삭제하시겠습니까?").arg(tag_str),
 			QMessageBox::Yes | QMessageBox::No);
 		if (reply == QMessageBox::Yes)
 		{
@@ -1022,7 +1021,7 @@ void widgetLeftView::onFileMVDClicked(QListWidgetItem* item)
 			int seconds = (((time_str_list[0].toInt() * 60) + time_str_list[1].toInt()) * 60) + time_str_list[2].toInt();
 			if (timeToMemo.contains(seconds))
 			{
-				QMessageBox::StandardButton reply = QMessageBox::question(this, QString("확인"), QString("[%1  %2]을 삭제하시겠습니까?")
+				QMessageBox::StandardButton reply = QMessageBox::question(this, QString::fromLocal8Bit("확인"), QString::fromLocal8Bit("[%1  %2]을 삭제하시겠습니까?")
 					.arg(tag_str)
 					.arg(timeToMemo[seconds]),
 					QMessageBox::Yes | QMessageBox::No);
@@ -1053,7 +1052,7 @@ void widgetLeftView::onFileTagClicked(const QModelIndex& index)
 		int tag_id = fileTagData[tag_str];
 		if (tag_id > 0)
 		{
-			QMessageBox::StandardButton reply = QMessageBox::question(this, QString("확인"), QString("[%1]을 삭제하시겠습니까?").arg(tag_str),
+			QMessageBox::StandardButton reply = QMessageBox::question(this, QString::fromLocal8Bit("확인"), QString::fromLocal8Bit("[%1]을 삭제하시겠습니까?").arg(tag_str),
 				QMessageBox::Yes | QMessageBox::No);
 			if (reply == QMessageBox::Yes)
 			{
@@ -1076,7 +1075,7 @@ void widgetLeftView::onSearchTagClicked(const QModelIndex& index)
 	if (index.row() > -1)
 	{
 		QString tag_str = index.data().toString();
-		QMessageBox::StandardButton reply = QMessageBox::question(this, QString("확인"), QString("[%1]을 삭제하시겠습니까?").arg(tag_str),
+		QMessageBox::StandardButton reply = QMessageBox::question(this, QString::fromLocal8Bit("확인"), QString::fromLocal8Bit("[%1]을 삭제하시겠습니까?").arg(tag_str),
 			QMessageBox::Yes | QMessageBox::No);
 		if (reply == QMessageBox::Yes)
 		{
@@ -1095,7 +1094,7 @@ void widgetLeftView::doSearch4()
 {
 	if (m_pView->DBConnected() == false)
 	{
-		QMessageBox::information(this, QString("확인"), QString("데이터베이스를 먼저 생성하세요."));
+		QMessageBox::information(this, QString::fromLocal8Bit("확인"), QString::fromLocal8Bit("데이터베이스를 먼저 생성하세요."));
 		return;
 	}
 
@@ -1430,13 +1429,13 @@ void widgetLeftView::doAddMemo()
 {
 	if (m_pView->m_loginUserID == "admin")
 	{
-		QMessageBox::information(this, QString("확인"), QString("admin 계정으로는 메모를 작성할 수 없습니다."));
+		QMessageBox::information(this, QString::fromLocal8Bit("확인"), QString::fromLocal8Bit("admin 계정으로는 메모를 작성할 수 없습니다."));
 		return;
 	}
 
 	if (m_pView->DBConnected() == false)
 	{
-		QMessageBox::information(this, QString("확인"), QString("데이터베이스를 먼저 생성하세요."));
+		QMessageBox::information(this, QString::fromLocal8Bit("확인"), QString::fromLocal8Bit("데이터베이스를 먼저 생성하세요."));
 		return;
 	}
 
@@ -1502,7 +1501,7 @@ void widgetLeftView::onSearchTagAdd()
 {
 	if (m_pView->DBConnected() == false)
 	{
-		QMessageBox::information(this, QString("확인"), QString("데이터베이스를 먼저 생성하세요."));
+		QMessageBox::information(this, QString::fromLocal8Bit("확인"), QString::fromLocal8Bit("데이터베이스를 먼저 생성하세요."));
 		return;
 	}
 
@@ -1548,7 +1547,7 @@ void widgetLeftView::doAddTag()
 {
 	if (m_pView->DBConnected() == false)
 	{
-		QMessageBox::information(this, QString("확인"), QString("데이터베이스를 먼저 생성하세요."));
+		QMessageBox::information(this, QString::fromLocal8Bit("확인"), QString::fromLocal8Bit("데이터베이스를 먼저 생성하세요."));
 		return;
 	}
 
@@ -1668,7 +1667,7 @@ void widgetLeftView::doAddMV()
 {
 	if (m_pView->DBConnected() == false)
 	{
-		QMessageBox::information(this, QString("확인"), QString("데이터베이스를 먼저 생성하세요."));
+		QMessageBox::information(this, QString::fromLocal8Bit("확인"), QString::fromLocal8Bit("데이터베이스를 먼저 생성하세요."));
 		return;
 	}
 
@@ -1682,7 +1681,7 @@ void widgetLeftView::doAddMV()
 		{
 			if (timeToMemo.contains(seconds))
 			{
-				QMessageBox::question(this, QString("확인"), QString("동일한 시간에 목차가 존재합니다."));
+				QMessageBox::question(this, QString::fromLocal8Bit("확인"), QString::fromLocal8Bit("동일한 시간에 목차가 존재합니다."));
 				return;
 			}
 			else
@@ -1721,7 +1720,7 @@ void widgetLeftView::OnMemoClicked(widgetMemo* pmemo)
 			//memo->setStyleSheet("QWidget#mymemo{background:white; border: 1px solid red;}");
 			pmemo->setSelect(true);
 			parent_memo_id = pmemo->memo_id;
-			noteParent->setText("답글 > " + pmemo->user_name);
+			noteParent->setText(QString::fromLocal8Bit("답글 > ") + pmemo->user_name);
 		}
 	}
 }
@@ -1730,7 +1729,7 @@ void widgetLeftView::doNewMemo()
 {
 	clearMemoSelection();
 	parent_memo_id = 0;
-	noteParent->setText("새글");
+	noteParent->setText(QString::fromLocal8Bit("새글"));
 }
 
 void widgetLeftView::setMVPos(int secs)
@@ -1746,7 +1745,7 @@ void widgetLeftView::setUserList()
 	{
 		userTable->setRowCount(0);
 		userTable->setColumnCount(3);
-		userTable->setHorizontalHeaderLabels(QStringList() << "ID" << "이름" << "관리자");
+		userTable->setHorizontalHeaderLabels(QStringList() << "ID" << QString::fromLocal8Bit("이름") << QString::fromLocal8Bit("관리자"));
 		QVariantList data;
 		//	tag가 존재하는지 확인
 		QString query = QString("SELECT user_id, user_name, read_only FROM user_info ORDER BY user_id");
@@ -1765,7 +1764,7 @@ void widgetLeftView::setUserList()
 			userTable->setItem(row_count - 1, 1, new QTableWidgetItem(tag_str));
 			if (read_only == 1)
 			{
-				userTable->setItem(row_count - 1, 2, new QTableWidgetItem("관리자"));
+				userTable->setItem(row_count - 1, 2, new QTableWidgetItem(QString::fromLocal8Bit("관리자")));
 			}
 			else
 			{
@@ -1794,7 +1793,7 @@ void widgetLeftView::setFileList(QString user_id)
 		userTable_user_id = user_id;
 		fileTable->setRowCount(0);
 		fileTable->setColumnCount(2);
-		fileTable->setHorizontalHeaderLabels(QStringList() << "파일명" << "경로");
+		fileTable->setHorizontalHeaderLabels(QStringList() << QString::fromLocal8Bit("파일명") << QString::fromLocal8Bit("경로"));
 		QVariantList data;
 		//	tag가 존재하는지 확인
 		QString query = QString("SELECT file_info.file_name, file_info.id FROM file_info INNER JOIN user_file_info on file_info.id = user_file_info.file_id WHERE user_file_info.user_id = \"%1\"").arg(user_id);
@@ -1826,7 +1825,7 @@ void widgetLeftView::doDelFile()
 		if (selection.count() > 0)
 		{
 			QMessageBox::StandardButton reply;
-			reply = QMessageBox::question(this, QString("확인"), QString("[%1]개 파일을 삭제하시겠습니까?").arg(selection.count()),
+			reply = QMessageBox::question(this, QString::fromLocal8Bit("확인"), QString::fromLocal8Bit("[%1]개 파일을 삭제하시겠습니까?").arg(selection.count()),
 				QMessageBox::Yes | QMessageBox::No);
 			if (reply == QMessageBox::Yes)
 			{
@@ -1849,7 +1848,7 @@ void widgetLeftView::doAddUser()
 {
 	if(m_pView->DBConnected() == false)
 	{
-		QMessageBox::information(this, QString("확인"), QString("데이터베이스를 먼저 생성하세요."));
+		QMessageBox::information(this, QString::fromLocal8Bit("확인"), QString::fromLocal8Bit("데이터베이스를 먼저 생성하세요."));
 		return;
 	}
 
@@ -1878,7 +1877,7 @@ void widgetLeftView::doAddUser()
 		if (user_exist)
 		{
 			QMessageBox::StandardButton reply;
-			reply = QMessageBox::question(this, QString("확인"), QString("[%1] 사용자가 존재합니다. 암호와 이름을 변경하시겠습니까?").arg(user_id),
+			reply = QMessageBox::question(this, QString::fromLocal8Bit("확인"), QString::fromLocal8Bit("[%1] 사용자가 존재합니다. 암호와 이름을 변경하시겠습니까?").arg(user_id),
 				QMessageBox::Yes | QMessageBox::No);
 			if (reply == QMessageBox::Yes)
 			{
@@ -1910,7 +1909,7 @@ void widgetLeftView::doDelUser()
 {
 	if (m_pView->DBConnected() == false)
 	{
-		QMessageBox::information(this, QString("확인"), QString("데이터베이스를 먼저 생성하세요."));
+		QMessageBox::information(this, QString::fromLocal8Bit("확인"), QString::fromLocal8Bit("데이터베이스를 먼저 생성하세요."));
 		return;
 	}
 
@@ -1921,7 +1920,7 @@ void widgetLeftView::doDelUser()
 		QString user_id = userTable->item(index.row(), 0)->text();
 		QString user_name = userTable->item(index.row(), 1)->text();
 		QMessageBox::StandardButton reply;
-		reply = QMessageBox::question(this, QString("확인"), QString("[%1] [%2] 사용자를 삭제하시겠습니까?").arg(user_id).arg(user_name),
+		reply = QMessageBox::question(this, QString::fromLocal8Bit("확인"), QString::fromLocal8Bit("[%1] [%2] 사용자를 삭제하시겠습니까?").arg(user_id).arg(user_name),
 			QMessageBox::Yes | QMessageBox::No);
 		if (reply == QMessageBox::Yes)
 		{
