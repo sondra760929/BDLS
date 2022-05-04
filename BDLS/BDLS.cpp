@@ -144,7 +144,7 @@ BDLS::BDLS(QWidget* parent)
 	QString auto_save = m.value("AUTO_SAVE").toString();
 	m_bAutoSave = (auto_save == "T") ? true : false;
 
-	//readSettings();
+	readSettings();
 }
 
 void BDLS::DoAutoSave()
@@ -632,12 +632,12 @@ void BDLS::InitFromDB()
 								originModel->setHeaderData(i + 3, Qt::Horizontal, title_list[i]);
 							}
 							originModel->insertColumn(col_size - 2);
-							originModel->setHeaderData(col_size - 2, Qt::Horizontal, "검색 결과");
+							originModel->setHeaderData(col_size - 2, Qt::Horizontal, QString::fromLocal8Bit("검색 결과"));
 
 							//if (m_bIsAdmin)
 							{
 								originModel->insertColumn(col_size - 1);
-								originModel->setHeaderData(col_size - 1, Qt::Horizontal, "파일 경로");
+								originModel->setHeaderData(col_size - 1, Qt::Horizontal, QString::fromLocal8Bit("파일 경로"));
 							}
 
 							if (m_UserLevel == ADMIN)
@@ -1160,7 +1160,7 @@ void BDLS::onTableDoubleClicked(const QModelIndex& index)
 
 		if (QFile::exists(file_path))
 		{
-			::ShellExecuteA(0, "open", file_path.toStdString().c_str(), nullptr, nullptr, SW_SHOW);
+			QDesktopServices::openUrl(QUrl::fromLocalFile(file_path));
 		}
 	}
 }
@@ -1482,7 +1482,14 @@ bool BDLS::AddFolder(QString folder_path)
 {
 	bool add_list = false;
 	QDir directory(folder_path);
-	QStringList pdfs = directory.entryList(QStringList() << "*.pdf" << "*.PDF", QDir::Files);
+	QStringList entry_list;
+	entry_list << "*.pdf" << "*.PDF";
+	for (int i = 0; i < media_file_format.length(); i++)
+	{
+		entry_list << ("*." + media_file_format[i]);
+		entry_list << ("*." + media_file_format[i].toUpper());
+	}
+	QStringList pdfs = directory.entryList(entry_list, QDir::Files);
 	int new_index = originModel->rowCount();
 	int col_size = originModel->columnCount();
 	foreach(QString filename, pdfs)

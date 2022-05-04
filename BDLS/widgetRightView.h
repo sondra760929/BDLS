@@ -12,6 +12,9 @@
 #include <QVideoWidget>
 #include <QAudioOutput>
 #include <QStatusBar>
+#include <QSlider>
+#include <QLabel>
+#include <QPushButton>
 
 class BDLS;
 class widgetRightView : public QWidget
@@ -28,6 +31,9 @@ public:
     void ViewPDF(QString file_path, QString file_info = "");
     void ViewMovie(QString file_path, QString file_info = "");
     void JumpTo(int secs);
+
+protected:
+    void resizeEvent(QResizeEvent* event);
 
 private:
 	Ui::widgetRightView ui;
@@ -71,19 +77,21 @@ private:
     void handleCursor(QMediaPlayer::MediaStatus status);
     void updateDurationInfo(qint64 currentInfo);
 
-    //QMediaPlayer* m_player = nullptr;
-    //QAudioOutput* m_audioOutput = nullptr;
-    //QVideoWidget* m_videoWidget = nullptr;
-    //QSlider* m_slider = nullptr;
-    //QLabel* m_labelDuration = nullptr;
-    //QPushButton* m_fullScreenButton = nullptr;
-    ////QComboBox* m_audioOutputCombo = nullptr;
-    //QLabel* m_statusLabel = nullptr;
-    //QStatusBar* m_statusBar = nullptr;
+    QMediaPlayer* m_player = nullptr;
+    QAudioOutput* m_audioOutput = nullptr;
+    QVideoWidget* m_videoWidget = nullptr;
+    QSlider* m_slider = nullptr;
+    QLabel* m_labelDuration = nullptr;
+    QPushButton* m_fullScreenButton = nullptr;
+    //QComboBox* m_audioOutputCombo = nullptr;
+    QLabel* m_statusLabel = nullptr;
+    QStatusBar* m_statusBar = nullptr;
 
-    //QString m_trackInfo;
-    //QString m_statusInfo;
-    //qint64 m_duration;
+    QString m_trackInfo;
+    QString m_statusInfo;
+    qint64 m_duration;
+
+    Qt::HANDLE m_pdfViewer;
 
     //QWidget* m_metaDataFields[QMediaMetaData::NumMetaData] = {};
     //QLabel* m_metaDataLabels[QMediaMetaData::NumMetaData] = {};

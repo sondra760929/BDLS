@@ -132,7 +132,7 @@ void widgetBottomView::onDoubleClicked(const QModelIndex& index)
 
 			if (QFile::exists(file_path))
 			{
-				::ShellExecuteA(0, "open", file_path.toStdString().c_str(), nullptr, nullptr, SW_SHOW);
+				QDesktopServices::openUrl(QUrl::fromLocalFile(file_path));
 			}
 		}
 	}

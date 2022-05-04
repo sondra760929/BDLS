@@ -47,73 +47,73 @@ widgetRightView::widgetRightView(QWidget *parent)
 
  //   connect(ui.pdfView, &QPdfView::zoomFactorChanged, m_zoomSelector, &ZoomSelector::setZoomFactor);
 
-    //m_player = new QMediaPlayer(this);
-    //m_audioOutput = new QAudioOutput(this);
+    m_player = new QMediaPlayer(this);
+    m_audioOutput = new QAudioOutput();
     //m_player->setAudioOutput(m_audioOutput);
-    ////! [create-objs]
-    //connect(m_player, &QMediaPlayer::durationChanged, this, &widgetRightView::durationChanged);
-    //connect(m_player, &QMediaPlayer::positionChanged, this, &widgetRightView::positionChanged);
-    //connect(m_player, QOverload<>::of(&QMediaPlayer::metaDataChanged), this, &widgetRightView::metaDataChanged);
-    //connect(m_player, &QMediaPlayer::mediaStatusChanged, this, &widgetRightView::statusChanged);
-    //connect(m_player, &QMediaPlayer::bufferProgressChanged, this, &widgetRightView::bufferingProgress);
-    //connect(m_player, &QMediaPlayer::hasVideoChanged, this, &widgetRightView::videoAvailableChanged);
-    //connect(m_player, &QMediaPlayer::errorChanged, this, &widgetRightView::displayErrorMessage);
-    ////connect(m_player, &QMediaPlayer::tracksChanged, this, &widgetRightView::tracksChanged);
+    //! [create-objs]
+    connect(m_player, &QMediaPlayer::durationChanged, this, &widgetRightView::durationChanged);
+    connect(m_player, &QMediaPlayer::positionChanged, this, &widgetRightView::positionChanged);
+    connect(m_player, QOverload<>::of(&QMediaPlayer::metaDataChanged), this, &widgetRightView::metaDataChanged);
+    connect(m_player, &QMediaPlayer::mediaStatusChanged, this, &widgetRightView::statusChanged);
+    connect(m_player, &QMediaPlayer::bufferStatusChanged, this, &widgetRightView::bufferingProgress);
+    connect(m_player, &QMediaPlayer::videoAvailableChanged, this, &widgetRightView::videoAvailableChanged);
+    //connect(m_player, &QMediaPlayer::error, this, &widgetRightView::displayErrorMessage);
+    //connect(m_player, &QMediaPlayer::tracksChanged, this, &widgetRightView::tracksChanged);
 
-    ////! [2]
-    //m_videoWidget = new VideoWidget(this);
-    //m_videoWidget->resize(128, 72);
-    //m_player->setVideoOutput(m_videoWidget);
+    //! [2]
+    m_videoWidget = new VideoWidget(this);
+    m_videoWidget->resize(128, 72);
+    m_player->setVideoOutput(m_videoWidget);
 
-    //// player layout
-    //QBoxLayout* layout = new QVBoxLayout(ui.page_2);
+    // player layout
+    QBoxLayout* layout = new QVBoxLayout(ui.page_2);
 
-    //// display
-    //QBoxLayout* displayLayout = new QHBoxLayout;
-    //displayLayout->addWidget(m_videoWidget, 2);
-    //layout->addLayout(displayLayout);
+    // display
+    QBoxLayout* displayLayout = new QHBoxLayout;
+    displayLayout->addWidget(m_videoWidget, 2);
+    layout->addLayout(displayLayout);
 
-    //// duration slider and label
-    //QHBoxLayout* hLayout = new QHBoxLayout;
+    // duration slider and label
+    QHBoxLayout* hLayout = new QHBoxLayout;
 
-    //m_slider = new QSlider(Qt::Horizontal, this);
-    //m_slider->setRange(0, m_player->duration());
-    //connect(m_slider, &QSlider::sliderMoved, this, &widgetRightView::seek);
-    //hLayout->addWidget(m_slider);
+    m_slider = new QSlider(Qt::Horizontal, this);
+    m_slider->setRange(0, m_player->duration());
+    connect(m_slider, &QSlider::sliderMoved, this, &widgetRightView::seek);
+    hLayout->addWidget(m_slider);
 
-    //m_labelDuration = new QLabel();
-    //m_labelDuration->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-    //hLayout->addWidget(m_labelDuration);
-    //layout->addLayout(hLayout);
+    m_labelDuration = new QLabel();
+    m_labelDuration->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    hLayout->addWidget(m_labelDuration);
+    layout->addLayout(hLayout);
 
-    //// controls
-    //QBoxLayout* controlLayout = new QHBoxLayout;
-    //controlLayout->setContentsMargins(0, 0, 0, 0);
+    // controls
+    QBoxLayout* controlLayout = new QHBoxLayout;
+    controlLayout->setContentsMargins(0, 0, 0, 0);
 
-    //PlayerControls* controls = new PlayerControls();
-    //controls->setState(m_player->playbackState());
-    //controls->setVolume(m_audioOutput->volume());
+    PlayerControls* controls = new PlayerControls();
+    controls->setState(m_player->state());
+    controls->setVolume(m_audioOutput->volume());
     //controls->setMuted(controls->isMuted());
 
-    //connect(controls, &PlayerControls::play, m_player, &QMediaPlayer::play);
-    //connect(controls, &PlayerControls::pause, m_player, &QMediaPlayer::pause);
-    //connect(controls, &PlayerControls::stop, m_player, &QMediaPlayer::stop);
-    ////connect(controls, &PlayerControls::previous, this, &widgetRightView::previousClicked);
-    //connect(controls, &PlayerControls::changeVolume, m_audioOutput, &QAudioOutput::setVolume);
+    connect(controls, &PlayerControls::play, m_player, &QMediaPlayer::play);
+    connect(controls, &PlayerControls::pause, m_player, &QMediaPlayer::pause);
+    connect(controls, &PlayerControls::stop, m_player, &QMediaPlayer::stop);
+    //connect(controls, &PlayerControls::previous, this, &widgetRightView::previousClicked);
+    connect(controls, &PlayerControls::changeVolume, m_player, &QMediaPlayer::setVolume);
     //connect(controls, &PlayerControls::changeMuting, m_audioOutput, &QAudioOutput::setMuted);
-    //connect(controls, &PlayerControls::changeRate, m_player, &QMediaPlayer::setPlaybackRate);
-    //connect(controls, &PlayerControls::stop, m_videoWidget, QOverload<>::of(&QVideoWidget::update));
+    connect(controls, &PlayerControls::changeRate, m_player, &QMediaPlayer::setPlaybackRate);
+    connect(controls, &PlayerControls::stop, m_videoWidget, QOverload<>::of(&QVideoWidget::update));
 
-    //connect(m_player, &QMediaPlayer::playbackStateChanged, controls, &PlayerControls::setState);
+    connect(m_player, &QMediaPlayer::stateChanged, controls, &PlayerControls::setState);
     //connect(m_audioOutput, &QAudioOutput::volumeChanged, controls, &PlayerControls::setVolume);
     //connect(m_audioOutput, &QAudioOutput::mutedChanged, controls, &PlayerControls::setMuted);
 
-    //controlLayout->addWidget(controls);
-    //controlLayout->addStretch(1);
+    controlLayout->addWidget(controls);
+    controlLayout->addStretch(1);
 
-    //m_fullScreenButton = new QPushButton(tr("FullScreen"), this);
-    //m_fullScreenButton->setCheckable(true);
-    //controlLayout->addWidget(m_fullScreenButton);
+    m_fullScreenButton = new QPushButton(tr("FullScreen"), this);
+    m_fullScreenButton->setCheckable(true);
+    controlLayout->addWidget(m_fullScreenButton);
 
 //#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
 //    m_audioOutputCombo = new QComboBox(this);
@@ -124,8 +124,8 @@ widgetRightView::widgetRightView(QWidget *parent)
 //        &widgetRightView::audioOutputChanged);
 //    controlLayout->addWidget(m_audioOutputCombo);
 //#endif
-
-    //layout->addLayout(controlLayout);
+//
+    layout->addLayout(controlLayout);
 
     //QLabel* metaDataLabel = new QLabel(tr("Metadata for file:"));
     //layout->addWidget(metaDataLabel);
@@ -165,9 +165,53 @@ widgetRightView::~widgetRightView()
 
 void widgetRightView::ViewPDF(QString file_path, QString file_info)
 {
-    //m_player->stop();
+    m_player->stop();
 
     ui.stackedWidget->setCurrentIndex(0);
+    int page_no = 0;
+    if (file_info != "")
+    {
+        page_no = file_info.toInt();
+    }
+
+    HWND m_hWnd = (HWND)(ui.stackedWidget->currentWidget()->winId());
+
+    //QString target_path = QString("%stemp.pdf").arg(m_strTempFolder);
+    //if (CopyFile(szFile, target_path, FALSE))
+    //{
+        QString cmdLine;
+        //if (thumbnail)
+        //    cmdLine = QString("-plugin -reuse-instance %1 \"%2\" -page %3 -view \"continuous facing\" -zoom \"fit content\"").arg((int)m_hWnd).arg(target_path).arg(page_no);
+        //else
+            cmdLine = QString("-plugin -reuse-instance %1 \"%2\" -page %3 -zoom \"fit page\"").arg((int)m_hWnd).arg(file_path).arg(page_no);
+        //cmdLine.Format(_T("\"%s\""), target_path);
+        SHELLEXECUTEINFO seinfo = { 0 };
+        QString verb("open");
+        QString file("SumatraPDF.exe");
+        seinfo.cbSize = sizeof(SHELLEXECUTEINFO);
+        seinfo.fMask = SEE_MASK_NOCLOSEPROCESS;
+        seinfo.lpVerb = reinterpret_cast<const WCHAR*>(verb.utf16());
+        seinfo.lpDirectory = reinterpret_cast<const WCHAR*>(QCoreApplication::applicationDirPath().utf16());
+        seinfo.lpFile = reinterpret_cast<const WCHAR*>(file.utf16());
+        seinfo.lpParameters = reinterpret_cast<const WCHAR*>(cmdLine.utf16());
+        seinfo.nShow = SW_SHOWNORMAL;
+        ShellExecuteEx(&seinfo);
+        HANDLE prev_process = m_pdfViewer;
+        m_pdfViewer = seinfo.hProcess;
+        if (prev_process != m_pdfViewer && prev_process != 0)
+        {
+            TerminateProcess(prev_process, 0);
+        }
+
+        //HINSTANCE prev_inst = m_pdfViewer;
+        //m_pdfViewer = ShellExecute(m_hWnd, _T("open"), m_strAppPath + _T("\\SumatraPDF.exe"), cmdLine, nullptr, SW_SHOWNOACTIVATE);
+        //if (prev_inst != m_pdfViewer && prev_inst != 0)
+        //{
+
+        //}
+        Sleep(500);
+    //}
+
     //m_document->load(file_path);
     //if (file_info != "")
     //{
@@ -182,8 +226,8 @@ void widgetRightView::ViewPDF(QString file_path, QString file_info)
 void widgetRightView::ViewMovie(QString file_path, QString file_info)
 {
     ui.stackedWidget->setCurrentIndex(1);
-    //m_player->setSource(QUrl::fromLocalFile(file_path));
-    //m_player->play();
+    m_player->setMedia(QUrl::fromLocalFile(file_path));
+    m_player->play();
 }
 
 //void widgetRightView::bookmarkSelected(const QModelIndex& index)
@@ -238,17 +282,17 @@ void widgetRightView::on_actionAbout_Qt_triggered()
 
 void widgetRightView::durationChanged(qint64 duration)
 {
-    //m_duration = duration / 1000;
-    //m_slider->setMaximum(duration);
+    m_duration = duration / 1000;
+    m_slider->setMaximum(duration);
 }
 
 void widgetRightView::positionChanged(qint64 progress)
 {
-    //if (!m_slider->isSliderDown())
-    //    m_slider->setValue(progress);
+    if (!m_slider->isSliderDown())
+        m_slider->setValue(progress);
 
-    //updateDurationInfo(progress / 1000);
-    //m_pView->_widgetLeftView->setMVPos(progress / 1000);
+    updateDurationInfo(progress / 1000);
+    m_pView->_widgetLeftView->setMVPos(progress / 1000);
 }
 
 void widgetRightView::metaDataChanged()
@@ -301,36 +345,36 @@ void widgetRightView::JumpTo(int secs)
 
 void widgetRightView::seek(int mseconds)
 {
-    //m_player->setPosition(mseconds);
+    m_player->setPosition(mseconds);
 }
 
 void widgetRightView::statusChanged(QMediaPlayer::MediaStatus status)
 {
-    //handleCursor(status);
+    handleCursor(status);
 
-    //// handle status message
-    //switch (status) {
-    //case QMediaPlayer::NoMedia:
-    //case QMediaPlayer::LoadedMedia:
-    //    setStatusInfo(QString());
-    //    break;
-    //case QMediaPlayer::LoadingMedia:
-    //    setStatusInfo(tr("Loading..."));
-    //    break;
-    //case QMediaPlayer::BufferingMedia:
-    //case QMediaPlayer::BufferedMedia:
-    //    setStatusInfo(tr("Buffering %1%").arg(qRound(m_player->bufferProgress() * 100.)));
-    //    break;
-    //case QMediaPlayer::StalledMedia:
-    //    setStatusInfo(tr("Stalled %1%").arg(qRound(m_player->bufferProgress() * 100.)));
-    //    break;
-    //case QMediaPlayer::EndOfMedia:
-    //    QApplication::alert(this);
-    //    break;
-    //case QMediaPlayer::InvalidMedia:
-    //    displayErrorMessage();
-    //    break;
-    //}
+    // handle status message
+    switch (status) {
+    case QMediaPlayer::NoMedia:
+    case QMediaPlayer::LoadedMedia:
+        setStatusInfo(QString());
+        break;
+    case QMediaPlayer::LoadingMedia:
+        setStatusInfo(tr("Loading..."));
+        break;
+    case QMediaPlayer::BufferingMedia:
+    case QMediaPlayer::BufferedMedia:
+        setStatusInfo(tr("Buffering %1%").arg(m_player->bufferStatus()));
+        break;
+    case QMediaPlayer::StalledMedia:
+        setStatusInfo(tr("Stalled %1%").arg(m_player->bufferStatus()));
+        break;
+    case QMediaPlayer::EndOfMedia:
+        QApplication::alert(this);
+        break;
+    case QMediaPlayer::InvalidMedia:
+        displayErrorMessage();
+        break;
+    }
 }
 
 void widgetRightView::handleCursor(QMediaPlayer::MediaStatus status)
@@ -347,81 +391,81 @@ void widgetRightView::handleCursor(QMediaPlayer::MediaStatus status)
 
 void widgetRightView::bufferingProgress(float progress)
 {
-    //if (m_player->mediaStatus() == QMediaPlayer::StalledMedia)
-    //    setStatusInfo(tr("Stalled %1%").arg(qRound(progress * 100.)));
-    //else
-    //    setStatusInfo(tr("Buffering %1%").arg(qRound(progress * 100.)));
+    if (m_player->mediaStatus() == QMediaPlayer::StalledMedia)
+        setStatusInfo(tr("Stalled %1%").arg(qRound(progress * 100.)));
+    else
+        setStatusInfo(tr("Buffering %1%").arg(qRound(progress * 100.)));
 }
 
 void widgetRightView::videoAvailableChanged(bool available)
 {
-    //if (!available) {
-    //    disconnect(m_fullScreenButton, &QPushButton::clicked, m_videoWidget, &QVideoWidget::setFullScreen);
-    //    disconnect(m_videoWidget, &QVideoWidget::fullScreenChanged, m_fullScreenButton, &QPushButton::setChecked);
-    //    m_videoWidget->setFullScreen(false);
-    //}
-    //else {
-    //    connect(m_fullScreenButton, &QPushButton::clicked, m_videoWidget, &QVideoWidget::setFullScreen);
-    //    connect(m_videoWidget, &QVideoWidget::fullScreenChanged, m_fullScreenButton, &QPushButton::setChecked);
+    if (!available) {
+        disconnect(m_fullScreenButton, &QPushButton::clicked, m_videoWidget, &QVideoWidget::setFullScreen);
+        disconnect(m_videoWidget, &QVideoWidget::fullScreenChanged, m_fullScreenButton, &QPushButton::setChecked);
+        m_videoWidget->setFullScreen(false);
+    }
+    else {
+        connect(m_fullScreenButton, &QPushButton::clicked, m_videoWidget, &QVideoWidget::setFullScreen);
+        connect(m_videoWidget, &QVideoWidget::fullScreenChanged, m_fullScreenButton, &QPushButton::setChecked);
 
-    //    if (m_fullScreenButton->isChecked())
-    //        m_videoWidget->setFullScreen(true);
-    //}
+        if (m_fullScreenButton->isChecked())
+            m_videoWidget->setFullScreen(true);
+    }
 }
 
 void widgetRightView::setTrackInfo(const QString& info)
 {
-    //m_trackInfo = info;
+    m_trackInfo = info;
 
-    //if (m_statusBar) {
-    //    m_statusBar->showMessage(m_trackInfo);
-    //    m_statusLabel->setText(m_statusInfo);
-    //}
-    //else {
-    //    if (!m_statusInfo.isEmpty())
-    //        setWindowTitle(QString("%1 | %2").arg(m_trackInfo).arg(m_statusInfo));
-    //    else
-    //        setWindowTitle(m_trackInfo);
-    //}
+    if (m_statusBar) {
+        m_statusBar->showMessage(m_trackInfo);
+        m_statusLabel->setText(m_statusInfo);
+    }
+    else {
+        if (!m_statusInfo.isEmpty())
+            setWindowTitle(QString("%1 | %2").arg(m_trackInfo).arg(m_statusInfo));
+        else
+            setWindowTitle(m_trackInfo);
+    }
 }
 
 void widgetRightView::setStatusInfo(const QString& info)
 {
-    //m_statusInfo = info;
+    m_statusInfo = info;
 
-    //if (m_statusBar) {
-    //    m_statusBar->showMessage(m_trackInfo);
-    //    m_statusLabel->setText(m_statusInfo);
-    //}
-    //else {
-    //    if (!m_statusInfo.isEmpty())
-    //        setWindowTitle(QString("%1 | %2").arg(m_trackInfo).arg(m_statusInfo));
-    //    else
-    //        setWindowTitle(m_trackInfo);
-    //}
+    if (m_statusBar) {
+        m_statusBar->showMessage(m_trackInfo);
+        m_statusLabel->setText(m_statusInfo);
+    }
+    else {
+        if (!m_statusInfo.isEmpty())
+            setWindowTitle(QString("%1 | %2").arg(m_trackInfo).arg(m_statusInfo));
+        else
+            setWindowTitle(m_trackInfo);
+    }
 }
 
 void widgetRightView::displayErrorMessage()
 {
-    //if (m_player->error() == QMediaPlayer::NoError)
-    //    return;
-    //setStatusInfo(m_player->errorString());
+    if (m_player->error() == QMediaPlayer::NoError)
+        return;
+    setStatusInfo(m_player->errorString());
 }
 
 void widgetRightView::updateDurationInfo(qint64 currentInfo)
 {
-    //QString tStr;
-    //if (currentInfo || m_duration) {
-    //    QTime currentTime((currentInfo / 3600) % 60, (currentInfo / 60) % 60,
-    //        currentInfo % 60, (currentInfo * 1000) % 1000);
-    //    QTime totalTime((m_duration / 3600) % 60, (m_duration / 60) % 60,
-    //        m_duration % 60, (m_duration * 1000) % 1000);
-    //    QString format = "mm:ss";
-    //    if (m_duration > 3600)
-    //        format = "hh:mm:ss";
-    //    tStr = currentTime.toString(format) + " / " + totalTime.toString(format);
-    //}
-    //m_labelDuration->setText(tStr);
+    QString tStr;
+    if (currentInfo || m_duration) {
+        QTime currentTime((currentInfo / 3600) % 60, (currentInfo / 60) % 60,
+            currentInfo % 60, (currentInfo * 1000) % 1000);
+        QTime totalTime((m_duration / 3600) % 60, (m_duration / 60) % 60,
+            m_duration % 60, (m_duration * 1000) % 1000);
+        QString format = "mm:ss";
+        if (m_duration > 3600)
+            format = "hh:mm:ss";
+        tStr = currentTime.toString(format) + " / " + totalTime.toString(format);
+    }
+    m_labelDuration->setText(tStr);
 }
 
 //void widgetRightView::audioOutputChanged(int index)
@@ -429,3 +473,15 @@ void widgetRightView::updateDurationInfo(qint64 currentInfo)
 //    auto device = m_audioOutputCombo->itemData(index).value<QAudioDevice>();
 //    m_player->audioOutput()->setDevice(device);
 //}
+
+void widgetRightView::resizeEvent(QResizeEvent* event)
+{
+    HWND m_hWnd = (HWND)(ui.stackedWidget->currentWidget()->winId());
+
+    HWND hChild = FindWindowEx(m_hWnd, nullptr, nullptr, nullptr);
+    if (hChild) {
+        MoveWindow(hChild, 0, 0, width(), height(), TRUE);
+    }
+
+    QWidget::resizeEvent(event);
+}

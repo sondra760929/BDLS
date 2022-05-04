@@ -5,7 +5,7 @@
 #include "widgetMemo.h"
 #include "widgetAddUser.h"
 
-QStringList memo_combo_header = { QString::fromLocal8Bit("내용"), QString::fromLocal8Bit("날짜") };
+QStringList memo_combo_header = { QString::fromLocal8Bit("내용"), QString::fromLocal8Bit("작성자"), QString::fromLocal8Bit("날짜") };
 widgetLeftView::widgetLeftView(QWidget* parent)
 	: QWidget(parent)
 {
@@ -367,11 +367,11 @@ void widgetLeftView::setSearchCombo(QList<QString>& h_list, QMap<QString, int>& 
 		header_list.append(h_list[i]);
 	}
 	header_to_index[QString::fromLocal8Bit("내용 검색")] = 0;
-	h_list.insert(0, QString::fromLocal8Bit("내용 검색"));
+	header_list.insert(0, QString::fromLocal8Bit("내용 검색"));
 	for (int i = 0; i < search_list.size(); i++)
 	{
 		search_list[i]->m_searchTitle->clear();
-		search_list[i]->m_searchTitle->addItems(h_list);
+		search_list[i]->m_searchTitle->addItems(header_list);
 		search_list[i]->m_searchTitle->setSizeAdjustPolicy(QComboBox::AdjustToContents);
 	}
 }
@@ -722,12 +722,42 @@ void widgetLeftView::doSearch2()
 							int index = memo_str.indexOf(search_word);
 							while (index > -1)
 							{
-								QString info_str = QString("[%1] : %2<font color=\"red\">%3</font>%4").arg("내용").arg(memo_str.left(index)).arg(search_word).arg(memo_str.right(memo_str.length() - index - search_word.length()));
+								QString info_str = QString::fromLocal8Bit("[%1] : %2<font color=\"red\">%3</font>%4").arg(QString::fromLocal8Bit("내용")).arg(memo_str.left(index)).arg(search_word).arg(memo_str.right(memo_str.length() - index - search_word.length()));
 								total_file_find[file_id].append(info_str);
 								QString info_info_str = QString("%1/%2/%3/%4").arg(file_id).arg(memo_id).arg(index).arg(search_word.length());
 								total_file_find_info[file_id].append(info_info_str);
 
 								index = memo_str.indexOf(search_word, index + search_word.length());
+							}
+						}
+					}
+				}
+				else if (sc->m_searchTitle->currentText() == QString::fromLocal8Bit("작성자"))
+				{
+					query = QString("SELECT reply_info.id, reply_info.file_id, reply_info.parent_id, reply_info.user_id, reply_info.value, reply_info.date_time, user_info.user_name FROM reply_info INNER JOIN user_info ON reply_info.user_id = user_info.user_id WHERE user_info.user_name LIKE \"%%1%\"").arg(search_word);
+					m_pView->db->exec(query, data);
+					for (const auto& item : data)
+					{
+						auto map = item.toMap();
+						int memo_id = map["id"].toInt();
+						int file_id = map["file_id"].toInt();
+						int parent_id = map["parent_id"].toInt();
+						QString user_id = map["user_id"].toString();
+						QString user_name = map["user_name"].toString();
+						QString memo_str = map["value"].toString();
+						QString date_time = map["date_time"].toString();
+						search_file_index.append(file_id);
+						if (prev_condition_name != "NOT")
+						{
+							int index = user_name.indexOf(search_word);
+							while (index > -1)
+							{
+								QString info_str = QString::fromLocal8Bit("[%1] : %2<font color=\"red\">%3</font>%4").arg(QString::fromLocal8Bit("작성자")).arg(user_name.left(index)).arg(search_word).arg(user_name.right(user_name.length() - index - search_word.length()));
+								total_file_find[file_id].append(info_str);
+								QString info_info_str = QString("%1/%2/%3/%4").arg(file_id).arg(memo_id).arg(index).arg(search_word.length());
+								total_file_find_info[file_id].append(info_info_str);
+
+								index = user_name.indexOf(search_word, index + search_word.length());
 							}
 						}
 					}
@@ -750,8 +780,8 @@ void widgetLeftView::doSearch2()
 						search_file_index.append(file_id);
 						if (prev_condition_name != "NOT")
 						{
-							QString info_str = QString("[%1 : <font color=\"red\">%2</font>] : %3")
-								.arg("날짜")
+							QString info_str = QString::fromLocal8Bit("[%1 : <font color=\"red\">%2</font>] : %3")
+								.arg(QString::fromLocal8Bit("날짜"))
 								.arg(search_time.toString("yyyy-MM-dd"))
 								.arg(memo_str);
 							total_file_find[file_id].append(info_str);
@@ -1955,5 +1985,5 @@ void widgetLeftView::clearAll()
 void widgetLeftView::on_treeView_doubleClicked(const QModelIndex& index)
 {
 	//QMessageBox::information(this, "info", model.filePath(index));
-	::ShellExecuteA(0, "open", model.filePath(index).toStdString().c_str(), nullptr, nullptr, SW_SHOW);
+	QDesktopServices::openUrl(QUrl::fromLocalFile(model.filePath(index)));
 }
