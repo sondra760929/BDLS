@@ -6,7 +6,7 @@
 //#include <QAudioDevice>
 //#include <QMediaDevices>
 #include "BDLS.h"
-
+#include "QPdfWidget"
 //const qreal zoomMultiplier = qSqrt(2.0);
 
 widgetRightView::widgetRightView(QWidget *parent)
@@ -15,6 +15,11 @@ widgetRightView::widgetRightView(QWidget *parent)
 	//, m_pageSelector(new PageSelector(this))
 {
 	ui.setupUi(this);
+
+    QBoxLayout* layout1 = new QVBoxLayout(ui.page);
+    layout1->setContentsMargins(0, 0, 0, 0);
+    m_pPdfWidget = new QPdfWidget();
+    layout1->addWidget(m_pPdfWidget);
 
 	//m_document = new QPdfDocument(this);
 
@@ -173,44 +178,50 @@ void widgetRightView::ViewPDF(QString file_path, QString file_info)
     {
         page_no = file_info.toInt();
     }
+    m_pPdfWidget->loadFile(file_path);
+    m_pPdfWidget->setPage(page_no);
 
-    HWND m_hWnd = (HWND)(ui.stackedWidget->currentWidget()->winId());
 
-    //QString target_path = QString("%stemp.pdf").arg(m_strTempFolder);
-    //if (CopyFile(szFile, target_path, FALSE))
-    //{
-        QString cmdLine;
-        //if (thumbnail)
-        //    cmdLine = QString("-plugin -reuse-instance %1 \"%2\" -page %3 -view \"continuous facing\" -zoom \"fit content\"").arg((int)m_hWnd).arg(target_path).arg(page_no);
-        //else
-            cmdLine = QString("-plugin -reuse-instance %1 \"%2\" -page %3 -zoom \"fit page\"").arg((int)m_hWnd).arg(file_path).arg(page_no);
-        //cmdLine.Format(_T("\"%s\""), target_path);
-        SHELLEXECUTEINFO seinfo = { 0 };
-        QString verb("open");
-        QString file("SumatraPDF.exe");
-        seinfo.cbSize = sizeof(SHELLEXECUTEINFO);
-        seinfo.fMask = SEE_MASK_NOCLOSEPROCESS;
-        seinfo.lpVerb = reinterpret_cast<const WCHAR*>(verb.utf16());
-        seinfo.lpDirectory = reinterpret_cast<const WCHAR*>(QCoreApplication::applicationDirPath().utf16());
-        seinfo.lpFile = reinterpret_cast<const WCHAR*>(file.utf16());
-        seinfo.lpParameters = reinterpret_cast<const WCHAR*>(cmdLine.utf16());
-        seinfo.nShow = SW_SHOWNORMAL;
-        ShellExecuteEx(&seinfo);
-        HANDLE prev_process = m_pdfViewer;
-        m_pdfViewer = seinfo.hProcess;
-        if (prev_process != m_pdfViewer && prev_process != 0)
-        {
-            TerminateProcess(prev_process, 0);
-        }
+    //HWND m_hWnd = (HWND)(ui.stackedWidget->currentWidget()->winId());
 
-        //HINSTANCE prev_inst = m_pdfViewer;
-        //m_pdfViewer = ShellExecute(m_hWnd, _T("open"), m_strAppPath + _T("\\SumatraPDF.exe"), cmdLine, nullptr, SW_SHOWNOACTIVATE);
-        //if (prev_inst != m_pdfViewer && prev_inst != 0)
-        //{
+    ////QString target_path = QString("%stemp.pdf").arg(m_strTempFolder);
+    ////if (CopyFile(szFile, target_path, FALSE))
+    ////{
+    //    QString cmdLine;
+    //    //if (thumbnail)
+    //    //    cmdLine = QString("-plugin -reuse-instance %1 \"%2\" -page %3 -view \"continuous facing\" -zoom \"fit content\"").arg((int)m_hWnd).arg(target_path).arg(page_no);
+    //    //else
+    //        cmdLine = QString("-plugin -reuse-instance %1 \"%2\" -page %3 -zoom \"fit page\"").arg((int)m_hWnd).arg(file_path).arg(page_no);
+    //    //cmdLine.Format(_T("\"%s\""), target_path);
+    //    SHELLEXECUTEINFO seinfo = { 0 };
+    //    QString verb("open");
+    //    QString file("SumatraPDF.exe");
+    //    seinfo.cbSize = sizeof(SHELLEXECUTEINFO);
+    //    seinfo.fMask = SEE_MASK_NOCLOSEPROCESS;
+    //    seinfo.lpVerb = reinterpret_cast<const WCHAR*>(verb.utf16());
+    //    seinfo.lpDirectory = reinterpret_cast<const WCHAR*>(QCoreApplication::applicationDirPath().utf16());
+    //    seinfo.lpFile = reinterpret_cast<const WCHAR*>(file.utf16());
+    //    seinfo.lpParameters = reinterpret_cast<const WCHAR*>(cmdLine.utf16());
+    //    seinfo.nShow = SW_SHOWNOACTIVATE;
 
-        //}
-        Sleep(500);
-    //}
+    //   ShellExecuteEx(&seinfo);
+    //    HANDLE prev_process = m_pdfViewer;
+    //    m_pdfViewer = seinfo.hProcess;
+    //    if (prev_process != m_pdfViewer && prev_process != 0)
+    //    {
+    //        TerminateProcess(prev_process, 0);
+    //    }
+
+    //    m_pView->m_pMainTable->setFocus(Qt::OtherFocusReason);
+    //    QTimer::singleShot(0, m_pView->m_pMainTable, SLOT(setFocus()));
+    //    //HINSTANCE prev_inst = m_pdfViewer;
+    //    //m_pdfViewer = ShellExecute(m_hWnd, _T("open"), m_strAppPath + _T("\\SumatraPDF.exe"), cmdLine, nullptr, SW_SHOWNOACTIVATE);
+    //    //if (prev_inst != m_pdfViewer && prev_inst != 0)
+    //    //{
+
+    //    //}
+    //    //Sleep(500);
+    ////}
 
     //m_document->load(file_path);
     //if (file_info != "")

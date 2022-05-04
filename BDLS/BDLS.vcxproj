@@ -37,7 +37,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
     <QtInstall>5.15.0</QtInstall>
-    <QtModules>core;sql;gui;multimedia;widgets;multimediawidgets</QtModules>
+    <QtModules>core;sql;gui;multimedia;widgets;multimediawidgets;webengine</QtModules>
     <QtBuildConfig>release</QtBuildConfig>
   </PropertyGroup>
   <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') or !Exists('$(QtMsBuild)\qt.props')">
@@ -59,8 +59,8 @@
     <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <IncludePath>E:\source\BDLS\QXlsx\header;$(QTDIR)\include\;$(QTDIR)\include\QtGui\5.15.0;$(QTDIR)\include\QtGui\5.15.0\QtGui;$(QTDIR)\include\QtCore\5.15.0;$(QTDIR)\include\QtCore\5.15.0\QtCore;$(IncludePath)</IncludePath>
-    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <IncludePath>E:\source\BDLS\QXlsx\header;$(QTDIR)\include\;$(QTDIR)\include\QtGui\5.15.0;$(QTDIR)\include\QtGui\5.15.0\QtGui;$(QTDIR)\include\QtCore\5.15.0;$(QTDIR)\include\QtCore\5.15.0\QtCore;E:\library\Qt\qpdf-master\qpdflib;$(IncludePath)</IncludePath>
+    <LibraryPath>E:\library\Qt\build-qpdf-Desktop_Qt_5_15_0_MSVC2019_64bit-Release\qpdflib\release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
@@ -69,7 +69,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>qpdf.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <QtRcc>
       <QmlCacheGenerate>true</QmlCacheGenerate>

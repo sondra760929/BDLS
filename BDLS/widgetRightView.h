@@ -16,6 +16,7 @@
 #include <QLabel>
 #include <QPushButton>
 
+class QPdfWidget;
 class BDLS;
 class widgetRightView : public QWidget
 {
@@ -28,6 +29,7 @@ public:
 	//QPdfDocument* m_document;
  //   ZoomSelector* m_zoomSelector;
  //   PageSelector* m_pageSelector;
+    QPdfWidget* m_pPdfWidget;
     void ViewPDF(QString file_path, QString file_info = "");
     void ViewMovie(QString file_path, QString file_info = "");
     void JumpTo(int secs);

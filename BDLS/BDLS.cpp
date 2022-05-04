@@ -39,11 +39,11 @@ BDLS::BDLS(QWidget* parent)
 
 	//m_titleBar = new TitleBar(this);
 	//setMenuWidget(m_titleBar);
-	//title_string = "BDLS (Big Data Library System)";
+	title_string = "BDLS (Big Data Library System)";
 	//setWindowTitle(title_string);
 	//m_titleBar->SetTitleBarIcon(":/BDLS/icons/database_search_icon.png");
 
-	setWindowTitle("BDLS(Big Data Library System)");
+	setWindowTitle(title_string);
 
 	QPushButton* btnColor1 = new QPushButton(this);
 	btnColor1->setFixedSize(20, 20);
@@ -84,6 +84,9 @@ BDLS::BDLS(QWidget* parent)
 	ui.tableView->setModel(proxyModel);
 	ui.tableView->setAlternatingRowColors(true);
 	ui.tableView->setSortingEnabled(true);
+	ui.tableView->setFocusPolicy(Qt::StrongFocus);
+
+	m_pMainTable = ui.tableView;
 
 	connect(ui.tableView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)), this, SLOT(onTableCellClicked(const QItemSelection&, const QItemSelection&)));
 	connect(ui.tableView, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(onTableDoubleClicked(const QModelIndex&)));

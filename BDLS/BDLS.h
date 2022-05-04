@@ -65,6 +65,7 @@ public:
     int m_iCurrentSelectedItemType;
 
     QTimer* m_saveTimer;
+    QTableView* m_pMainTable;
 
     db_manager* db;
     bool InitDB(QString db_file_path);
