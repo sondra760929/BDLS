@@ -27,6 +27,7 @@ public:
 	QList<QString> header_list;
 	QList< SearchControls*> search_list;
 	QList< SearchControls*> memo_list;
+	QList< SearchControls*> tag_list;
 
 	QList< widgetMemo* > memo_control_list;
 	void SetCurrentFile(QString file_path);
@@ -53,11 +54,16 @@ private:
 	QPushButton* btn_dell;
 	QPushButton* btn_memo_add;
 	QPushButton* btn_memo_dell;
-	QListView* tagSearchList;
-	QLineEdit* tagSearchEdit;
-	QListWidget* mvSearchList;
-	QLineEdit* mvSearchEdit;
+	//QListView* tagSearchList;
+	//QLineEdit* tagSearchEdit;
+	//QListWidget* mvSearchList;
+	//QLineEdit* mvSearchEdit;
 	QScrollArea* techScroll;
+
+	QPushButton* btn_tag_add;
+	QPushButton* btn_tag_dell;
+	QPushButton* btn_mv_add;
+	QPushButton* btn_mv_dell;
 
 	QBoxLayout* noteViewLayout;
 	QPushButton* noteParent;
@@ -74,10 +80,10 @@ private:
 	//QStringListModel* fileTagModel = NULL;
 	QMap<int, QString> tagDatas;
 
-	QMap<int, QString> searchTagDatas;
-	QMap<QString, int> searchTagToIndex;
-	QStringListModel* searchTagModel = NULL;
-	QCompleter* search_completer = NULL;
+	//QMap<int, QString> searchTagDatas;
+	//QMap<QString, int> searchTagToIndex;
+	//QStringListModel* searchTagModel = NULL;
+	//QCompleter* search_completer = NULL;
 
 	QTimeEdit* mvTime;
 	QLineEdit* mvText;
@@ -100,7 +106,9 @@ private slots:
 	void onSearchMemoAdd();
 	void onSearchMemoDell();
 	void onSearchTagAdd();
+	void onSearchTagDell();
 	void onSearchMVAdd();
+	void onSearchMVDell();
 	void doSearch1();
 	void doSearch2();
 	void doSearch3();
@@ -109,7 +117,7 @@ private slots:
 	void doAddTag();
 	void doAddMV();
 	void doNewMemo();
-	void onSearchTagClicked(const QModelIndex& index);
+	//void onSearchTagClicked(const QModelIndex& index);
 	void onSearchMVClicked(QListWidgetItem* item);
 	void onFileTagClicked(const QModelIndex& index);
 	void onFileMVClicked(QListWidgetItem* current, QListWidgetItem* previous);

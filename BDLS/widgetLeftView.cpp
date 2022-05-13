@@ -6,6 +6,7 @@
 #include "widgetAddUser.h"
 
 QStringList memo_combo_header = { QString::fromLocal8Bit("내용"), QString::fromLocal8Bit("작성자"), QString::fromLocal8Bit("날짜") };
+QStringList tag_combo_header = { QString::fromLocal8Bit("해시태그") };
 widgetLeftView::widgetLeftView(QWidget* parent)
 	: QWidget(parent)
 {
@@ -88,49 +89,97 @@ widgetLeftView::widgetLeftView(QWidget* parent)
 	label->setText("");
 	searchViewLayout->addWidget(label);
 
+	temp_add = new QHBoxLayout;
 	label = new QLabel(this);
 	label->setText(QString::fromLocal8Bit("3. 해시태그 검색"));
-	searchViewLayout->addWidget(label);
-
-	tagSearchList = new QListView(this);
-	searchViewLayout->addWidget(tagSearchList);
-	tagSearchList->setViewMode(QListView::ViewMode::IconMode);
-	tagSearchList->setSpacing(10);
-
-	temp_add = new QHBoxLayout;
-	tagSearchEdit = new QLineEdit(this);
-	QPushButton* tagSearchAdd = new QPushButton(this);
-	tagSearchAdd->setText(QString::fromLocal8Bit("추가"));
-	temp_add->addWidget(tagSearchEdit);
-	temp_add->addWidget(tagSearchAdd);
+	btn_tag_add = new QPushButton(this);
+	btn_tag_add->setText("+");
+	btn_tag_add->setFixedSize(20, 20);
+	btn_tag_dell = new QPushButton(this);
+	btn_tag_dell->setText("-");
+	btn_tag_dell->setFixedSize(20, 20);
+	temp_add->addWidget(label);
+	//temp_add->addStretch(1);
+	temp_add->addWidget(btn_tag_add);
+	temp_add->addWidget(btn_tag_dell);
 	searchViewLayout->addLayout(temp_add);
+
+	sc = new SearchControls(this);
+	sc->m_searchTitle->addItems(tag_combo_header);
+	tag_list.append(sc);
+	searchViewLayout->addWidget(sc);
 
 	QPushButton* btn_search3 = new QPushButton(this);
 	btn_search3->setText(QString::fromLocal8Bit("검색"));
 	searchViewLayout->addWidget(btn_search3);
 
+	//label = new QLabel(this);
+	//label->setText(QString::fromLocal8Bit("3. 해시태그 검색"));
+	//searchViewLayout->addWidget(label);
+
+	//tagSearchList = new QListView(this);
+	//searchViewLayout->addWidget(tagSearchList);
+	//tagSearchList->setViewMode(QListView::ViewMode::IconMode);
+	//tagSearchList->setSpacing(10);
+
+	//temp_add = new QHBoxLayout;
+	//tagSearchEdit = new QLineEdit(this);
+	//QPushButton* tagSearchAdd = new QPushButton(this);
+	//tagSearchAdd->setText(QString::fromLocal8Bit("추가"));
+	//temp_add->addWidget(tagSearchEdit);
+	//temp_add->addWidget(tagSearchAdd);
+	//searchViewLayout->addLayout(temp_add);
+
+	//QPushButton* btn_search3 = new QPushButton(this);
+	//btn_search3->setText(QString::fromLocal8Bit("검색"));
+	//searchViewLayout->addWidget(btn_search3);
+
 	label = new QLabel(this);
 	label->setText("");
 	searchViewLayout->addWidget(label);
 
+	temp_add = new QHBoxLayout;
 	label = new QLabel(this);
 	label->setText(QString::fromLocal8Bit("4. 동영상 목차 검색"));
-	searchViewLayout->addWidget(label);
-
-	mvSearchList = new QListWidget(this);
-	searchViewLayout->addWidget(mvSearchList);
-
-	temp_add = new QHBoxLayout;
-	mvSearchEdit = new QLineEdit(this);
-	QPushButton* mvSearchAdd = new QPushButton(this);
-	mvSearchAdd->setText(QString::fromLocal8Bit("추가"));
-	temp_add->addWidget(mvSearchEdit);
-	temp_add->addWidget(mvSearchAdd);
+	btn_mv_add = new QPushButton(this);
+	btn_mv_add->setText("+");
+	btn_mv_add->setFixedSize(20, 20);
+	btn_mv_dell = new QPushButton(this);
+	btn_mv_dell->setText("-");
+	btn_mv_dell->setFixedSize(20, 20);
+	temp_add->addWidget(label);
+	//temp_add->addStretch(1);
+	temp_add->addWidget(btn_mv_add);
+	temp_add->addWidget(btn_mv_dell);
 	searchViewLayout->addLayout(temp_add);
+
+	sc = new SearchControls(this);
+	sc->m_searchTitle->addItems(mv_combo_header);
+	mv_list.append(sc);
+	searchViewLayout->addWidget(sc);
 
 	QPushButton* btn_search4 = new QPushButton(this);
 	btn_search4->setText(QString::fromLocal8Bit("검색"));
 	searchViewLayout->addWidget(btn_search4);
+
+	//label = new QLabel(this);
+	//label->setText(QString::fromLocal8Bit("4. 동영상 목차 검색"));
+	//searchViewLayout->addWidget(label);
+
+	//mvSearchList = new QListWidget(this);
+	//searchViewLayout->addWidget(mvSearchList);
+
+	//temp_add = new QHBoxLayout;
+	//mvSearchEdit = new QLineEdit(this);
+	//QPushButton* mvSearchAdd = new QPushButton(this);
+	//mvSearchAdd->setText(QString::fromLocal8Bit("추가"));
+	//temp_add->addWidget(mvSearchEdit);
+	//temp_add->addWidget(mvSearchAdd);
+	//searchViewLayout->addLayout(temp_add);
+
+	//QPushButton* btn_search4 = new QPushButton(this);
+	//btn_search4->setText(QString::fromLocal8Bit("검색"));
+	//searchViewLayout->addWidget(btn_search4);
 
 	searchViewLayout->addStretch(1);
 
@@ -140,10 +189,14 @@ widgetLeftView::widgetLeftView(QWidget* parent)
 	connect(btn_dell, &QPushButton::clicked, this, &widgetLeftView::onSearchDell);
 	connect(btn_memo_add, &QPushButton::clicked, this, &widgetLeftView::onSearchMemoAdd);
 	connect(btn_memo_dell, &QPushButton::clicked, this, &widgetLeftView::onSearchMemoDell);
-	connect(tagSearchAdd, &QPushButton::clicked, this, &widgetLeftView::onSearchTagAdd);
-	connect(mvSearchAdd, &QPushButton::clicked, this, &widgetLeftView::onSearchMVAdd);
+	connect(btn_tag_add, &QPushButton::clicked, this, &widgetLeftView::onSearchTagAdd);
+	connect(btn_tag_dell, &QPushButton::clicked, this, &widgetLeftView::onSearchTagDell);
+	connect(btn_mv_add, &QPushButton::clicked, this, &widgetLeftView::onSearchMVAdd);
+	connect(btn_mv_dell, &QPushButton::clicked, this, &widgetLeftView::onSearchMVDell);
+	//connect(tagSearchAdd, &QPushButton::clicked, this, &widgetLeftView::onSearchTagAdd);
+	//connect(mvSearchAdd, &QPushButton::clicked, this, &widgetLeftView::onSearchMVAdd);
 
-	connect(tagSearchList, &QListView::clicked, this, &widgetLeftView::onSearchTagClicked);
+	//connect(tagSearchList, &QListView::clicked, this, &widgetLeftView::onSearchTagClicked);
 	connect(mvSearchList, &QListWidget::itemClicked, this, &widgetLeftView::onSearchMVClicked);
 
 	connect(btn_search, &QPushButton::clicked, this, &widgetLeftView::doSearch1);
@@ -246,14 +299,14 @@ widgetLeftView::widgetLeftView(QWidget* parent)
 	//fileTagModel = new QStringListModel(this);
 	//tagList->setModel(fileTagModel);
 
-	searchTagModel = new QStringListModel(this);
-	tagSearchList->setModel(searchTagModel);
+	//searchTagModel = new QStringListModel(this);
+	//tagSearchList->setModel(searchTagModel);
 
-	completer = new QCompleter(this);
-	tagEdit->setCompleter(completer);
+	//completer = new QCompleter(this);
+	//tagEdit->setCompleter(completer);
 
-	search_completer = new QCompleter(this);
-	tagSearchEdit->setCompleter(search_completer);
+	//search_completer = new QCompleter(this);
+	//tagSearchEdit->setCompleter(search_completer);
 
 	connect(noteAdd, &QPushButton::clicked, this, &widgetLeftView::doAddMemo);
 	connect(tagAdd, &QPushButton::clicked, this, &widgetLeftView::doAddTag);
@@ -348,13 +401,13 @@ void widgetLeftView::setTagList()
 	completer->setWrapAround(true);
 	tagEdit->setCompleter(completer);
 
-	delete search_completer;
-	search_completer = new QCompleter(tags, this);
-	search_completer->setMaxVisibleItems(10);
-	search_completer->setCompletionMode(QCompleter::CompletionMode::UnfilteredPopupCompletion);
-	search_completer->setCaseSensitivity(Qt::CaseInsensitive);
-	search_completer->setWrapAround(true);
-	tagSearchEdit->setCompleter(search_completer);
+	//delete search_completer;
+	//search_completer = new QCompleter(tags, this);
+	//search_completer->setMaxVisibleItems(10);
+	//search_completer->setCompletionMode(QCompleter::CompletionMode::UnfilteredPopupCompletion);
+	//search_completer->setCaseSensitivity(Qt::CaseInsensitive);
+	//search_completer->setWrapAround(true);
+	//tagSearchEdit->setCompleter(search_completer);
 }
 
 void widgetLeftView::setSearchCombo(QList<QString>& h_list, QMap<QString, int>& map_h_to_i)
@@ -437,6 +490,31 @@ void widgetLeftView::onSearchMemoDell()
 	if (memo_list.size() < 2)
 	{
 		btn_memo_dell->setEnabled(false);
+	}
+}
+
+void widgetLeftView::onSearchTagAdd()
+{
+	SearchControls* last_sc = tag_list[tag_list.size() - 1];
+	SearchControls* sc = new SearchControls(this);
+	sc->m_searchTitle->addItems(tag_combo_header);
+	tag_list.append(sc);
+	searchViewLayout->insertWidget(searchViewLayout->indexOf(last_sc) + 1, sc);
+	btn_memo_dell->setEnabled(true);
+}
+
+void widgetLeftView::onSearchTagDell()
+{
+	if (tag_list.size() > 1)
+	{
+		SearchControls* sc = tag_list[memo_list.size() - 1];
+		searchViewLayout->removeWidget(sc);
+		tag_list.erase(tag_list.begin() + tag_list.size() - 1);
+		delete sc;
+	}
+	if (tag_list.size() < 2)
+	{
+		btn_tag_dell->setEnabled(false);
 	}
 }
 
@@ -887,60 +965,101 @@ void widgetLeftView::doSearch2()
 
 void widgetLeftView::doSearch3()
 {
-	QList<int> search_tag_ids = searchTagDatas.keys();
-
-	if (search_tag_ids.size() > 0)
+	if (m_pView->DBConnected())
 	{
-		if (m_pView->DBConnected())
+		QVariantList data;
+		QMap< int, bool > total_search_file_index;
+		QMap< int, QList<QString>> total_file_find;
+		QMap< int, QList<QString>> total_file_find_info;
+
+		QMap< int, QList<int> > check_file_tags;
+
+		QString prev_condition_name;
+		QString query;
+		for (int i = 0; i < tag_list.size(); i++)
 		{
-			QVariantList data;
-			QMap< int, int > check_file_ids;
-			for (int i = 0; i < search_tag_ids.size(); i++)
+			SearchControls* sc = tag_list[i];
+			QString header_name = sc->m_searchTitle->currentText();
+			QString search_word = sc->m_searchWord->text();
+
+			if (search_word.length() > 0)
 			{
-				QString query = QString("SELECT file_id FROM file_to_hash WHERE tag_id=%1").arg(search_tag_ids[i]);
+				QString condition_name = sc->m_searchCondition->currentText();
+
+				QList< int > search_file_index;
+				
+				query = QString("SELECT file_to_hash.file_id, file_to_hash.tag_id FROM file_to_hash INNER JOIN hsah_tags ON file_to_hash.tag_id = hsah_tags.id WHERE hsah_tags.tags LIKE \"%%1%\"").arg(search_word);
 				m_pView->db->exec(query, data);
+				for (const auto& item : data)
+				{
+					auto map = item.toMap();
+					int file_id = map["file_id"].toInt();
+					int tag_id = map["tag_id"].toInt();
+					search_file_index.append(file_id);
+					check_file_tags[file_id].append(tag_id);
+				}
+
 				if (i == 0)
 				{
-					for (const auto& item : data)
+					for (int j = 0; j < search_file_index.size(); j++)
 					{
-						auto map = item.toMap();
-						int file_id = map["file_id"].toInt();
-						check_file_ids[file_id] = 0;
+						total_search_file_index[search_file_index[j]] = true;
 					}
 				}
 				else
 				{
-					for (const auto& item : data)
+					if (prev_condition_name == "AND")
 					{
-						auto map = item.toMap();
-						int file_id = map["file_id"].toInt();
-						if(check_file_ids.contains(file_id))
-							check_file_ids[file_id] = i;
-					}
-
-					QList<int> temp_file_ids = check_file_ids.keys();
-					for (int j = 0; j < temp_file_ids.size(); j++)
-					{
-						if (check_file_ids[temp_file_ids[j]] < i)
+						QList< int > temp_file_index;
+						for (int j = 0; j < search_file_index.size(); j++)
 						{
-							check_file_ids.remove(temp_file_ids[j]);
+							if (total_search_file_index.contains(search_file_index[j]))
+							{
+								temp_file_index.append(search_file_index[j]);
+							}
+						}
+
+						total_search_file_index.clear();
+						for (int j = 0; j < temp_file_index.size(); j++)
+						{
+							total_search_file_index[temp_file_index[j]] = true;
 						}
 					}
-
-					if (check_file_ids.size() < 1)
+					else if (prev_condition_name == "OR")
 					{
-						break;
+						for (int j = 0; j < search_file_index.size(); j++)
+						{
+							total_search_file_index[search_file_index[j]] = true;
+						}
+					}
+					else if (prev_condition_name == "NOT")
+					{
+						for (int j = 0; j < search_file_index.size(); j++)
+						{
+							total_search_file_index[search_file_index[j]] = false;
+						}
+					}
+					else
+					{
+						//	이상 버림
 					}
 				}
-			}
 
-			QTreeWidgetItem* this_search = new QTreeWidgetItem();
-			//	결과 표시
-			int total_count = 0;
-			QList<int> find_file_ids = check_file_ids.keys();
-			for (int i = 0; i < find_file_ids.size(); i++)
+				prev_condition_name = condition_name;
+			}
+		}
+
+		QTreeWidgetItem* this_search = new QTreeWidgetItem();
+		//	결과 표시
+		int total_count = 0;
+		int file_count = 0;
+		QList<int> file_id_list = total_search_file_index.keys();
+		for (int i = 0; i < file_id_list.size(); i++)
+		{
+			file_count = 0;
+			int file_id = file_id_list[i];
+			if (total_search_file_index[file_id])
 			{
-				int file_id = find_file_ids[i];
 				QString file_name;
 				m_pView->db->exec(QString("SELECT file_name FROM file_info WHERE id=%1").arg(file_id), data);
 				for (const auto& item : data)
@@ -958,7 +1077,7 @@ void widgetLeftView::doSearch3()
 					int temp_tag_id = map["tag_id"].toInt();
 
 					QString temp_info_str;
-					if (searchTagDatas.contains(temp_tag_id))
+					if (check_file_tags[file_id].contains(temp_tag_id))
 					{
 						temp_info_str = QString("<font color=\"red\">#%1</font>").arg(tagDatas[temp_tag_id]);
 						if (tag_string == "")
@@ -995,10 +1114,10 @@ void widgetLeftView::doSearch3()
 				//this_info->setText(0, total_file_to_header[file_id][j].second);
 				total_count++;
 			}
-			this_search->setText(0, QString("%1 [%2]").arg(QDateTime::currentDateTime().toString()).arg(total_count));
-
-			m_pView->_widgetBottomView->AddResult(this_search);
 		}
+		this_search->setText(0, QString("%1 [%2]").arg(QDateTime::currentDateTime().toString()).arg(total_count));
+
+		m_pView->_widgetBottomView->AddResult(this_search);
 	}
 }
 
@@ -1100,26 +1219,27 @@ void widgetLeftView::onFileTagClicked(const QModelIndex& index)
 	}
 }
 
-void widgetLeftView::onSearchTagClicked(const QModelIndex& index)
-{
-	if (index.row() > -1)
-	{
-		QString tag_str = index.data().toString();
-		QMessageBox::StandardButton reply = QMessageBox::question(this, QString::fromLocal8Bit("확인"), QString::fromLocal8Bit("[%1]을 삭제하시겠습니까?").arg(tag_str),
-			QMessageBox::Yes | QMessageBox::No);
-		if (reply == QMessageBox::Yes)
-		{
-			if (searchTagToIndex.contains(tag_str))
-			{
-				int tag_index = searchTagToIndex[tag_str];
+//void widgetLeftView::onSearchTagClicked(const QModelIndex& index)
+//{
+//	if (index.row() > -1)
+//	{
+//		QString tag_str = index.data().toString();
+//		QMessageBox::StandardButton reply = QMessageBox::question(this, QString::fromLocal8Bit("확인"), QString::fromLocal8Bit("[%1]을 삭제하시겠습니까?").arg(tag_str),
+//			QMessageBox::Yes | QMessageBox::No);
+//		if (reply == QMessageBox::Yes)
+//		{
+//			if (searchTagToIndex.contains(tag_str))
+//			{
+//				int tag_index = searchTagToIndex[tag_str];
+//
+//				searchTagToIndex.remove(tag_str);
+//				searchTagDatas.remove(tag_index);
+//			}
+//			searchTagModel->removeRow(index.row());
+//		}
+//	}
+//}
 
-				searchTagToIndex.remove(tag_str);
-				searchTagDatas.remove(tag_index);
-			}
-			searchTagModel->removeRow(index.row());
-		}
-	}
-}
 void widgetLeftView::doSearch4()
 {
 	if (m_pView->DBConnected() == false)
@@ -1511,67 +1631,67 @@ void widgetLeftView::doAddMemo()
 	}
 }
 
-void widgetLeftView::onSearchMVAdd()
-{
-	QString tag_str = mvSearchEdit->text();
-	if (tag_str != "")
-	{
-		if (!serchVMDatas.contains(tag_str))
-		{
-			serchVMDatas[tag_str] = 1;
-			QListWidgetItem* mv_item = new QListWidgetItem(mvSearchList);
-			mv_item->setText(tag_str);
-			mvSearchList->addItem(mv_item);
-			mvSearchEdit->clear();
-		}
-	}
-}
+//void widgetLeftView::onSearchMVAdd()
+//{
+//	QString tag_str = mvSearchEdit->text();
+//	if (tag_str != "")
+//	{
+//		if (!serchVMDatas.contains(tag_str))
+//		{
+//			serchVMDatas[tag_str] = 1;
+//			QListWidgetItem* mv_item = new QListWidgetItem(mvSearchList);
+//			mv_item->setText(tag_str);
+//			mvSearchList->addItem(mv_item);
+//			mvSearchEdit->clear();
+//		}
+//	}
+//}
 
-void widgetLeftView::onSearchTagAdd()
-{
-	if (m_pView->DBConnected() == false)
-	{
-		QMessageBox::information(this, QString::fromLocal8Bit("확인"), QString::fromLocal8Bit("데이터베이스를 먼저 생성하세요."));
-		return;
-	}
-
-	QString tag_str = tagSearchEdit->text();
-	if (tag_str != "")
-	{
-		QVariantList data;
-		//	tag가 존재하는지 확인
-		QString query = QString("SELECT id FROM hsah_tags WHERE tags=\"%1\"")
-			.arg(tag_str);
-		m_pView->db->exec(query, data);
-		int tag_id = 0;
-		for (const auto& item : data)
-		{
-			auto map = item.toMap();
-			tag_id = map["id"].toInt();
-		}
-
-		if (tag_id < 1)
-		{
-			//	tag가 존재하지 않음
-			return;
-		}
-
-		if (!searchTagDatas.contains(tag_id))
-		{
-			searchTagDatas[tag_id] = tag_str;
-
-			int row = searchTagModel->rowCount();
-			searchTagModel->insertRow(row);
-			QModelIndex _index = searchTagModel->index(row);
-			QString new_tag = "#" + tag_str;
-			searchTagModel->setData(_index, new_tag);
-
-			searchTagToIndex[new_tag] = tag_id;
-		}
-
-		tagSearchEdit->clear();
-	}
-}
+//void widgetLeftView::onSearchTagAdd()
+//{
+//	if (m_pView->DBConnected() == false)
+//	{
+//		QMessageBox::information(this, QString::fromLocal8Bit("확인"), QString::fromLocal8Bit("데이터베이스를 먼저 생성하세요."));
+//		return;
+//	}
+//
+//	QString tag_str = tagSearchEdit->text();
+//	if (tag_str != "")
+//	{
+//		QVariantList data;
+//		//	tag가 존재하는지 확인
+//		QString query = QString("SELECT id FROM hsah_tags WHERE tags=\"%1\"")
+//			.arg(tag_str);
+//		m_pView->db->exec(query, data);
+//		int tag_id = 0;
+//		for (const auto& item : data)
+//		{
+//			auto map = item.toMap();
+//			tag_id = map["id"].toInt();
+//		}
+//
+//		if (tag_id < 1)
+//		{
+//			//	tag가 존재하지 않음
+//			return;
+//		}
+//
+//		if (!searchTagDatas.contains(tag_id))
+//		{
+//			searchTagDatas[tag_id] = tag_str;
+//
+//			int row = searchTagModel->rowCount();
+//			searchTagModel->insertRow(row);
+//			QModelIndex _index = searchTagModel->index(row);
+//			QString new_tag = "#" + tag_str;
+//			searchTagModel->setData(_index, new_tag);
+//
+//			searchTagToIndex[new_tag] = tag_id;
+//		}
+//
+//		tagSearchEdit->clear();
+//	}
+//}
 
 void widgetLeftView::doAddTag()
 {
@@ -1626,13 +1746,13 @@ void widgetLeftView::doAddTag()
 					completer->setWrapAround(true);
 					tagEdit->setCompleter(completer);
 
-					delete search_completer;
-					search_completer = new QCompleter(tags, this);
-					search_completer->setMaxVisibleItems(10);
-					search_completer->setCompletionMode(QCompleter::CompletionMode::UnfilteredPopupCompletion);
-					search_completer->setCaseSensitivity(Qt::CaseInsensitive);
-					search_completer->setWrapAround(true);
-					tagSearchEdit->setCompleter(search_completer);
+					//delete search_completer;
+					//search_completer = new QCompleter(tags, this);
+					//search_completer->setMaxVisibleItems(10);
+					//search_completer->setCompletionMode(QCompleter::CompletionMode::UnfilteredPopupCompletion);
+					//search_completer->setCaseSensitivity(Qt::CaseInsensitive);
+					//search_completer->setWrapAround(true);
+					//tagSearchEdit->setCompleter(search_completer);
 				}
 
 				query = QString("SELECT id FROM file_to_hash WHERE file_id=%1 AND tag_id=%2")
