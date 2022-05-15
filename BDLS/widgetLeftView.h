@@ -28,6 +28,7 @@ public:
 	QList< SearchControls*> search_list;
 	QList< SearchControls*> memo_list;
 	QList< SearchControls*> tag_list;
+	QList< SearchControls*> mv_list;	
 
 	QList< widgetMemo* > memo_control_list;
 	void SetCurrentFile(QString file_path);
@@ -118,7 +119,7 @@ private slots:
 	void doAddMV();
 	void doNewMemo();
 	//void onSearchTagClicked(const QModelIndex& index);
-	void onSearchMVClicked(QListWidgetItem* item);
+	//void onSearchMVClicked(QListWidgetItem* item);
 	void onFileTagClicked(const QModelIndex& index);
 	void onFileMVClicked(QListWidgetItem* current, QListWidgetItem* previous);
 	void onFileMVDClicked(QListWidgetItem* item);

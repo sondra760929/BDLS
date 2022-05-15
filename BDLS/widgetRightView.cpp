@@ -168,7 +168,7 @@ widgetRightView::~widgetRightView()
 {
 }
 
-void widgetRightView::ViewPDF(QString file_path, QString file_info)
+void widgetRightView::ViewPDF(QString file_path, QString file_info, QString search_word)
 {
     m_player->stop();
 
@@ -179,6 +179,11 @@ void widgetRightView::ViewPDF(QString file_path, QString file_info)
         page_no = file_info.toInt();
     }
     m_pPdfWidget->loadFile(file_path);
+
+    if (search_word != "")
+    {
+        m_pPdfWidget->findText(search_word);
+    }
     m_pPdfWidget->setPage(page_no);
 
 

@@ -90,20 +90,47 @@ void widgetBottomView::itemChanged(QTreeWidgetItem* current, QTreeWidgetItem* pr
 					file_path = map["file_path"].toString();
 				}
 
-				if (data_list.count() == 2)
+				if (data_list[1] == "C")
 				{
-					//	content
-					m_pView->SetCurrentFile(HASHTAG, file_name, data_list[1]);
+					if (data_list.count() == 4)
+					{
+						m_pView->SetCurrentFile(CONTENT, file_name, data_list[2], data_list[3]);
+					}
 				}
-				else if (data_list.count() == 3)
+				else if (data_list[1] == "H")
 				{
-					//	content
-					m_pView->SetCurrentFile(CONTENT, file_name, data_list[1], data_list[2]);
+					if (data_list.count() == 3)
+					{
+						m_pView->SetCurrentFile(HASHTAG, file_name, data_list[2]);
+					}
 				}
-				else if (data_list.count() == 4)
+				else if (data_list[1] == "V")
 				{
-					//	memo
-					m_pView->SetCurrentFile(MEMO, file_name, data_list[1], data_list[2], data_list[3]);
+					if (data_list.count() == 3)
+					{
+						m_pView->SetCurrentFile(MV, file_name, data_list[2]);
+					}
+				}
+				else if (data_list[1] == "MC")
+				{
+					if (data_list.count() == 5)
+					{
+						m_pView->SetCurrentFile(MEMO_CONTENT, file_name, data_list[2], data_list[3], data_list[4]);
+					}
+				}
+				else if (data_list[1] == "MW")
+				{
+					if (data_list.count() == 5)
+					{
+						m_pView->SetCurrentFile(MEMO_USER, file_name, data_list[2], data_list[3], data_list[4]);
+					}
+				}
+				else if (data_list[1] == "MD")
+				{
+					if (data_list.count() == 5)
+					{
+						m_pView->SetCurrentFile(MEMO_DATE, file_name, data_list[2], data_list[3], data_list[4]);
+					}
 				}
 			}
 		}

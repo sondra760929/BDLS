@@ -7,6 +7,8 @@
 
 QStringList memo_combo_header = { QString::fromLocal8Bit("내용"), QString::fromLocal8Bit("작성자"), QString::fromLocal8Bit("날짜") };
 QStringList tag_combo_header = { QString::fromLocal8Bit("해시태그") };
+QStringList mv_combo_header = { QString::fromLocal8Bit("목차내용") };
+
 widgetLeftView::widgetLeftView(QWidget* parent)
 	: QWidget(parent)
 {
@@ -197,7 +199,7 @@ widgetLeftView::widgetLeftView(QWidget* parent)
 	//connect(mvSearchAdd, &QPushButton::clicked, this, &widgetLeftView::onSearchMVAdd);
 
 	//connect(tagSearchList, &QListView::clicked, this, &widgetLeftView::onSearchTagClicked);
-	connect(mvSearchList, &QListWidget::itemClicked, this, &widgetLeftView::onSearchMVClicked);
+	//connect(mvSearchList, &QListWidget::itemClicked, this, &widgetLeftView::onSearchMVClicked);
 
 	connect(btn_search, &QPushButton::clicked, this, &widgetLeftView::doSearch1);
 	connect(btn_search2, &QPushButton::clicked, this, &widgetLeftView::doSearch2);
@@ -223,7 +225,7 @@ widgetLeftView::widgetLeftView(QWidget* parent)
 
 	//techArea->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	memoList->setLayout(new QVBoxLayout(memoList));
-	memoList->layout()->setContentsMargins(5, 5, 5 , 5);
+	memoList->layout()->setContentsMargins(5, 5, 5, 5);
 	techScroll->setWidget(memoList);
 
 	//memoList = new QListWidget(this);
@@ -507,7 +509,7 @@ void widgetLeftView::onSearchTagDell()
 {
 	if (tag_list.size() > 1)
 	{
-		SearchControls* sc = tag_list[memo_list.size() - 1];
+		SearchControls* sc = tag_list[tag_list.size() - 1];
 		searchViewLayout->removeWidget(sc);
 		tag_list.erase(tag_list.begin() + tag_list.size() - 1);
 		delete sc;
@@ -518,10 +520,35 @@ void widgetLeftView::onSearchTagDell()
 	}
 }
 
+void widgetLeftView::onSearchMVAdd()
+{
+	SearchControls* last_sc = mv_list[mv_list.size() - 1];
+	SearchControls* sc = new SearchControls(this);
+	sc->m_searchTitle->addItems(mv_combo_header);
+	mv_list.append(sc);
+	searchViewLayout->insertWidget(searchViewLayout->indexOf(last_sc) + 1, sc);
+	btn_memo_dell->setEnabled(true);
+}
+
+void widgetLeftView::onSearchMVDell()
+{
+	if (mv_list.size() > 1)
+	{
+		SearchControls* sc = mv_list[mv_list.size() - 1];
+		searchViewLayout->removeWidget(sc);
+		mv_list.erase(mv_list.begin() + mv_list.size() - 1);
+		delete sc;
+	}
+	if (mv_list.size() < 2)
+	{
+		btn_mv_dell->setEnabled(false);
+	}
+}
+
 void widgetLeftView::ViewUser(bool show)
 {
 	ui.tabWidget->setTabVisible(3, show);
-	if(show)
+	if (show)
 		setUserList();
 }
 
@@ -669,7 +696,7 @@ void widgetLeftView::doSearch1()
 						QLabel* this_info_label = new QLabel();
 						this_info_label->setText(total_file_to_header[file_id][j].second);
 						m_pView->_widgetBottomView->m_outputTree->setItemWidget(this_info, 0, this_info_label);
-						QString data_str = QString("%1/0/0").arg(file_id);
+						QString data_str = QString("%1/C/0/0").arg(file_id);
 						this_info->setData(0, Qt::AccessibleTextRole, data_str);
 						//this_info->setText(0, total_file_to_header[file_id][j].second);
 						total_count++;
@@ -733,7 +760,7 @@ void widgetLeftView::doSearch1()
 									QLabel* this_info_label = new QLabel();
 									this_info_label->setText(info_str);
 									m_pView->_widgetBottomView->m_outputTree->setItemWidget(this_info, 0, this_info_label);
-									QString data_str = QString("%1/%2/%3").arg(file_id).arg(page_no_keys[j]).arg(block_no_keys[k]);
+									QString data_str = QString("%1/C/%2/%3").arg(file_id).arg(page_no_keys[j]).arg(block_no_keys[k]);
 									this_info->setData(0, Qt::AccessibleTextRole, data_str);
 									search_index = file_contents.indexOf(search_words[l], search_index + search_word_count);
 									total_count++;
@@ -801,8 +828,12 @@ void widgetLeftView::doSearch2()
 							while (index > -1)
 							{
 								QString info_str = QString::fromLocal8Bit("[%1] : %2<font color=\"red\">%3</font>%4").arg(QString::fromLocal8Bit("내용")).arg(memo_str.left(index)).arg(search_word).arg(memo_str.right(memo_str.length() - index - search_word.length()));
+								info_str = info_str.insert(0, "<p>");
+								info_str = info_str + "</p>";
+								info_str = info_str.replace("\n", " ");
+
 								total_file_find[file_id].append(info_str);
-								QString info_info_str = QString("%1/%2/%3/%4").arg(file_id).arg(memo_id).arg(index).arg(search_word.length());
+								QString info_info_str = QString("%1/MC/%2/%3/%4").arg(file_id).arg(memo_id).arg(index).arg(search_word.length());
 								total_file_find_info[file_id].append(info_info_str);
 
 								index = memo_str.indexOf(search_word, index + search_word.length());
@@ -832,7 +863,7 @@ void widgetLeftView::doSearch2()
 							{
 								QString info_str = QString::fromLocal8Bit("[%1] : %2<font color=\"red\">%3</font>%4").arg(QString::fromLocal8Bit("작성자")).arg(user_name.left(index)).arg(search_word).arg(user_name.right(user_name.length() - index - search_word.length()));
 								total_file_find[file_id].append(info_str);
-								QString info_info_str = QString("%1/%2/%3/%4").arg(file_id).arg(memo_id).arg(index).arg(search_word.length());
+								QString info_info_str = QString("%1/MW/%2/%3/%4").arg(file_id).arg(memo_id).arg(index).arg(search_word.length());
 								total_file_find_info[file_id].append(info_info_str);
 
 								index = user_name.indexOf(search_word, index + search_word.length());
@@ -863,7 +894,7 @@ void widgetLeftView::doSearch2()
 								.arg(search_time.toString("yyyy-MM-dd"))
 								.arg(memo_str);
 							total_file_find[file_id].append(info_str);
-							QString info_info_str = QString("%1/%2/%3/%4").arg(file_id).arg(memo_id).arg(-1).arg(-1);
+							QString info_info_str = QString("%1/MD/%2/%3/%4").arg(file_id).arg(memo_id).arg(search_time.toString("yyyy-MM-dd")).arg(-1);
 							total_file_find_info[file_id].append(info_info_str);
 						}
 					}
@@ -987,7 +1018,7 @@ void widgetLeftView::doSearch3()
 				QString condition_name = sc->m_searchCondition->currentText();
 
 				QList< int > search_file_index;
-				
+
 				query = QString("SELECT file_to_hash.file_id, file_to_hash.tag_id FROM file_to_hash INNER JOIN hsah_tags ON file_to_hash.tag_id = hsah_tags.id WHERE hsah_tags.tags LIKE \"%%1%\"").arg(search_word);
 				m_pView->db->exec(query, data);
 				for (const auto& item : data)
@@ -1109,7 +1140,7 @@ void widgetLeftView::doSearch3()
 				QLabel* this_info_label = new QLabel();
 				this_info_label->setText(output_string);
 				m_pView->_widgetBottomView->m_outputTree->setItemWidget(this_info, 0, this_info_label);
-				QString data_str = QString("%1/%2").arg(file_id).arg(tag_string);
+				QString data_str = QString("%1/H/%2").arg(file_id).arg(tag_string);
 				this_info->setData(0, Qt::AccessibleTextRole, data_str);
 				//this_info->setText(0, total_file_to_header[file_id][j].second);
 				total_count++;
@@ -1121,24 +1152,24 @@ void widgetLeftView::doSearch3()
 	}
 }
 
-void widgetLeftView::onSearchMVClicked(QListWidgetItem* item)
-{
-	if (item != NULL)
-	{
-		QString tag_str = item->text();
-		QMessageBox::StandardButton reply = QMessageBox::question(this, QString::fromLocal8Bit("확인"), QString::fromLocal8Bit("[%1]을 삭제하시겠습니까?").arg(tag_str),
-			QMessageBox::Yes | QMessageBox::No);
-		if (reply == QMessageBox::Yes)
-		{
-			if (serchVMDatas.contains(tag_str))
-			{
-				serchVMDatas.remove(tag_str);
-			}
-			mvSearchList->takeItem(mvSearchList->row(item));
-			delete item;
-		}
-	}
-}
+//void widgetLeftView::onSearchMVClicked(QListWidgetItem* item)
+//{
+//	if (item != NULL)
+//	{
+//		QString tag_str = item->text();
+//		QMessageBox::StandardButton reply = QMessageBox::question(this, QString::fromLocal8Bit("확인"), QString::fromLocal8Bit("[%1]을 삭제하시겠습니까?").arg(tag_str),
+//			QMessageBox::Yes | QMessageBox::No);
+//		if (reply == QMessageBox::Yes)
+//		{
+//			if (serchVMDatas.contains(tag_str))
+//			{
+//				serchVMDatas.remove(tag_str);
+//			}
+//			mvSearchList->takeItem(mvSearchList->row(item));
+//			delete item;
+//		}
+//	}
+//}
 
 void widgetLeftView::onFileMVClicked(QListWidgetItem* current, QListWidgetItem* previous)
 {
@@ -1248,85 +1279,119 @@ void widgetLeftView::doSearch4()
 		return;
 	}
 
-	QList<QString> search_mv_list = serchVMDatas.keys();
+	QVariantList data;
+	QMap< int, bool > total_search_file_index;
+	QMap< int, QList<QString>> total_file_find_info;
+	QMap< int, QList<QString>> total_file_search_word;
 
-	if (search_mv_list.size() > 0)
+	QString prev_condition_name;
+	QString query;
+	for (int i = 0; i < mv_list.size(); i++)
 	{
-		QVariantList data;
-		QMap< int, int > check_file_ids;
-		QMap< int, QList<QString> > file_to_result;
-		for (int i = 0; i < search_mv_list.size(); i++)
+		SearchControls* sc = mv_list[i];
+		QString search_word = sc->m_searchWord->text();
+
+		if (search_word.length() > 0)
 		{
-			QString search_text = search_mv_list[i];
-			QString query = QString("SELECT file_id, s_title FROM play_info WHERE s_title LIKE \"%%1%\"").arg(search_text);
+			QString condition_name = sc->m_searchCondition->currentText();
+
+			QList< int > search_file_index;
+
+			query = QString("SELECT file_id, s_title FROM play_info WHERE s_title LIKE \"%%1%\"").arg(search_word);
+			//query = QString("SELECT file_to_hash.file_id, file_to_hash.tag_id FROM file_to_hash INNER JOIN hsah_tags ON file_to_hash.tag_id = hsah_tags.id WHERE hsah_tags.tags LIKE \"%%1%\"").arg(search_word);
 			m_pView->db->exec(query, data);
+			for (const auto& item : data)
+			{
+				auto map = item.toMap();
+				int file_id = map["file_id"].toInt();
+				search_file_index.append(file_id);
+				QString s_title = map["s_title"].toString();
+
+				QList<int> find_index;
+				int index = s_title.indexOf(search_word);
+				while (index > -1)
+				{
+					find_index.append(index);
+					index = s_title.indexOf(search_word, index + 1);
+				}
+
+				QString result_info;
+				index = 0;
+				for (int j = 0; j < find_index.size(); j++)
+				{
+					int current_index = find_index[j];
+					if (current_index > index)
+						result_info += s_title.mid(index, current_index - index);
+
+					result_info += QString("<font color=\"red\">%1</font>").arg(search_word);
+					index = current_index + search_word.length();
+				}
+				result_info += s_title.right(s_title.length() - index);
+
+				total_file_find_info[file_id].append(result_info);
+				total_file_search_word[file_id].append(search_word);
+			}
+
 			if (i == 0)
 			{
-				for (const auto& item : data)
+				for (int j = 0; j < search_file_index.size(); j++)
 				{
-					auto map = item.toMap();
-					int file_id = map["file_id"].toInt();
-					QString s_title = map["s_title"].toString();
-					check_file_ids[file_id] = 0;
-
-					QList<int> find_index;
-					int index = s_title.indexOf(search_text);
-					while (index > -1)
-					{
-						find_index.append(index);
-						index = s_title.indexOf(search_text, index + 1);
-					}
-
-					QString result_info;
-					index = 0;
-					for (int j = 0; j < find_index.size(); j++)
-					{
-						int current_index = find_index[j];
-						if (current_index > index)
-							result_info += s_title.mid(index, current_index - index);
-
-						result_info += QString("<font color=\"red\">%1</font>").arg(search_text);
-						index = current_index + search_text.length();
-					}
-					result_info += s_title.right(s_title.length() - index);
-
-					file_to_result[file_id].append(result_info);
+					total_search_file_index[search_file_index[j]] = true;
 				}
 			}
 			else
 			{
-				for (const auto& item : data)
+				if (prev_condition_name == "AND")
 				{
-					auto map = item.toMap();
-					int file_id = map["file_id"].toInt();
-					if (check_file_ids.contains(file_id))
-						check_file_ids[file_id] = i;
-				}
-
-				QList<int> temp_file_ids = check_file_ids.keys();
-				for (int j = 0; j < temp_file_ids.size(); j++)
-				{
-					if (check_file_ids[temp_file_ids[j]] < i)
+					QList< int > temp_file_index;
+					for (int j = 0; j < search_file_index.size(); j++)
 					{
-						check_file_ids.remove(temp_file_ids[j]);
+						if (total_search_file_index.contains(search_file_index[j]))
+						{
+							temp_file_index.append(search_file_index[j]);
+						}
+					}
+
+					total_search_file_index.clear();
+					for (int j = 0; j < temp_file_index.size(); j++)
+					{
+						total_search_file_index[temp_file_index[j]] = true;
 					}
 				}
-
-				if (check_file_ids.size() < 1)
+				else if (prev_condition_name == "OR")
 				{
-					break;
+					for (int j = 0; j < search_file_index.size(); j++)
+					{
+						total_search_file_index[search_file_index[j]] = true;
+					}
+				}
+				else if (prev_condition_name == "NOT")
+				{
+					for (int j = 0; j < search_file_index.size(); j++)
+					{
+						total_search_file_index[search_file_index[j]] = false;
+					}
+				}
+				else
+				{
+					//	이상 버림
 				}
 			}
-		}
 
-		QTreeWidgetItem* this_search = new QTreeWidgetItem();
-		//	결과 표시
-		int total_count = 0;
-		int file_count = 0;
-		QList<int> find_file_ids = check_file_ids.keys();
-		for (int i = 0; i < find_file_ids.size(); i++)
+			prev_condition_name = condition_name;
+		}
+	}
+
+	QTreeWidgetItem* this_search = new QTreeWidgetItem();
+	//	결과 표시
+	int total_count = 0;
+	int file_count = 0;
+	QList<int> find_file_ids = total_search_file_index.keys();
+	for (int i = 0; i < find_file_ids.size(); i++)
+	{
+		int file_id = find_file_ids[i];
+		if (total_search_file_index[file_id])
 		{
-			int file_id = find_file_ids[i];
 			QString file_name;
 			file_count = 0;
 			m_pView->db->exec(QString("SELECT file_name FROM file_info WHERE id=%1").arg(file_id), data);
@@ -1337,13 +1402,13 @@ void widgetLeftView::doSearch4()
 			}
 
 			QTreeWidgetItem* this_file = new QTreeWidgetItem(this_search);
-			for (int j = 0; j < file_to_result[file_id].size(); j++)
+			for (int j = 0; j < total_file_find_info[file_id].size(); j++)
 			{
 				QTreeWidgetItem* this_info = new QTreeWidgetItem(this_file);
 				QLabel* this_info_label = new QLabel();
-				this_info_label->setText(file_to_result[file_id][j]);
+				this_info_label->setText(total_file_find_info[file_id][j]);
 				m_pView->_widgetBottomView->m_outputTree->setItemWidget(this_info, 0, this_info_label);
-				QString data_str = QString("%1/0/0").arg(file_id);
+				QString data_str = QString("%1/V/%2").arg(file_id).arg(total_file_search_word[file_id][j]);
 				this_info->setData(0, Qt::AccessibleTextRole, data_str);
 				//this_info->setText(0, total_file_to_header[file_id][j].second);
 				total_count++;
@@ -1351,10 +1416,10 @@ void widgetLeftView::doSearch4()
 			}
 			this_file->setText(0, QString("%1 [%2]").arg(file_name).arg(file_count));
 		}
-		this_search->setText(0, QString("%1 [%2]").arg(QDateTime::currentDateTime().toString()).arg(total_count));
-
-		m_pView->_widgetBottomView->AddResult(this_search);
 	}
+	this_search->setText(0, QString("%1 [%2]").arg(QDateTime::currentDateTime().toString()).arg(total_count));
+
+	m_pView->_widgetBottomView->AddResult(this_search);
 }
 
 void widgetLeftView::UpdateMemo(SEARCH_TYPE search_type, QString file_info1, QString file_info2, QString file_info3)
@@ -1368,7 +1433,7 @@ void widgetLeftView::UpdateMemo(SEARCH_TYPE search_type, QString file_info1, QSt
 			int search_memo_id = -1;
 			int search_index = -1;
 			int search_length = -1;
-			if (search_type == MEMO)
+			if (search_type == MEMO_CONTENT || search_type == MEMO_USER || search_type == MEMO_DATE)
 			{
 				if (file_info1 != "")
 				{
@@ -1412,14 +1477,25 @@ void widgetLeftView::UpdateMemo(SEARCH_TYPE search_type, QString file_info1, QSt
 				MemoData* new_memo = new MemoData(memo_id, parent_id, user_id, user_name, memo_text, memo_date);
 				if (search_memo_id == memo_id)
 				{
-					if (search_index == -1)
+					if (search_type == MEMO_DATE)
 					{
 						new_memo->m_str_datetime = QString("<font color=\"green\">%1</font>").arg(new_memo->m_str_datetime);
 					}
-					else
+					else if (search_type == MEMO_CONTENT)
 					{
 						new_memo->m_memo = new_memo->m_memo.insert(search_index + search_length, "</font>");
 						new_memo->m_memo = new_memo->m_memo.insert(search_index, "<font color=\"green\">");
+						new_memo->m_memo = new_memo->m_memo.insert(0, "<p>");
+						new_memo->m_memo = new_memo->m_memo + "</p>";
+						new_memo->m_memo = new_memo->m_memo.replace("\n", "</p><p>");
+					}
+					else if (search_type == MEMO_USER)
+					{
+						new_memo->m_username = new_memo->m_username.insert(search_index + search_length, "</font>");
+						new_memo->m_username = new_memo->m_username.insert(search_index, "<font color=\"green\">");
+						new_memo->m_username = new_memo->m_memo.insert(0, "<p>");
+						new_memo->m_username = new_memo->m_username + "</p>";
+						new_memo->m_username = new_memo->m_username.replace("\n", "</p><p>");
 					}
 				}
 
@@ -1503,6 +1579,22 @@ void widgetLeftView::UpdateMemo(SEARCH_TYPE search_type, QString file_info1, QSt
 				auto map = item.toMap();
 				int s_time = map["s_time"].toInt();
 				QString s_title = map["s_title"].toString();
+				QList<int> start_index;
+				if (search_type == MV)
+				{
+					int search_index = s_title.indexOf(file_info1);
+					while (search_index > -1)
+					{
+						start_index.push_back(search_index);
+
+						search_index = s_title.indexOf(file_info1, search_index + file_info1.length());
+					}
+					for (int i = start_index.length() - 1; i >= 0; i--)
+					{
+						s_title = s_title.insert(start_index[i] + file_info1.length(), "</font>");
+						s_title = s_title.insert(start_index[i], "<font color=\"green\">");
+					}
+				}
 
 				timeToMemo[s_time] = s_title;
 			}
@@ -1996,7 +2088,7 @@ void widgetLeftView::doDelFile()
 
 void widgetLeftView::doAddUser()
 {
-	if(m_pView->DBConnected() == false)
+	if (m_pView->DBConnected() == false)
 	{
 		QMessageBox::information(this, QString::fromLocal8Bit("확인"), QString::fromLocal8Bit("데이터베이스를 먼저 생성하세요."));
 		return;

@@ -1136,11 +1136,17 @@ void BDLS::SetCurrentFile(SEARCH_TYPE search_type, QString file_name, QString fi
 		file_path = m_strDBfolderpath + "\\" + file_name;
 	m_iCurrentFileDBID = map_file_to_id[file_name];
 	_widgetLeftView->UpdateMemo(search_type, file_info1, file_info2, file_info3);
+
+	QString search_word = "";
+	if (search_type == CONTENT)
+	{
+		search_word = file_info2;
+	}
 	if (IsPDF(file_path))
 	{
 		m_strCurrentSelectedItemPath = file_path;
 		m_iCurrentSelectedItemType = 2;
-		_widgetRightView->ViewPDF(file_path, file_info1);
+		_widgetRightView->ViewPDF(file_path, file_info1, search_word);
 		//m_pFrame->m_wndProperties.DoPreview(file_path, 1, m_bViewThumbInPreview);
 	}
 	else if (IsMV(file_path))

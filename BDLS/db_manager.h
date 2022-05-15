@@ -8,8 +8,11 @@ enum SEARCH_TYPE
 {
     NONE,
     CONTENT,
-    MEMO,
-    HASHTAG
+    MEMO_CONTENT,
+    MEMO_USER,
+    MEMO_DATE,
+    HASHTAG,
+    MV
 };
 
 
