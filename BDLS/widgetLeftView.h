@@ -35,7 +35,7 @@ public:
 	void setSearchCombo(QList<QString>& h_list, QMap<QString, int>& map_h_to_i);
 	void OnMemoClicked(widgetMemo* pmemo);
 	void clearMemoSelection();
-	void UpdateMemo(SEARCH_TYPE search_type, QString file_info1 = "", QString file_info2 = "", QString file_info3 = "");
+	void UpdateMemo(SEARCH_TYPE search_type, QString file_info1 = "", QString file_info2 = "", QString file_info3 = "", QString file_info4 = "");
 	widgetMemo* AddMemoControl(MemoData* new_memo, int search_memo_id = -1, MemoData* parent_memo = NULL);
 	void clearMemo();
 	void setTagList();

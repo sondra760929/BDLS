@@ -344,61 +344,8 @@ void BDLS::LoadOldDB(QString file_path)
 				//sprintf_s(input_query, "INSERT INTO headers VALUES (NULL, \"%s\")", temp_string);
 				db->exec(temp_string);
 			}
-			db->exec("CREATE TABLE file_info (id INTEGER PRIMARY KEY, file_name TEXT, file_path TEXT, m_no TEXT)");
-			db->exec("CREATE TABLE header_info (file_id INTEGER, header_id INTEGER, value TEXT, PRIMARY KEY(file_id, header_id))");
-			db->exec("CREATE TABLE page_info (id INTEGER PRIMARY KEY, file_id INTEGER, page_no INTEGER, block_no INTEGER, block_text TEXT)");
-			db->exec("CREATE TABLE hsah_tags (id INTEGER PRIMARY KEY, tags TEXT)");
-			db->exec("CREATE TABLE file_to_hash (id INTEGER PRIMARY KEY, file_id INTEGER, tag_id INTEGER)");
-			db->exec("CREATE TABLE reply_info (id INTEGER PRIMARY KEY, file_id INTEGER, parent_id INTEGER, user_id TEXT, value TEXT, date_time TEXT)");
-			db->exec("CREATE TABLE play_info (id INTEGER PRIMARY KEY, file_id INTEGER, s_time INTEGER, s_title TEXT)");
-			db->exec("CREATE TABLE user_info (id INTEGER PRIMARY KEY, user_id TEXT, user_pass TEXT, user_name TEXT, read_only INTEGER)");
-			db->exec("CREATE TABLE user_file_info (id INTEGER PRIMARY KEY, user_id TEXT, file_id INTEGER)");
-			db->exec("CREATE TABLE log_info (id INTEGER PRIMARY KEY, log_type TEXT, log_content TEXT, date_time TEXT)");
 		}
-		else
-		{
-			QStringList table_list = db->tables();
-			if (!table_list.contains("file_info"))
-			{
-				db->exec("CREATE TABLE file_info (id INTEGER PRIMARY KEY, file_name TEXT, file_path TEXT, m_no TEXT)");
-			}
-			if (!table_list.contains("header_info"))
-			{
-				db->exec("CREATE TABLE header_info (file_id INTEGER, header_id INTEGER, value TEXT, PRIMARY KEY(file_id, header_id))");
-			}
-			if (!table_list.contains("page_info"))
-			{
-				db->exec("CREATE TABLE page_info (id INTEGER PRIMARY KEY, file_id INTEGER, page_no INTEGER, block_no INTEGER, block_text TEXT)");
-			}
-			if (!table_list.contains("hsah_tags"))
-			{
-				db->exec("CREATE TABLE hsah_tags (id INTEGER PRIMARY KEY, tags TEXT)");
-			}
-			if (!table_list.contains("file_to_hash"))
-			{
-				db->exec("CREATE TABLE file_to_hash (id INTEGER PRIMARY KEY, file_id INTEGER, tag_id INTEGER)");
-			}
-			if (!table_list.contains("reply_info"))
-			{
-				db->exec("CREATE TABLE reply_info (id INTEGER PRIMARY KEY, file_id INTEGER, parent_id INTEGER, user_id TEXT, value TEXT, date_time TEXT)");
-			}
-			if (!table_list.contains("play_info"))
-			{
-				db->exec("CREATE TABLE play_info (id INTEGER PRIMARY KEY, file_id INTEGER, s_time INTEGER, s_title TEXT)");
-			}
-			if (!table_list.contains("user_info"))
-			{
-				db->exec("CREATE TABLE user_info (id INTEGER PRIMARY KEY, user_id TEXT, user_pass TEXT, user_name TEXT, read_only INTEGER)");
-			}
-			if (!table_list.contains("user_file_info"))
-			{
-				db->exec("CREATE TABLE user_file_info (id INTEGER PRIMARY KEY, user_id TEXT, file_id INTEGER)");
-			}
-			if (!table_list.contains("log_info"))
-			{
-				db->exec("CREATE TABLE log_info (id INTEGER PRIMARY KEY, log_type TEXT, log_content TEXT, date_time TEXT)");
-			}
-		}
+		CheckAndCreateTable();
 		//CreateDirectory(m_strCurrentFolderPath + "\\pdf_txt", NULL);
 
 		QString managed_file_no("");
@@ -555,48 +502,7 @@ void BDLS::InitFromDB()
 		{
 			if (InitDB(m_strDBfilepath))
 			{
-				QStringList table_list = db->tables();
-				if (!table_list.contains("file_info"))
-				{
-					db->exec("CREATE TABLE file_info (id INTEGER PRIMARY KEY, file_name TEXT, file_path TEXT, m_no TEXT)");
-				}
-				if (!table_list.contains("header_info"))
-				{
-					db->exec("CREATE TABLE header_info (file_id INTEGER, header_id INTEGER, value TEXT, PRIMARY KEY(file_id, header_id))");
-				}
-				if (!table_list.contains("page_info"))
-				{
-					db->exec("CREATE TABLE page_info (id INTEGER PRIMARY KEY, file_id INTEGER, page_no INTEGER, block_no INTEGER, block_text TEXT)");
-				}
-				if (!table_list.contains("hsah_tags"))
-				{
-					db->exec("CREATE TABLE hsah_tags (id INTEGER PRIMARY KEY, tags TEXT)");
-				}
-				if (!table_list.contains("file_to_hash"))
-				{
-					db->exec("CREATE TABLE file_to_hash (id INTEGER PRIMARY KEY, file_id INTEGER, tag_id INTEGER)");
-				}
-				if (!table_list.contains("reply_info"))
-				{
-					db->exec("CREATE TABLE reply_info (id INTEGER PRIMARY KEY, file_id INTEGER, parent_id INTEGER, user_id TEXT, value TEXT, date_time TEXT)");
-				}
-				if (!table_list.contains("play_info"))
-				{
-					db->exec("CREATE TABLE play_info (id INTEGER PRIMARY KEY, file_id INTEGER, s_time INTEGER, s_title TEXT)");
-				}
-				if (!table_list.contains("user_info"))
-				{
-					db->exec("CREATE TABLE user_info (id INTEGER PRIMARY KEY, user_id TEXT, user_pass TEXT, user_name TEXT, read_only INTEGER)");
-				}
-				if (!table_list.contains("user_file_info"))
-				{
-					db->exec("CREATE TABLE user_file_info (id INTEGER PRIMARY KEY, user_id TEXT, file_id INTEGER)");
-				}
-				if (!table_list.contains("log_info"))
-				{
-					db->exec("CREATE TABLE log_info (id INTEGER PRIMARY KEY, log_type TEXT, log_content TEXT, date_time TEXT)");
-				}
-
+				CheckAndCreateTable();
 
 				if (m_bIsLogin)
 				{
@@ -1129,13 +1035,13 @@ void BDLS::OnOpenSingle()
 	}
 }
 
-void BDLS::SetCurrentFile(SEARCH_TYPE search_type, QString file_name, QString file_info1, QString file_info2, QString file_info3)
+void BDLS::SetCurrentFile(SEARCH_TYPE search_type, QString file_name, QString file_info1, QString file_info2, QString file_info3, QString file_info4)
 {
 	QString file_path = m_strCurrentFolderPath + "\\" + file_name;
 	if(DBConnected())
 		file_path = m_strDBfolderpath + "\\" + file_name;
 	m_iCurrentFileDBID = map_file_to_id[file_name];
-	_widgetLeftView->UpdateMemo(search_type, file_info1, file_info2, file_info3);
+	_widgetLeftView->UpdateMemo(search_type, file_info1, file_info2, file_info3, file_info4);
 
 	QString search_word = "";
 	if (search_type == CONTENT)
@@ -1553,6 +1459,54 @@ QString BDLS::NextFileMNO(QString last_mno)
 	return m_no;
 }
 
+void BDLS::CheckAndCreateTable()
+{
+	if (DBConnected())
+	{
+		QStringList table_list = db->tables();
+		if (!table_list.contains("file_info"))
+		{
+			db->exec("CREATE TABLE file_info (id INTEGER PRIMARY KEY, file_name TEXT, file_path TEXT, m_no TEXT)");
+		}
+		if (!table_list.contains("header_info"))
+		{
+			db->exec("CREATE TABLE header_info (file_id INTEGER, header_id INTEGER, value TEXT, PRIMARY KEY(file_id, header_id))");
+		}
+		if (!table_list.contains("page_info"))
+		{
+			db->exec("CREATE TABLE page_info (id INTEGER PRIMARY KEY, file_id INTEGER, page_no INTEGER, block_no INTEGER, block_text TEXT)");
+		}
+		if (!table_list.contains("hsah_tags"))
+		{
+			db->exec("CREATE TABLE hsah_tags (id INTEGER PRIMARY KEY, tags TEXT)");
+		}
+		if (!table_list.contains("file_to_hash"))
+		{
+			db->exec("CREATE TABLE file_to_hash (id INTEGER PRIMARY KEY, file_id INTEGER, page_no INTEGER, tag_id INTEGER)");
+		}
+		if (!table_list.contains("reply_info"))
+		{
+			db->exec("CREATE TABLE reply_info (id INTEGER PRIMARY KEY, file_id INTEGER, page_no INTEGER, parent_id INTEGER, user_id TEXT, value TEXT, date_time TEXT)");
+		}
+		if (!table_list.contains("play_info"))
+		{
+			db->exec("CREATE TABLE play_info (id INTEGER PRIMARY KEY, file_id INTEGER, s_time INTEGER, s_title TEXT)");
+		}
+		if (!table_list.contains("user_info"))
+		{
+			db->exec("CREATE TABLE user_info (id INTEGER PRIMARY KEY, user_id TEXT, user_pass TEXT, user_name TEXT, read_only INTEGER)");
+		}
+		if (!table_list.contains("user_file_info"))
+		{
+			db->exec("CREATE TABLE user_file_info (id INTEGER PRIMARY KEY, user_id TEXT, file_id INTEGER)");
+		}
+		if (!table_list.contains("log_info"))
+		{
+			db->exec("CREATE TABLE log_info (id INTEGER PRIMARY KEY, log_type TEXT, log_content TEXT, date_time TEXT)");
+		}
+	}
+}
+
 void BDLS::doDBUpdate()
 {
 	int row_count = originModel->rowCount();
@@ -1608,16 +1562,7 @@ void BDLS::doDBUpdate()
 						//sprintf_s(input_query, "INSERT INTO headers VALUES (NULL, \"%s\")", temp_string);
 						db->exec(temp_string);
 					}
-					db->exec("CREATE TABLE file_info (id INTEGER PRIMARY KEY, file_name TEXT, file_path TEXT, m_no TEXT)");
-					db->exec("CREATE TABLE header_info (file_id INTEGER, header_id INTEGER, value TEXT, PRIMARY KEY(file_id, header_id))");
-					db->exec("CREATE TABLE page_info (id INTEGER PRIMARY KEY, file_id INTEGER, page_no INTEGER, block_no INTEGER, block_text TEXT)");
-					db->exec("CREATE TABLE hsah_tags (id INTEGER PRIMARY KEY, tags TEXT)");
-					db->exec("CREATE TABLE file_to_hash (id INTEGER PRIMARY KEY, file_id INTEGER, tag_id INTEGER)");
-					db->exec("CREATE TABLE reply_info (id INTEGER PRIMARY KEY, file_id INTEGER, parent_id INTEGER, user_id TEXT, value TEXT, date_time TEXT)");
-					db->exec("CREATE TABLE play_info (id INTEGER PRIMARY KEY, file_id INTEGER, s_time INTEGER, s_title TEXT)");
-					db->exec("CREATE TABLE user_info (id INTEGER PRIMARY KEY, user_id TEXT, user_pass TEXT, user_name TEXT, read_only INTEGER)");
-					db->exec("CREATE TABLE user_file_info (id INTEGER PRIMARY KEY, user_id TEXT, file_id INTEGER)");
-					db->exec("CREATE TABLE log_info (id INTEGER PRIMARY KEY, log_type TEXT, log_content TEXT, date_time TEXT)");
+					CheckAndCreateTable();
 				}
 				//CreateDirectory(m_strCurrentFolderPath + "\\pdf_txt", NULL);
 

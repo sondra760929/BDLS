@@ -33,6 +33,7 @@ public:
     void ViewPDF(QString file_path, QString file_info = "", QString search_word = "");
     void ViewMovie(QString file_path, QString file_info = "");
     void JumpTo(int secs);
+    int getPageNo();
 
 protected:
     void resizeEvent(QResizeEvent* event);

@@ -246,6 +246,11 @@ void widgetRightView::ViewMovie(QString file_path, QString file_info)
     m_player->play();
 }
 
+int widgetRightView::getPageNo()
+{
+    return m_pPdfWidget->page();
+}
+
 //void widgetRightView::bookmarkSelected(const QModelIndex& index)
 //{
 //    if (!index.isValid())
