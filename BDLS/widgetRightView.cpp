@@ -218,6 +218,22 @@ void widgetRightView::pageSelected(int page)
 {
 	auto nav = ui.pdfView->pageNavigation();
 	nav->jump(page, {}, nav->currentZoom());
+	int page_count = m_document->pageCount();
+
+	if (page <= 0)
+	{
+		ui.pushButton_3->setEnabled(false);
+	}
+	else if (page < page_count - 1)
+	{
+		ui.pushButton_3->setEnabled(true);
+	}
+
+	ui.pushButton_4->setEnabled(true);
+	if (page >= page_count - 1)
+	{
+		ui.pushButton_4->setEnabled(false);
+	}
 }
 
 void widgetRightView::on_actionQuit_triggered()

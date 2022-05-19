@@ -66,6 +66,7 @@ void widgetBottomView::onMinus()
 void widgetBottomView::onClear()
 {
 	m_outputTree->clear();
+	m_pView->resetSelectBySearch();
 }
 
 void widgetBottomView::itemChanged(QTreeWidgetItem* current, QTreeWidgetItem* previous)

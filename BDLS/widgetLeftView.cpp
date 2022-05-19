@@ -702,6 +702,8 @@ void widgetLeftView::doSearch1()
 						//this_info->setText(0, total_file_to_header[file_id][j].second);
 						total_count++;
 						file_count++;
+
+						m_pView->setSelectBySearch(file_id);
 					}
 				}
 
@@ -766,6 +768,7 @@ void widgetLeftView::doSearch1()
 									search_index = file_contents.indexOf(search_words[l], search_index + search_word_count);
 									total_count++;
 									file_count++;
+									m_pView->setSelectBySearch(file_id);
 								}
 							}
 						}
@@ -987,6 +990,7 @@ void widgetLeftView::doSearch2()
 						//this_info->setText(0, total_file_to_header[file_id][j].second);
 						total_count++;
 						file_count++;
+						m_pView->setSelectBySearch(file_id);
 					}
 				}
 				this_file->setText(0, QString("%1 [%2]").arg(file_name).arg(file_count));
@@ -1188,6 +1192,7 @@ void widgetLeftView::doSearch3()
 					this_info->setData(0, Qt::AccessibleTextRole, data_str);
 					//this_info->setText(0, total_file_to_header[file_id][j].second);
 					total_count++;
+					m_pView->setSelectBySearch(file_id);
 				}
 			}
 		}
@@ -1458,6 +1463,7 @@ void widgetLeftView::doSearch4()
 				//this_info->setText(0, total_file_to_header[file_id][j].second);
 				total_count++;
 				file_count++;
+				m_pView->setSelectBySearch(file_id);
 			}
 			this_file->setText(0, QString("%1 [%2]").arg(file_name).arg(file_count));
 		}

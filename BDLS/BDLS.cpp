@@ -1973,3 +1973,26 @@ void BDLS::toogleViewRight()
 void BDLS::toogleViewBottom()
 {
 }
+
+void BDLS::setSelectBySearch(int file_id)
+{
+	QModelIndexList Items = originModel->match(originModel->index(0, 0), Qt::AccessibleTextRole, QVariant::fromValue(file_id), 1, Qt::MatchRecursive);
+	
+	if (Items.count() > 0)
+	{
+		originModel->setData(originModel->index(Items[0].row(), originModel->columnCount() - 2), "V");
+	}
+}
+
+void BDLS::resetSelectBySearch()
+{
+	int rows = originModel->rowCount();
+	int cols = originModel->columnCount();
+	if (cols > 1)
+	{
+		for (int i = 0; i < rows; i++)
+		{
+			originModel->setData(originModel->index(i, cols - 2), "");
+		}
+	}
+}

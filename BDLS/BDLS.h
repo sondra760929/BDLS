@@ -52,6 +52,8 @@ public:
     void toogleViewLeft();
     void toogleViewRight();
     void toogleViewBottom();
+    void setSelectBySearch(int file_id);
+    void resetSelectBySearch();
 
     void generateFilters();
     void updateFilter(size_t column, const QString& value);
