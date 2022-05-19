@@ -36,7 +36,7 @@
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
-    <QtInstall>6.3.0_msvc2019_64</QtInstall>
+    <QtInstall>6.4.0_msvc2019_64</QtInstall>
     <QtModules>core;sql;gui;multimedia;widgets;multimediawidgets;webenginewidgets</QtModules>
     <QtBuildConfig>release</QtBuildConfig>
   </PropertyGroup>
@@ -59,8 +59,8 @@
     <LibraryPath>E:\Library\Qt\6.3.0\msvc2019_64\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <IncludePath>E:\source\BDLS\QXlsx\header;$(QTDIR)\include\;$(QTDIR)\include\QtGui\6.3.0;$(QTDIR)\include\QtGui\6.3.0\QtGui;$(QTDIR)\include\QtCore\6.3.0;$(QTDIR)\include\QtCore\6.3.0\QtCore;E:\Library\Qt\6.3.0\msvc2019_64\include\QtPdf;E:\Library\Qt\6.3.0\msvc2019_64\include\QtPdfWidgets;$(IncludePath)</IncludePath>
-    <LibraryPath>E:\Library\Qt\6.3.0\msvc2019_64\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>E:\source\BDLS\QXlsx\header;$(QTDIR)\include\;$(QTDIR)\include\QtGui\6.4.0;$(QTDIR)\include\QtGui\6.4.0\QtGui;$(QTDIR)\include\QtCore\6.4.0;$(QTDIR)\include\QtCore\6.4.0\QtCore;E:\library\Qt6\6.4.0\msvc2019_64\include\QtPdf;E:\library\Qt6\6.4.0\msvc2019_64\include\QtPdfWidgets;$(IncludePath)</IncludePath>
+    <LibraryPath>E:\Library\Qt6\6.4.0\msvc2019_64\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
@@ -140,7 +140,6 @@
     <ClCompile Include="FilterTableHeader.cpp" />
     <ClCompile Include="MySortFilterProxyModel.cpp" />
     <ClCompile Include="MyTabWidget.cpp" />
-    <ClCompile Include="pageselector.cpp" />
     <ClCompile Include="playercontrols.cpp" />
     <ClCompile Include="SearchControls.cpp" />
     <ClCompile Include="TitleBar.cpp" />
@@ -230,7 +229,6 @@
     <QtMoc Include="videowidget.h" />
     <QtMoc Include="playercontrols.h" />
     <QtMoc Include="zoomselector.h" />
-    <QtMoc Include="pageselector.h" />
     <QtMoc Include="MySortFilterProxyModel.h" />
     <QtMoc Include="..\QXlsx\header\xlsxdocument.h" />
     <ClInclude Include="..\QXlsx\header\xlsxstyles_p.h" />

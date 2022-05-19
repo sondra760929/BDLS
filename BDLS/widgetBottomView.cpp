@@ -2,7 +2,7 @@
 #include "BDLS.h"
 #include "db_manager.h"
 
-widgetBottomView::widgetBottomView(QWidget *parent)
+widgetBottomView::widgetBottomView(QWidget* parent)
 	: QWidget(parent)
 {
 	ui.setupUi(this);
@@ -90,20 +90,47 @@ void widgetBottomView::itemChanged(QTreeWidgetItem* current, QTreeWidgetItem* pr
 					file_path = map["file_path"].toString();
 				}
 
-				if (data_list.count() == 2)
+				if (data_list[1] == "C")
 				{
-					//	content
-					m_pView->SetCurrentFile(HASHTAG, file_name, data_list[1]);
+					if (data_list.count() > 3)
+					{
+						m_pView->SetCurrentFile(CONTENT, file_name, data_list[2], data_list[3]);	//	page_no, block_no
+					}
 				}
-				else if (data_list.count() == 3)
+				else if (data_list[1] == "H")
 				{
-					//	content
-					m_pView->SetCurrentFile(CONTENT, file_name, data_list[1], data_list[2]);
+					if (data_list.count() > 3)
+					{
+						m_pView->SetCurrentFile(HASHTAG, file_name, data_list[3], data_list[2]);	//	page_no, tag_name
+					}
 				}
-				else if (data_list.count() == 4)
+				else if (data_list[1] == "V")
 				{
-					//	memo
-					m_pView->SetCurrentFile(MEMO, file_name, data_list[1], data_list[2], data_list[3]);
+					if (data_list.count() > 2)
+					{
+						m_pView->SetCurrentFile(MV, file_name, data_list[2]);
+					}
+				}
+				else if (data_list[1] == "MC")
+				{
+					if (data_list.count() > 5)
+					{
+						m_pView->SetCurrentFile(MEMO_CONTENT, file_name, data_list[5], data_list[2], data_list[3], data_list[4]);	//	page_no, memo_id, find_start_index, find_length
+					}
+				}
+				else if (data_list[1] == "MW")
+				{
+					if (data_list.count() > 5)
+					{
+						m_pView->SetCurrentFile(MEMO_USER, file_name, data_list[5], data_list[2], data_list[3], data_list[4]);	//	page_no, memo_id, find_start_index, find_length
+					}
+				}
+				else if (data_list[1] == "MD")
+				{
+					if (data_list.count() > 4)
+					{
+						m_pView->SetCurrentFile(MEMO_DATE, file_name, data_list[4], data_list[2], data_list[3]);	//	page_no, memo_id, date
+					}
 				}
 			}
 		}
@@ -132,7 +159,7 @@ void widgetBottomView::onDoubleClicked(const QModelIndex& index)
 
 			if (QFile::exists(file_path))
 			{
-				::ShellExecuteA(0, "open", file_path.toStdString().c_str(), nullptr, nullptr, SW_SHOW);
+				QDesktopServices::openUrl(QUrl::fromLocalFile(file_path));
 			}
 		}
 	}

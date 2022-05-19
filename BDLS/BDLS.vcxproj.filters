@@ -157,9 +157,6 @@
     <ClCompile Include="zoomselector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="pageselector.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="playercontrols.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -214,9 +211,6 @@
       <Filter>QXlsx</Filter>
     </QtMoc>
     <QtMoc Include="MySortFilterProxyModel.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="pageselector.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="zoomselector.h">

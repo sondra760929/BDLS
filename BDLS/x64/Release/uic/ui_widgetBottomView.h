@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'widgetBottomView.ui'
 **
-** Created by: Qt User Interface Compiler version 6.3.0
+** Created by: Qt User Interface Compiler version 6.4.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -22,7 +22,7 @@ public:
     void setupUi(QWidget *widgetBottomView)
     {
         if (widgetBottomView->objectName().isEmpty())
-            widgetBottomView->setObjectName(QString::fromUtf8("widgetBottomView"));
+            widgetBottomView->setObjectName("widgetBottomView");
         widgetBottomView->resize(647, 507);
 
         retranslateUi(widgetBottomView);

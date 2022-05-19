@@ -47,6 +47,8 @@ public:
     QDockWidget* dockRight;
     QDockWidget* dockBottom;
 
+    void CheckAndCreateTable();
+
     void toogleViewLeft();
     void toogleViewRight();
     void toogleViewBottom();
@@ -87,7 +89,7 @@ public:
     QString NextFileMNO(QString last_mno);
     void ClearTable();
     void setSearchCombo();
-    void SetCurrentFile(SEARCH_TYPE search_type, QString file_name, QString file_info1 = "", QString file_info2 = "", QString file_info3 = "");
+    void SetCurrentFile(SEARCH_TYPE search_type, QString file_name, QString file_info1 = "", QString file_info2 = "", QString file_info3 = "", QString file_info4 = "");
     void setTagList();
     QMap<QString, int> map_title_to_index;
     QList<QString> title_list;
