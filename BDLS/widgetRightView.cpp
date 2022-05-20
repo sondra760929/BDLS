@@ -12,50 +12,53 @@ const qreal zoomMultiplier = qSqrt(2.0);
 
 widgetRightView::widgetRightView(QWidget *parent)
 	: QWidget(parent)
-	, m_zoomSelector(new ZoomSelector(this))
-	, m_pageSelector(new QSpinBox(this))
-	, m_document(new QPdfDocument(this))
+	//, m_zoomSelector(new ZoomSelector(this))
+	//, m_pageSelector(new QSpinBox(this))
+	//, m_document(new QPdfDocument(this))
 {
 	ui.setupUi(this);
 
-	m_document = new QPdfDocument(this);
+	//	page1
+	//m_document = new QPdfDocument(this);
 
-	QHBoxLayout* layout_0 = new QHBoxLayout(ui.bookmarkTab);
-	layout_0->addWidget(ui.bookmarkView);
+	//QHBoxLayout* layout_0 = new QHBoxLayout(ui.bookmarkTab);
+	//layout_0->addWidget(ui.bookmarkView);
 
-	m_zoomSelector->setMaximumWidth(150);
-	ui.widget->layout()->addWidget(m_zoomSelector);
+	//m_zoomSelector->setMaximumWidth(150);
+	//ui.widget->layout()->addWidget(m_zoomSelector);
 
-	m_pageSelector->setMaximumWidth(150);
-	ui.widget->layout()->addWidget(m_pageSelector);
+	//m_pageSelector->setMaximumWidth(150);
+	//ui.widget->layout()->addWidget(m_pageSelector);
 
-	connect(m_pageSelector, &QSpinBox::valueChanged, this, &widgetRightView::pageSelected);
-	auto nav = ui.pdfView->pageNavigation();
-	connect(nav, &QPdfNavigationStack::currentPageChanged, m_pageSelector, &QSpinBox::setValue);
-	connect(nav, &QPdfNavigationStack::backAvailableChanged, ui.pushButton_3, &QPushButton::setEnabled);
-	connect(nav, &QPdfNavigationStack::forwardAvailableChanged, ui.pushButton_4, &QPushButton::setEnabled);
+	//connect(m_pageSelector, &QSpinBox::valueChanged, this, &widgetRightView::pageSelected);
+	//auto nav = ui.pdfView->pageNavigation();
+	//connect(nav, &QPdfNavigationStack::currentPageChanged, m_pageSelector, &QSpinBox::setValue);
+	//connect(nav, &QPdfNavigationStack::backAvailableChanged, ui.pushButton_3, &QPushButton::setEnabled);
+	//connect(nav, &QPdfNavigationStack::forwardAvailableChanged, ui.pushButton_4, &QPushButton::setEnabled);
 
-	connect(m_zoomSelector, &ZoomSelector::zoomModeChanged, ui.pdfView, &QPdfView::setZoomMode);
-	connect(m_zoomSelector, &ZoomSelector::zoomFactorChanged, ui.pdfView, &QPdfView::setZoomFactor);
-	m_zoomSelector->reset();
+	//connect(m_zoomSelector, &ZoomSelector::zoomModeChanged, ui.pdfView, &QPdfView::setZoomMode);
+	//connect(m_zoomSelector, &ZoomSelector::zoomFactorChanged, ui.pdfView, &QPdfView::setZoomFactor);
+	//m_zoomSelector->reset();
 
-	QPdfBookmarkModel* bookmarkModel = new QPdfBookmarkModel(this);
-	bookmarkModel->setDocument(m_document);
+	//QPdfBookmarkModel* bookmarkModel = new QPdfBookmarkModel(this);
+	//bookmarkModel->setDocument(m_document);
 
-	ui.bookmarkView->setModel(bookmarkModel);
-	connect(ui.bookmarkView, SIGNAL(activated(QModelIndex)), this, SLOT(bookmarkSelected(QModelIndex)));
-	connect(ui.pushButton, SIGNAL(clicked()), this, SLOT(on_actionZoom_In_triggered()));
-	connect(ui.pushButton_2, SIGNAL(clicked()), this, SLOT(on_actionZoom_Out_triggered()));
-	connect(ui.pushButton_3, SIGNAL(clicked()), this, SLOT(on_actionPrevious_Page_triggered()));
-	connect(ui.pushButton_4, SIGNAL(clicked()), this, SLOT(on_actionNext_Page_triggered()));
-	connect(ui.pushButton_5, SIGNAL(clicked()), this, SLOT(on_actionContinuous_triggered()));
-	connect(ui.pdfView, SIGNAL(pageModeChanged(QPdfView::PageMode)), this, SLOT(on_actionPageModeChanged(QPdfView::PageMode)));
+	//ui.bookmarkView->setModel(bookmarkModel);
+	//connect(ui.bookmarkView, SIGNAL(activated(QModelIndex)), this, SLOT(bookmarkSelected(QModelIndex)));
+	//connect(ui.pushButton, SIGNAL(clicked()), this, SLOT(on_actionZoom_In_triggered()));
+	//connect(ui.pushButton_2, SIGNAL(clicked()), this, SLOT(on_actionZoom_Out_triggered()));
+	//connect(ui.pushButton_3, SIGNAL(clicked()), this, SLOT(on_actionPrevious_Page_triggered()));
+	//connect(ui.pushButton_4, SIGNAL(clicked()), this, SLOT(on_actionNext_Page_triggered()));
+	//connect(ui.pushButton_5, SIGNAL(clicked()), this, SLOT(on_actionContinuous_triggered()));
+	//connect(ui.pdfView, SIGNAL(pageModeChanged(QPdfView::PageMode)), this, SLOT(on_actionPageModeChanged(QPdfView::PageMode)));
 
-	//ui.tabWidget->setTabEnabled(1, false); // disable 'Pages' tab for now
+	////ui.tabWidget->setTabEnabled(1, false); // disable 'Pages' tab for now
 
-	ui.pdfView->setDocument(m_document);
+	//ui.pdfView->setDocument(m_document);
 
-	connect(ui.pdfView, &QPdfView::zoomFactorChanged, m_zoomSelector, &ZoomSelector::setZoomFactor);
+	//connect(ui.pdfView, &QPdfView::zoomFactorChanged, m_zoomSelector, &ZoomSelector::setZoomFactor);
+
+	//	page2
 
 	m_player = new QMediaPlayer(this);
 	m_audioOutput = new QAudioOutput(this);
@@ -76,7 +79,7 @@ widgetRightView::widgetRightView(QWidget *parent)
 	m_player->setVideoOutput(m_videoWidget);
 
 	// player layout
-	QBoxLayout* layout = new QVBoxLayout(ui.page_2);
+	QBoxLayout* layout = new QVBoxLayout(ui.pageMV);
 
 	// display
 	QBoxLayout* displayLayout = new QHBoxLayout;
@@ -137,6 +140,22 @@ widgetRightView::widgetRightView(QWidget *parent)
 
 	layout->addLayout(controlLayout);
 
+	//	page3
+
+	layout = new QVBoxLayout(ui.pagePDF);
+
+	qmlView = new QQuickWidget;
+	qmlView->setResizeMode(QQuickWidget::SizeRootObjectToView);
+	qmlView->setSource(QUrl("qrc:///BDLS/viewer.qml"));
+
+	layout->addWidget(qmlView);
+
+	//qmlView->rootObject()->setProperty("source", QUrl::fromLocalFile("D:/test/1.pdf"));
+	qmlView->show();
+
+	qmlRoot = (QObject*)qmlView->rootObject();
+	connect(qmlRoot, SIGNAL(qmlSignal(int)), this, SLOT(pageSelected(int)));
+
 	//QLabel* metaDataLabel = new QLabel(tr("Metadata for file:"));
 	//layout->addWidget(metaDataLabel);
 
@@ -173,31 +192,36 @@ widgetRightView::~widgetRightView()
 {
 }
 
-void widgetRightView::ViewPDF(QString file_path, QString file_info)
+void widgetRightView::ViewPDF(QString file_path, QString file_info, bool update_memo)
 {
 	m_player->stop();
 
-	ui.stackedWidget->setCurrentIndex(0);
-	m_document->load(file_path);
-	pageSelected(0);
-	m_pageSelector->setMaximum(m_document->pageCount() - 1); 
+	ui.stackedWidget->setCurrentIndex(2);
+
+	qmlRoot->setProperty("source", QUrl::fromLocalFile(file_path));
+
+	//m_document->load(file_path);
+	//m_pageSelector->setMaximum(m_document->pageCount() - 1); 
 	
 	if (file_info != "")
 	{
 		int page_no = file_info.toInt();
 		if (page_no > 0)
 		{
-			pageSelected(page_no);
+			pageSelectedwithMemo(page_no, update_memo);
+			return;
 		}
 	}
+	pageSelectedwithMemo(0, update_memo);
 }
 
 int widgetRightView::getPageNo()
 {
-	auto nav = ui.pdfView->pageNavigation();
-	return nav->currentPage();
+	return qmlRoot->property("page_no").toInt();
+	//auto nav = ui.pdfView->pageNavigation();
+	//return nav->currentPage();
 }
-void widgetRightView::ViewMovie(QString file_path, QString file_info)
+void widgetRightView::ViewMovie(QString file_path, QString file_info, bool update_memo)
 {
 	ui.stackedWidget->setCurrentIndex(1);
 	m_player->setSource(QUrl::fromLocalFile(file_path));
@@ -214,26 +238,38 @@ void widgetRightView::bookmarkSelected(const QModelIndex& index)
 	ui.pdfView->pageNavigation()->jump(page, {}, zoomLevel);
 }
 
+void widgetRightView::pageSelectedwithMemo(int page, bool update_memo)
+{
+	int return_value = 0;
+	QMetaObject::invokeMethod(qmlRoot, "goPage",
+		Q_ARG(int, page));
+
+	//auto nav = ui.pdfView->pageNavigation();
+	//nav->jump(page, {}, nav->currentZoom());
+	//int page_count = qmlRoot->property("page_count").toInt();
+
+	//if (page <= 0)
+	//{
+	//	ui.pushButton_3->setEnabled(false);
+	//}
+	//else if (page < page_count - 1)
+	//{
+	//	ui.pushButton_3->setEnabled(true);
+	//}
+
+	//ui.pushButton_4->setEnabled(true);
+	//if (page >= page_count - 1)
+	//{
+	//	ui.pushButton_4->setEnabled(false);
+	//}
+
+	if(update_memo)
+		m_pView->_widgetLeftView->UpdateMemo(SEARCH_TYPE::NONE, QString("%1").arg(page));
+}
+
 void widgetRightView::pageSelected(int page)
 {
-	auto nav = ui.pdfView->pageNavigation();
-	nav->jump(page, {}, nav->currentZoom());
-	int page_count = m_document->pageCount();
-
-	if (page <= 0)
-	{
-		ui.pushButton_3->setEnabled(false);
-	}
-	else if (page < page_count - 1)
-	{
-		ui.pushButton_3->setEnabled(true);
-	}
-
-	ui.pushButton_4->setEnabled(true);
-	if (page >= page_count - 1)
-	{
-		ui.pushButton_4->setEnabled(false);
-	}
+	pageSelectedwithMemo(page, true);
 }
 
 void widgetRightView::on_actionQuit_triggered()

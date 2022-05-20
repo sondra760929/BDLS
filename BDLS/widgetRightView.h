@@ -11,6 +11,9 @@
 #include <QVideoWidget>
 #include <QAudioOutput>
 #include <QStatusBar>
+#include <QQuickWidget>
+#include <QQuickitem>
+#include <qqmlcontext.h>
 
 class BDLS;
 class QSpinBox;
@@ -24,15 +27,16 @@ public:
 	widgetRightView(QWidget *parent = Q_NULLPTR);
 	~widgetRightView();
 	BDLS* m_pView;
-	QPdfDocument* m_document;
-	ZoomSelector* m_zoomSelector;
-	QSpinBox* m_pageSelector;
-	void ViewPDF(QString file_path, QString file_info = "");
-	void ViewMovie(QString file_path, QString file_info = "");
+	//QPdfDocument* m_document;
+	//ZoomSelector* m_zoomSelector;
+	//QSpinBox* m_pageSelector;
+	void ViewPDF(QString file_path, QString file_info = "", bool update_memo = true);
+	void ViewMovie(QString file_path, QString file_info = "", bool update_memo = true);
 	void JumpTo(int secs);
-
+	void pageSelectedwithMemo(int page, bool update_memo);
 	int getPageNo();
-
+	QQuickWidget* qmlView;
+	QObject* qmlRoot;
 	int current_page_no;
 private:
 	Ui::widgetRightView ui;

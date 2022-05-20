@@ -1041,14 +1041,14 @@ void BDLS::SetCurrentFile(SEARCH_TYPE search_type, QString file_name, QString fi
 	{
 		m_strCurrentSelectedItemPath = file_path;
 		m_iCurrentSelectedItemType = 2;
-		_widgetRightView->ViewPDF(file_path, file_info1);
+		_widgetRightView->ViewPDF(file_path, file_info1, false);
 		//m_pFrame->m_wndProperties.DoPreview(file_path, 1, m_bViewThumbInPreview);
 	}
 	else if (IsMV(file_path))
 	{
 		m_strCurrentSelectedItemPath = file_path;
 		m_iCurrentSelectedItemType = 3;
-		_widgetRightView->ViewMovie(file_path, file_info1);
+		_widgetRightView->ViewMovie(file_path, file_info1, false);
 	}
 }
 
@@ -1068,6 +1068,23 @@ void BDLS::onTableDoubleClicked(const QModelIndex& index)
 			QDesktopServices::openUrl(QUrl::fromLocalFile(file_path));
 		}
 	}
+}
+
+QString BDLS::selectFromFileID(int file_id)
+{
+	QModelIndexList Items = originModel->match(originModel->index(0, 0), Qt::AccessibleTextRole, QVariant::fromValue(file_id), 1, Qt::MatchRecursive);
+	QString file_name;
+
+	if (Items.count() > 0)
+	{
+		int orgin_model_index_row = Items[0].row();
+
+		file_name = originModel->data(originModel->index(orgin_model_index_row, originModel->columnCount() - 1)).toString();
+
+		ui.tableView->selectionModel()->select(proxyModel->mapFromSource(originModel->index(orgin_model_index_row, 0)), QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+	}
+
+	return file_name;
 }
 
 void BDLS::onTableCellClicked(const QItemSelection& selected, const QItemSelection& deselected)
@@ -1303,7 +1320,8 @@ void BDLS::doLogin()
 
 						if (m_bIsLogin)
 						{
-							SelectFileFromTree(m_strCurrentSelectedItemPath);
+							InitFromDB();
+							//SelectFileFromTree(m_strCurrentSelectedItemPath);
 						}
 					}
 				}

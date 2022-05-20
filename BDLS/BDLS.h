@@ -55,6 +55,7 @@ public:
     void setSelectBySearch(int file_id);
     void resetSelectBySearch();
 
+    QString selectFromFileID(int file_id);
     void generateFilters();
     void updateFilter(size_t column, const QString& value);
 

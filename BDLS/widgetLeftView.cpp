@@ -782,7 +782,8 @@ void widgetLeftView::doSearch1()
 				this_file->setExpanded(true);
 			}
 		}
-		this_search->setText(0, QString("%1 [%2]").arg(QDateTime::currentDateTime().toString()).arg(total_count));
+		QString temp_str = QString("%1 [%2]").arg(QDateTime::currentDateTime().toString()).arg(total_count);
+		this_search->setText(0, temp_str);
 		this_search->setExpanded(true);
 		m_pView->_widgetBottomView->AddResult(this_search);
 	}
@@ -993,7 +994,12 @@ void widgetLeftView::doSearch2()
 						m_pView->setSelectBySearch(file_id);
 					}
 				}
-				this_file->setText(0, QString("%1 [%2]").arg(file_name).arg(file_count));
+
+				QString temp_str = QString("<font color=\"blue\">%1 [%2]</font>").arg(file_name).arg(file_count);
+				QLabel* this_info_label = new QLabel();
+				this_info_label->setText(temp_str);
+				m_pView->_widgetBottomView->m_outputTree->setItemWidget(this_file, 0, this_info_label);
+				//this_file->setText(0, QString("<font color=\"blue\">%1 [%2]</font>").arg(file_name).arg(file_count));
 			}
 		}
 		this_search->setText(0, QString("%1 [%2]").arg(QDateTime::currentDateTime().toString()).arg(total_count));
@@ -1107,8 +1113,6 @@ void widgetLeftView::doSearch3()
 					file_name = map["file_name"].toString();
 				}
 
-				QString output_string = "";
-				QString tag_string = "";
 				m_pView->db->exec(QString("SELECT tag_id, page_no FROM file_to_hash WHERE file_id=%1").arg(file_id), data);
 
 				QMap<int, QList<int> > page_to_tags;
@@ -1152,6 +1156,9 @@ void widgetLeftView::doSearch3()
 				for (int j = 0; j < page_no_list.size(); j++)
 				{
 					int temp_page_no = page_no_list[j];
+					QString tag_string = "";
+					QString output_string = "";
+					bool tag_exist = false;
 
 					for (int k = 0; k < page_to_tags[temp_page_no].size(); k++)
 					{
@@ -1159,6 +1166,7 @@ void widgetLeftView::doSearch3()
 						QString temp_info_str;
 						if (check_file_tags[file_id].contains(temp_tag_id))
 						{
+							tag_exist = true;
 							temp_info_str = QString("<font color=\"red\">#%1</font>").arg(tagDatas[temp_tag_id]);
 							if (tag_string == "")
 							{
@@ -1183,16 +1191,20 @@ void widgetLeftView::doSearch3()
 							output_string += (", " + temp_info_str);
 						}
 					}
-					output_string = QString("%1[%2] : [%3]").arg(file_name).arg(temp_page_no).arg(output_string);
-					QTreeWidgetItem* this_info = new QTreeWidgetItem(this_search);
-					QLabel* this_info_label = new QLabel();
-					this_info_label->setText(output_string);
-					m_pView->_widgetBottomView->m_outputTree->setItemWidget(this_info, 0, this_info_label);
-					QString data_str = QString("%1/H/%2/%3").arg(file_id).arg(tag_string).arg(temp_page_no);
-					this_info->setData(0, Qt::AccessibleTextRole, data_str);
-					//this_info->setText(0, total_file_to_header[file_id][j].second);
-					total_count++;
-					m_pView->setSelectBySearch(file_id);
+
+					if (tag_exist)
+					{
+						output_string = QString("%1[%2] : [%3]").arg(file_name).arg(temp_page_no).arg(output_string);
+						QTreeWidgetItem* this_info = new QTreeWidgetItem(this_search);
+						QLabel* this_info_label = new QLabel();
+						this_info_label->setText(output_string);
+						m_pView->_widgetBottomView->m_outputTree->setItemWidget(this_info, 0, this_info_label);
+						QString data_str = QString("%1/H/%2/%3").arg(file_id).arg(tag_string).arg(temp_page_no);
+						this_info->setData(0, Qt::AccessibleTextRole, data_str);
+						//this_info->setText(0, total_file_to_header[file_id][j].second);
+						total_count++;
+						m_pView->setSelectBySearch(file_id);
+					}
 				}
 			}
 		}
@@ -1465,7 +1477,11 @@ void widgetLeftView::doSearch4()
 				file_count++;
 				m_pView->setSelectBySearch(file_id);
 			}
-			this_file->setText(0, QString("%1 [%2]").arg(file_name).arg(file_count));
+			QString temp_str = QString("<font color=\"blue\">%1 [%2]</font>").arg(file_name).arg(file_count);
+			QLabel* this_info_label = new QLabel();
+			this_info_label->setText(temp_str);
+			m_pView->_widgetBottomView->m_outputTree->setItemWidget(this_file, 0, this_info_label);
+			//this_file->setText(0, QString("<font color=\"blue\">%1 [%2]</font>").arg(file_name).arg(file_count));
 		}
 	}
 	this_search->setText(0, QString("%1 [%2]").arg(QDateTime::currentDateTime().toString()).arg(total_count));
