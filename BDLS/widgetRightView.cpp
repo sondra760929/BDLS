@@ -156,6 +156,7 @@ widgetRightView::widgetRightView(QWidget *parent)
 	qmlRoot1 = (QObject*)qmlView1->rootObject();
 	connect(qmlRoot1, SIGNAL(qmlSignal(int)), this, SLOT(onPageSelected1(int)));
 	connect(qmlRoot1, SIGNAL(qmlSignal1()), this, SLOT(onPageModeChanged1()));
+	connect(qmlRoot1, SIGNAL(qmlSignalPrint()), this, SLOT(OnQmlPrint()));
 
 	//	page4
 
@@ -320,6 +321,24 @@ void widgetRightView::onPageSelected1(int page)
 void widgetRightView::onPageSelected2(int page)
 {
 	pageSelectedwithMemo(page, false);
+}
+
+void widgetRightView::OnQmlPrint()
+{
+	QStringList arguments;
+	arguments.append("-print-dialog");
+	arguments.append("-exit-when-done");
+	arguments.append(m_currentPDFPath);
+
+	int i_return = QProcess::execute("SumatraPDF.exe", arguments);
+	if (i_return == 0)
+	{
+	}
+	else
+	{
+		/*QMessageBox::critical(this, QString("파일 생성 오류"), QString("PDF 파일 생성에 실패했습니다. 관리자에게 문의하십시요."));*/
+		//	text 추출 오류
+	}
 }
 
 void widgetRightView::onPageModeChanged1()

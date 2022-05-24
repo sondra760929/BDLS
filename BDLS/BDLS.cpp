@@ -37,11 +37,13 @@ BDLS::BDLS(QWidget* parent)
 		setColor3();
 	}
 
-	m_titleBar = new TitleBar(this);
-	setMenuWidget(m_titleBar);
+	//m_titleBar = new TitleBar(this);
+	//setMenuWidget(m_titleBar);
 	title_string = "BDLS (Big Data Library System)";
+	//setWindowTitle(title_string);
+	//m_titleBar->SetTitleBarIcon(":/BDLS/icons/database_search_icon.png");
+
 	setWindowTitle(title_string);
-	m_titleBar->SetTitleBarIcon(":/BDLS/icons/database_search_icon.png");
 
 	QPushButton* btnColor1 = new QPushButton(this);
 	btnColor1->setFixedSize(20, 20);
@@ -1804,12 +1806,18 @@ void BDLS::readSettings()
 	else {
 		restoreGeometry(geometry);
 	}
+
+	const QByteArray state = settings.value("state", QByteArray()).toByteArray();
+	if (!state.isEmpty()) {
+		restoreState(state);
+	}
 }
 
 void BDLS::writeSettings()
 {
 	QSettings settings("DIGIBOOK", QCoreApplication::applicationName());
 	settings.setValue("geometry", saveGeometry());
+	settings.setValue("state", saveState());
 }
 
 void BDLS::BeginProgress()
@@ -1930,16 +1938,16 @@ void BDLS::AddFileList(QString user_id)
 		}
 	}
 }
-
-void BDLS::setWindowTitle(const QString& title)
-{
-	m_titleBar->setWindowTitle(title);
-}
-
-void BDLS::setWindowTitleHeight(int h)
-{
-	m_titleBar->setFixedHeight(h);
-}
+//
+//void BDLS::setWindowTitle(const QString& title)
+//{
+//	m_titleBar->setWindowTitle(title);
+//}
+//
+//void BDLS::setWindowTitleHeight(int h)
+//{
+//	m_titleBar->setFixedHeight(h);
+//}
 
 void BDLS::setColor1()
 {

@@ -27,9 +27,9 @@ class BDLS : public QMainWindow
 public:
     BDLS(QWidget *parent = Q_NULLPTR);
 
-    void setWindowTitle(const QString& title);
-    void setWindowTitleHeight(int h);
-    TitleBar* m_titleBar;//Title Block
+    //void setWindowTitle(const QString& title);
+    //void setWindowTitleHeight(int h);
+    //TitleBar* m_titleBar;//Title Block
 
     USER_LEVEL m_UserLevel = NORMAL;
     bool m_bIsLogin = false;

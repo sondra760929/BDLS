@@ -62,6 +62,7 @@ Rectangle {
     visible: true
     signal qmlSignal(int page_no)
     signal qmlSignal1()
+    signal qmlSignalPrint()
     property string source // for main.cpp
     property real scaleStep: Math.sqrt(2)
     property int page_mode: 0
@@ -91,6 +92,68 @@ Rectangle {
 //            view.scaleToPage(root.width, root.height)
 //        }
     }
+
+        FileDialog {
+            id: fileDialog
+            title: "Open a PDF file"
+            nameFilters: [ "PDF files (*.pdf)" ]
+            onAccepted: doc.source = selectedFile
+        }
+
+        Dialog {
+            id: passwordDialog
+            title: "Password"
+            standardButtons: Dialog.Ok | Dialog.Cancel
+            modal: true
+            closePolicy: Popup.CloseOnEscape
+            anchors.centerIn: parent
+            width: 300
+
+            contentItem: TextField {
+                id: passwordField
+                placeholderText: qsTr("Please provide the password")
+                echoMode: TextInput.Password
+                width: parent.width
+                onAccepted: passwordDialog.accept()
+            }
+            onOpened: function() { passwordField.forceActiveFocus() }
+            onAccepted: doc.password = passwordField.text
+        }
+
+        Dialog {
+            id: errorDialog
+            title: "Error loading " + doc.source
+            standardButtons: Dialog.Close
+            modal: true
+            closePolicy: Popup.CloseOnEscape
+            anchors.centerIn: parent
+            width: 300
+            visible: doc.status === PdfDocument.Error
+
+            contentItem: Label {
+                id: errorField
+                text: doc.error
+            }
+        }
+
+        PdfDocument {
+            id: doc
+            source: Qt.resolvedUrl(root.source)
+            onPasswordRequired: passwordDialog.open()
+        }
+
+        PdfScrollablePageView {
+            id: view
+            anchors.top: toolbar.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.bottom: bottombar.top
+            anchors.leftMargin: searchDrawer.position * searchDrawer.width
+            document: doc
+            searchString: searchField.text
+            onWidthChanged: resizeArea()
+            onHeightChanged: resizeArea()
+        }
 
         ToolBar {
             id: toolbar
@@ -267,6 +330,15 @@ Rectangle {
                     ToolTip.delay: 1000
                     ToolTip.text: "view single page"
                 }
+                ToolButton {
+                    action: Action {
+                        icon.source: "qrc:/BDLS/icons/printer-24.png"
+                        onTriggered: root.qmlSignalPrint()
+                    }
+                    ToolTip.visible: enabled && hovered
+                    ToolTip.delay: 1000
+                    ToolTip.text: "print"
+                }
                 Shortcut {
                     sequence: StandardKey.Find
                     onActivated: searchField.forceActiveFocus()
@@ -276,68 +348,6 @@ Rectangle {
                     onActivated: Qt.quit()
                 }
             }
-        }
-
-        FileDialog {
-            id: fileDialog
-            title: "Open a PDF file"
-            nameFilters: [ "PDF files (*.pdf)" ]
-            onAccepted: doc.source = selectedFile
-        }
-
-        Dialog {
-            id: passwordDialog
-            title: "Password"
-            standardButtons: Dialog.Ok | Dialog.Cancel
-            modal: true
-            closePolicy: Popup.CloseOnEscape
-            anchors.centerIn: parent
-            width: 300
-
-            contentItem: TextField {
-                id: passwordField
-                placeholderText: qsTr("Please provide the password")
-                echoMode: TextInput.Password
-                width: parent.width
-                onAccepted: passwordDialog.accept()
-            }
-            onOpened: function() { passwordField.forceActiveFocus() }
-            onAccepted: doc.password = passwordField.text
-        }
-
-        Dialog {
-            id: errorDialog
-            title: "Error loading " + doc.source
-            standardButtons: Dialog.Close
-            modal: true
-            closePolicy: Popup.CloseOnEscape
-            anchors.centerIn: parent
-            width: 300
-            visible: doc.status === PdfDocument.Error
-
-            contentItem: Label {
-                id: errorField
-                text: doc.error
-            }
-        }
-
-        PdfDocument {
-            id: doc
-            source: Qt.resolvedUrl(root.source)
-            onPasswordRequired: passwordDialog.open()
-        }
-
-        PdfScrollablePageView {
-            id: view
-            anchors.top: toolbar.bottom
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.bottom: bottombar.top
-            anchors.leftMargin: searchDrawer.position * searchDrawer.width
-            document: doc
-            searchString: searchField.text
-            onWidthChanged: resizeArea()
-            onHeightChanged: resizeArea()
         }
 
     Drawer {

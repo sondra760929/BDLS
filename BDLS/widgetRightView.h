@@ -60,6 +60,7 @@ private slots:
 	void onPageSelected2(int page);
 	void onPageModeChanged1();
 	void onPageModeChanged2();
+	void OnQmlPrint();
 	//// action handlers
 	//void on_actionQuit_triggered();
 	//void on_actionAbout_triggered();
