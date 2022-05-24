@@ -196,6 +196,9 @@
     <ClCompile Include="widgetDBTextView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="widgetTag.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="widgetLeftView.h">
@@ -255,6 +258,9 @@
     <QtMoc Include="widgetDBTextView.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="widgetTag.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="widgetLeftView.ui">
@@ -279,6 +285,9 @@
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="widgetDBTextView.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="widgetTag.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>

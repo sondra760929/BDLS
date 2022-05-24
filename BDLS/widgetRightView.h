@@ -30,13 +30,23 @@ public:
 	//QPdfDocument* m_document;
 	//ZoomSelector* m_zoomSelector;
 	//QSpinBox* m_pageSelector;
+	void SearchText(QString search_text, int search_index);
 	void ViewPDF(QString file_path, QString file_info = "", bool update_memo = true);
 	void ViewMovie(QString file_path, QString file_info = "", bool update_memo = true);
 	void JumpTo(int secs);
 	void pageSelectedwithMemo(int page, bool update_memo);
 	int getPageNo();
-	QQuickWidget* qmlView;
-	QObject* qmlRoot;
+	void setCurrentPage(int page);
+	QQuickWidget* qmlView1;
+	QObject* qmlRoot1;
+	QQuickWidget* qmlView2;
+	QObject* qmlRoot2;
+	int m_iCurrentPDFView = 0;
+	QString m_currentPDFPath;
+
+	QList< QQuickWidget* > views;
+	QList< QObject* > roots;
+	QList< bool > is_read_pdf;
 	int current_page_no;
 private:
 	Ui::widgetRightView ui;
@@ -46,17 +56,20 @@ signals:
 
 private slots:
 	void bookmarkSelected(const QModelIndex& index);
-	void pageSelected(int page);
-	// action handlers
-	void on_actionQuit_triggered();
-	void on_actionAbout_triggered();
-	void on_actionAbout_Qt_triggered();
-	void on_actionZoom_In_triggered();
-	void on_actionZoom_Out_triggered();
-	void on_actionPrevious_Page_triggered();
-	void on_actionNext_Page_triggered();
-	void on_actionContinuous_triggered();
-	void on_actionPageModeChanged(QPdfView::PageMode pageMode);
+	void onPageSelected1(int page);
+	void onPageSelected2(int page);
+	void onPageModeChanged1();
+	void onPageModeChanged2();
+	//// action handlers
+	//void on_actionQuit_triggered();
+	//void on_actionAbout_triggered();
+	//void on_actionAbout_Qt_triggered();
+	//void on_actionZoom_In_triggered();
+	//void on_actionZoom_Out_triggered();
+	//void on_actionPrevious_Page_triggered();
+	//void on_actionNext_Page_triggered();
+	//void on_actionContinuous_triggered();
+	//void on_actionPageModeChanged(QPdfView::PageMode pageMode);
 
 	void durationChanged(qint64 duration);
 	void positionChanged(qint64 progress);

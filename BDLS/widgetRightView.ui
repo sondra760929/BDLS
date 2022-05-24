@@ -172,6 +172,7 @@
      </widget>
      <widget class="QWidget" name="pageMV"/>
      <widget class="QWidget" name="pagePDF"/>
+     <widget class="QWidget" name="pagePDF2"/>
     </widget>
    </item>
   </layout>

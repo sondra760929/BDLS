@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="BDLS">
+    <file>viewer2.qml</file>
     <file>icons/document-open.svg</file>
     <file>icons/edit-clear.svg</file>
     <file>icons/edit-copy.svg</file>

@@ -144,18 +144,42 @@ widgetRightView::widgetRightView(QWidget *parent)
 
 	layout = new QVBoxLayout(ui.pagePDF);
 
-	qmlView = new QQuickWidget;
-	qmlView->setResizeMode(QQuickWidget::SizeRootObjectToView);
-	qmlView->setSource(QUrl("qrc:///BDLS/viewer.qml"));
+	qmlView1 = new QQuickWidget;
+	qmlView1->setResizeMode(QQuickWidget::SizeRootObjectToView);
+	qmlView1->setSource(QUrl("qrc:///BDLS/viewer.qml"));
 
-	layout->addWidget(qmlView);
+	layout->addWidget(qmlView1);
 
 	//qmlView->rootObject()->setProperty("source", QUrl::fromLocalFile("D:/test/1.pdf"));
-	qmlView->show();
+	qmlView1->show();
 
-	qmlRoot = (QObject*)qmlView->rootObject();
-	connect(qmlRoot, SIGNAL(qmlSignal(int)), this, SLOT(pageSelected(int)));
+	qmlRoot1 = (QObject*)qmlView1->rootObject();
+	connect(qmlRoot1, SIGNAL(qmlSignal(int)), this, SLOT(onPageSelected1(int)));
+	connect(qmlRoot1, SIGNAL(qmlSignal1()), this, SLOT(onPageModeChanged1()));
 
+	//	page4
+
+	layout = new QVBoxLayout(ui.pagePDF2);
+
+	qmlView2 = new QQuickWidget;
+	qmlView2->setResizeMode(QQuickWidget::SizeRootObjectToView);
+	qmlView2->setSource(QUrl("qrc:///BDLS/viewer2.qml"));
+
+	layout->addWidget(qmlView2);
+
+	//qmlView->rootObject()->setProperty("source", QUrl::fromLocalFile("D:/test/1.pdf"));
+	qmlView2->show();
+
+	qmlRoot2 = (QObject*)qmlView2->rootObject();
+	connect(qmlRoot2, SIGNAL(qmlSignal(int)), this, SLOT(onPageSelected2(int)));
+	connect(qmlRoot2, SIGNAL(qmlSignal1()), this, SLOT(onPageModeChanged2()));
+
+	views.append(qmlView1);
+	views.append(qmlView2);
+	roots.append(qmlRoot1);
+	roots.append(qmlRoot2);
+	is_read_pdf.append(false);
+	is_read_pdf.append(false);
 	//QLabel* metaDataLabel = new QLabel(tr("Metadata for file:"));
 	//layout->addWidget(metaDataLabel);
 
@@ -192,14 +216,28 @@ widgetRightView::~widgetRightView()
 {
 }
 
+void widgetRightView::SearchText(QString search_text, int search_index)
+{
+	QMetaObject::invokeMethod(roots[m_iCurrentPDFView], "goSearch"
+		, Q_ARG(QString, search_text)
+		, Q_ARG(int, search_index));
+}
+
 void widgetRightView::ViewPDF(QString file_path, QString file_info, bool update_memo)
 {
 	m_player->stop();
 
-	ui.stackedWidget->setCurrentIndex(2);
+	ui.stackedWidget->setCurrentIndex(m_iCurrentPDFView + 2);
 
-	qmlRoot->setProperty("source", QUrl::fromLocalFile(file_path));
+	if (m_currentPDFPath != file_path)
+	{
+		is_read_pdf[0] = false;
+		is_read_pdf[1] = false;
 
+		m_currentPDFPath = file_path;
+		roots[m_iCurrentPDFView]->setProperty("source", QUrl::fromLocalFile(file_path));
+		is_read_pdf[m_iCurrentPDFView] = true;
+	}
 	//m_document->load(file_path);
 	//m_pageSelector->setMaximum(m_document->pageCount() - 1); 
 	
@@ -217,7 +255,7 @@ void widgetRightView::ViewPDF(QString file_path, QString file_info, bool update_
 
 int widgetRightView::getPageNo()
 {
-	return qmlRoot->property("page_no").toInt();
+	return roots[m_iCurrentPDFView]->property("page_no").toInt();
 	//auto nav = ui.pdfView->pageNavigation();
 	//return nav->currentPage();
 }
@@ -241,7 +279,7 @@ void widgetRightView::bookmarkSelected(const QModelIndex& index)
 void widgetRightView::pageSelectedwithMemo(int page, bool update_memo)
 {
 	int return_value = 0;
-	QMetaObject::invokeMethod(qmlRoot, "goPage",
+	QMetaObject::invokeMethod(roots[m_iCurrentPDFView], "goPage",
 		Q_ARG(int, page));
 
 	//auto nav = ui.pdfView->pageNavigation();
@@ -263,75 +301,121 @@ void widgetRightView::pageSelectedwithMemo(int page, bool update_memo)
 	//	ui.pushButton_4->setEnabled(false);
 	//}
 
-	if(update_memo)
+	if (update_memo)
 		m_pView->_widgetLeftView->UpdateMemo(SEARCH_TYPE::NONE, QString("%1").arg(page));
-}
-
-void widgetRightView::pageSelected(int page)
-{
-	pageSelectedwithMemo(page, true);
-}
-
-void widgetRightView::on_actionQuit_triggered()
-{
-	QApplication::quit();
-}
-
-void widgetRightView::on_actionAbout_triggered()
-{
-	QMessageBox::about(this, tr("About PdfViewer"),
-		tr("An example using QPdfDocument"));
-}
-
-void widgetRightView::on_actionAbout_Qt_triggered()
-{
-	QMessageBox::aboutQt(this);
-}
-
-void widgetRightView::on_actionZoom_In_triggered()
-{
-	ui.pdfView->setZoomFactor(ui.pdfView->zoomFactor() * zoomMultiplier);
-}
-
-void widgetRightView::on_actionZoom_Out_triggered()
-{
-	ui.pdfView->setZoomFactor(ui.pdfView->zoomFactor() / zoomMultiplier);
-}
-
-void widgetRightView::on_actionPrevious_Page_triggered()
-{
-	auto nav = ui.pdfView->pageNavigation();
-	nav->jump(nav->currentPage() - 1, {}, nav->currentZoom());
-}
-
-void widgetRightView::on_actionNext_Page_triggered()
-{
-	auto nav = ui.pdfView->pageNavigation();
-	nav->jump(nav->currentPage() + 1, {}, nav->currentZoom());
-}
-
-void widgetRightView::on_actionContinuous_triggered()
-{
-	if (ui.pdfView->pageMode() == QPdfView::MultiPage)
-	{
-		ui.pdfView->setPageMode(QPdfView::SinglePage);
-	}
 	else
-	{
-		auto nav = ui.pdfView->pageNavigation();
-		current_page_no = nav->currentPage();
-
-		ui.pdfView->setPageMode(QPdfView::MultiPage);
-	}
+		m_pView->_widgetLeftView->selectPage(page);// UpdateMemo(SEARCH_TYPE::NONE, QString("%1").arg(page));
 }
 
-void widgetRightView::on_actionPageModeChanged(QPdfView::PageMode pageMode)
+void widgetRightView::setCurrentPage(int page)
 {
-	if (pageMode == QPdfView::MultiPage)
-	{
-		pageSelected(current_page_no);
-	}
+	pageSelectedwithMemo(page, false);
 }
+
+void widgetRightView::onPageSelected1(int page)
+{
+	pageSelectedwithMemo(page, false);
+}
+
+void widgetRightView::onPageSelected2(int page)
+{
+	pageSelectedwithMemo(page, false);
+}
+
+void widgetRightView::onPageModeChanged1()
+{
+	if (!is_read_pdf[1])
+	{
+		if (is_read_pdf[0])
+		{
+			roots[1]->setProperty("source", QUrl::fromLocalFile(m_currentPDFPath));
+			is_read_pdf[1] = true;
+		}
+	}
+
+	m_iCurrentPDFView = 1;
+	if(is_read_pdf[0] && is_read_pdf[1])
+		QMetaObject::invokeMethod(roots[m_iCurrentPDFView], "goPage", Q_ARG(int, roots[0]->property("page_no").toInt()));
+	ui.stackedWidget->setCurrentIndex(m_iCurrentPDFView + 2);
+}
+
+void widgetRightView::onPageModeChanged2()
+{
+	if (!is_read_pdf[0])
+	{
+		if (is_read_pdf[1])
+		{
+			roots[0]->setProperty("source", QUrl::fromLocalFile(m_currentPDFPath));
+			is_read_pdf[0] = true;
+		}
+	}
+
+	m_iCurrentPDFView = 0;
+	if (is_read_pdf[0] && is_read_pdf[1])
+		QMetaObject::invokeMethod(roots[m_iCurrentPDFView], "goPage", Q_ARG(int, roots[1]->property("page_no").toInt()));
+	ui.stackedWidget->setCurrentIndex(m_iCurrentPDFView + 2);
+}
+
+//void widgetRightView::on_actionQuit_triggered()
+//{
+//	QApplication::quit();
+//}
+//
+//void widgetRightView::on_actionAbout_triggered()
+//{
+//	QMessageBox::about(this, tr("About PdfViewer"),
+//		tr("An example using QPdfDocument"));
+//}
+//
+//void widgetRightView::on_actionAbout_Qt_triggered()
+//{
+//	QMessageBox::aboutQt(this);
+//}
+//
+//void widgetRightView::on_actionZoom_In_triggered()
+//{
+//	ui.pdfView->setZoomFactor(ui.pdfView->zoomFactor() * zoomMultiplier);
+//}
+//
+//void widgetRightView::on_actionZoom_Out_triggered()
+//{
+//	ui.pdfView->setZoomFactor(ui.pdfView->zoomFactor() / zoomMultiplier);
+//}
+//
+//void widgetRightView::on_actionPrevious_Page_triggered()
+//{
+//	auto nav = ui.pdfView->pageNavigation();
+//	nav->jump(nav->currentPage() - 1, {}, nav->currentZoom());
+//}
+//
+//void widgetRightView::on_actionNext_Page_triggered()
+//{
+//	auto nav = ui.pdfView->pageNavigation();
+//	nav->jump(nav->currentPage() + 1, {}, nav->currentZoom());
+//}
+//
+//void widgetRightView::on_actionContinuous_triggered()
+//{
+//	if (ui.pdfView->pageMode() == QPdfView::MultiPage)
+//	{
+//		ui.pdfView->setPageMode(QPdfView::SinglePage);
+//	}
+//	else
+//	{
+//		auto nav = ui.pdfView->pageNavigation();
+//		current_page_no = nav->currentPage();
+//
+//		ui.pdfView->setPageMode(QPdfView::MultiPage);
+//	}
+//}
+//
+//void widgetRightView::on_actionPageModeChanged(QPdfView::PageMode pageMode)
+//{
+//	if (pageMode == QPdfView::MultiPage)
+//	{
+//		pageSelected1(current_page_no);
+//	}
+//}
 
 
 void widgetRightView::durationChanged(qint64 duration)

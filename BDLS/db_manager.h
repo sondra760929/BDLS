@@ -7,7 +7,8 @@
 enum SEARCH_TYPE
 {
     NONE,
-    CONTENT,
+    CONTENT_META,
+    CONTENT_TEXT,
     MEMO_CONTENT,
     MEMO_USER,
     MEMO_DATE,

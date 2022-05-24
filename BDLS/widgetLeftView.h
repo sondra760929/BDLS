@@ -8,6 +8,7 @@
 #include "SearchControls.h"
 #include "widgetMemo.h"
 #include "db_manager.h"
+#include "widgetTag.h"
 
 class BDLS;
 class widgetMemo;
@@ -35,6 +36,9 @@ public:
 	void setSearchCombo(QList<QString>& h_list, QMap<QString, int>& map_h_to_i);
 	void OnMemoClicked(widgetMemo* pmemo);
 	void clearMemoSelection();
+	void selectPage(int page_no);
+	void UpdateReply(SEARCH_TYPE search_type = NONE, QString file_info2 = "", QString file_info3 = "", QString file_info4 = "");
+	void UpdateTag(SEARCH_TYPE search_type = NONE, QString file_info2 = "");
 	void UpdateMemo(SEARCH_TYPE search_type, QString file_info1 = "", QString file_info2 = "", QString file_info3 = "", QString file_info4 = "");
 	widgetMemo* AddMemoControl(MemoData* new_memo, int search_memo_id = -1, MemoData* parent_memo = NULL);
 	void clearMemo();
@@ -47,6 +51,8 @@ public:
 	void setUserList();
 	void setFileList(QString user_id);
 	void clearAll();
+	widgetTag* addTagPage(int page_no);
+	void OnTagListClicked(widgetTag* ptag);
 
 private:
 	Ui::widgetLeftView ui;
@@ -60,6 +66,7 @@ private:
 	//QListWidget* mvSearchList;
 	//QLineEdit* mvSearchEdit;
 	QScrollArea* techScroll;
+	QScrollArea* tagScroll;
 
 	QPushButton* btn_tag_add;
 	QPushButton* btn_tag_dell;
@@ -72,9 +79,14 @@ private:
 	QPlainTextEdit* memoText;
 	QWidget* memoList;
 	QMap<int, MemoData*> memoDatas;
+	QMap<int, int> memoLastIDByPage;
 
 	//QListView* tagList;
-	QListWidget* tagList;
+	//QListWidget* tagList;
+	QLabel* tagLabel;
+	QWidget* tagListArea;
+	QList< widgetTag* > tagList;
+	QList< int > tagListPageNo;
 	QCompleter* completer = NULL;
 	QLineEdit* tagEdit = NULL;
 	QStringList tags;
@@ -99,7 +111,7 @@ private:
 
 	QTableWidget* fileTable;
 	QString userTable_user_id;
-
+	QPushButton* noteDelete;
 private slots:
 	void onCurrentChanged(const QItemSelection& current, const QItemSelection& prev);
 	void onSearchAdd();
@@ -115,6 +127,7 @@ private slots:
 	void doSearch3();
 	void doSearch4();
 	void doAddMemo();
+	void doDelMemo();
 	void doAddTag();
 	void doAddMV();
 	void doNewMemo();

@@ -203,7 +203,7 @@ Rectangle {
                         }
                     }
                     ToolTip.visible: enabled && hovered
-                    ToolTip.delay: 2000
+                    ToolTip.delay: 1000
                     ToolTip.text: "go back"
                 }
                 SpinBox {
@@ -220,7 +220,7 @@ Rectangle {
                     }
                     Shortcut {
                         sequence: StandardKey.MoveToPreviousPage
-                        onActivated:{
+                        onActivated: {
                             view.goToPage(currentPageSB.value - 2)
                             page_no = view.currentPage
                             root.qmlSignal(view.currentPage)
@@ -265,7 +265,7 @@ Rectangle {
                     }
                     ToolTip.visible: enabled && hovered
                     ToolTip.delay: 1000
-                    ToolTip.text: "view single page"
+                    ToolTip.text: "view multi page"
                 }
                 Shortcut {
                     sequence: StandardKey.Find
@@ -327,7 +327,7 @@ Rectangle {
             onPasswordRequired: passwordDialog.open()
         }
 
-        PdfScrollablePageView {
+        PdfMultiPageView {
             id: view
             anchors.top: toolbar.bottom
             anchors.left: parent.left
@@ -517,7 +517,6 @@ Rectangle {
             }
         }
     }
-
         ToolBar {
             id: bottombar
             height: footerRow.implicitHeight

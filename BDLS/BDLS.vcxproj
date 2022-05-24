@@ -152,6 +152,7 @@
     <ClCompile Include="widgetMemo.cpp" />
     <ClCompile Include="widgetProgress.cpp" />
     <ClCompile Include="widgetRightView.cpp" />
+    <ClCompile Include="widgetTag.cpp" />
     <ClCompile Include="zoomselector.cpp" />
     <QtRcc Include="BDLS.qrc" />
     <QtUic Include="BDLS.ui" />
@@ -166,6 +167,7 @@
     <QtUic Include="widgetMemo.ui" />
     <QtUic Include="widgetProgress.ui" />
     <QtUic Include="widgetRightView.ui" />
+    <QtUic Include="widgetTag.ui" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="widgetLeftView.h" />
@@ -215,6 +217,7 @@
     <ClInclude Include="..\QXlsx\header\xlsxsharedstrings_p.h" />
     <ClInclude Include="..\QXlsx\header\xlsxsimpleooxmlfile_p.h" />
     <ClInclude Include="db_manager.h" />
+    <QtMoc Include="widgetTag.h" />
     <QtMoc Include="widgetDBTextView.h" />
     <QtMoc Include="TitleBar.h" />
     <QtMoc Include="MyTabWidget.h" />

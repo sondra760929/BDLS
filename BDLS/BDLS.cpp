@@ -1042,6 +1042,10 @@ void BDLS::SetCurrentFile(SEARCH_TYPE search_type, QString file_name, QString fi
 		m_strCurrentSelectedItemPath = file_path;
 		m_iCurrentSelectedItemType = 2;
 		_widgetRightView->ViewPDF(file_path, file_info1, false);
+		if (search_type == SEARCH_TYPE::CONTENT_TEXT)
+		{
+			_widgetRightView->SearchText(file_info2, file_info3.toInt());
+		}
 		//m_pFrame->m_wndProperties.DoPreview(file_path, 1, m_bViewThumbInPreview);
 	}
 	else if (IsMV(file_path))

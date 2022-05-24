@@ -81,11 +81,18 @@ void widgetBottomView::itemChanged(QTreeWidgetItem* current, QTreeWidgetItem* pr
 			{
 				QString file_name = m_pView->selectFromFileID(data_list[0].toInt());
 
-				if (data_list[1] == "C")
+				if (data_list[1] == "CH")
 				{
 					if (data_list.count() > 3)
 					{
-						m_pView->SetCurrentFile(CONTENT, file_name, data_list[2], data_list[3]);	//	page_no, block_no
+						m_pView->SetCurrentFile(CONTENT_META, file_name, data_list[2], data_list[3]);	//	page_no, block_no
+					}
+				}
+				else if (data_list[1] == "CC")
+				{
+					if (data_list.count() > 4)
+					{
+						m_pView->SetCurrentFile(CONTENT_TEXT, file_name, data_list[2], data_list[3], data_list[4]);	//	page_no, search_string, search_index
 					}
 				}
 				else if (data_list[1] == "H")
