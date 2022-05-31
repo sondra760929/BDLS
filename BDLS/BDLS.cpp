@@ -1474,6 +1474,18 @@ QString BDLS::NextFileMNO(QString last_mno)
 	return m_no;
 }
 
+void BDLS::CheckAndAddColumnTable(QString table_name, QString column, QString type, QString init_value)
+{
+	QVariantList data;
+	db->exec("select * from pragma_table_info('" + table_name + "') as tblInfo WHERE name='"+ column + "'", data);
+	if (data.count() == 0)
+	{
+		//	존재하지 않을 경우
+		db->exec("ALTER TABLE " + table_name + " ADD COLUMN " + column + " " + type);
+		db->exec("UPDATE " + table_name + " SET " + column + " = " + init_value);
+	}
+}
+
 void BDLS::CheckAndCreateTable()
 {
 	if (DBConnected())
@@ -1499,10 +1511,19 @@ void BDLS::CheckAndCreateTable()
 		{
 			db->exec("CREATE TABLE file_to_hash (id INTEGER PRIMARY KEY, file_id INTEGER, page_no INTEGER, tag_id INTEGER)");
 		}
+		else
+		{
+			CheckAndAddColumnTable("file_to_hash", "page_no", "INTEGER", "0");
+		}
 		if (!table_list.contains("reply_info"))
 		{
 			db->exec("CREATE TABLE reply_info (id INTEGER PRIMARY KEY, file_id INTEGER, page_no INTEGER, parent_id INTEGER, user_id TEXT, value TEXT, date_time TEXT)");
 		}
+		else
+		{
+			CheckAndAddColumnTable("reply_info", "page_no", "INTEGER", "0");
+		}
+
 		if (!table_list.contains("play_info"))
 		{
 			db->exec("CREATE TABLE play_info (id INTEGER PRIMARY KEY, file_id INTEGER, s_time INTEGER, s_title TEXT)");

@@ -54,7 +54,7 @@ public:
     void toogleViewBottom();
     void setSelectBySearch(int file_id);
     void resetSelectBySearch();
-
+    void CheckAndAddColumnTable(QString table_name, QString column, QString type, QString init_value);
     QString selectFromFileID(int file_id);
     void generateFilters();
     void updateFilter(size_t column, const QString& value);

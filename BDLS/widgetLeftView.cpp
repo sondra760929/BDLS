@@ -784,7 +784,7 @@ void widgetLeftView::doSearch1()
 										temp_length = 100;
 									QString info_str = QString("[%1 page[%2] block[%3]] : <font color=\"red\">%4</font>%5")
 										.arg(search_words[l])
-										.arg(page_no_keys[j])
+										.arg(page_no_keys[j] + 1)
 										.arg(block_no_keys[k])
 										.arg(search_words[l])
 										.arg(file_contents.mid(search_index + search_word_count, temp_length));
@@ -865,7 +865,7 @@ void widgetLeftView::doSearch2()
 							int index = memo_str.indexOf(search_word);
 							while (index > -1)
 							{
-								QString info_str = QString("[내용] %1 p : %2<font color=\"red\">%3</font>%4").arg(page_no).arg(memo_str.left(index)).arg(search_word).arg(memo_str.right(memo_str.length() - index - search_word.length()));
+								QString info_str = QString("[내용] %1 p : %2<font color=\"red\">%3</font>%4").arg(page_no + 1).arg(memo_str.left(index)).arg(search_word).arg(memo_str.right(memo_str.length() - index - search_word.length()));
 								info_str = info_str.insert(0, "<p>");
 								info_str = info_str + "</p>";
 								info_str = info_str.replace("\n", " ");
@@ -901,7 +901,7 @@ void widgetLeftView::doSearch2()
 							while (index > -1)
 							{
 								QString info_str = QString("[작성자 : %2<font color=\"red\">%3</font>%4] %1 p : %5")
-									.arg(page_no)
+									.arg(page_no + 1)
 									.arg(user_name.left(index))
 									.arg(search_word)
 									.arg(user_name.right(user_name.length() - index - search_word.length()))
@@ -935,7 +935,7 @@ void widgetLeftView::doSearch2()
 						if (prev_condition_name != "NOT")
 						{
 							QString info_str = QString("[날짜 : <font color=\"red\">%2</font>] %1 p : %3")
-								.arg(page_no)
+								.arg(page_no + 1)
 								.arg(search_time.toString("yyyy-MM-dd"))
 								.arg(memo_str);
 							total_file_find[file_id].append(info_str);
@@ -1231,7 +1231,7 @@ void widgetLeftView::doSearch3()
 
 					if (tag_exist)
 					{
-						output_string = QString("%1[%2] : [%3]").arg(file_name).arg(temp_page_no).arg(output_string);
+						output_string = QString("%1[%2] : [%3]").arg(file_name).arg(temp_page_no + 1).arg(output_string);
 						QTreeWidgetItem* this_info = new QTreeWidgetItem(this_search);
 						QLabel* this_info_label = new QLabel();
 						this_info_label->setText(output_string);
@@ -1940,7 +1940,7 @@ void widgetLeftView::doAddMemo()
 		{
 			QVariantList data;
 			int page_no = m_pView->_widgetRightView->getPageNo();
-			QString query = QString("INSERT INTO reply_info VALUES (NULL, %1, %2, %3, \"%4\", \"%5\", datetime('now', 'localtime'))")
+			QString query = QString("INSERT INTO reply_info (file_id, page_no, parent_id, user_id, value, date_time) VALUES (%1, %2, %3, \"%4\", \"%5\", datetime('now', 'localtime'))")
 				.arg(m_pView->m_iCurrentFileDBID)
 				.arg(page_no)
 				.arg(parent_memo_id)
@@ -2123,7 +2123,7 @@ void widgetLeftView::doAddTag()
 				}
 				else
 				{
-					query = QString("INSERT INTO file_to_hash VALUES (NULL, %1, %2, %3)")
+					query = QString("INSERT INTO file_to_hash (file_id, page_no, tag_id) VALUES (%1, %2, %3)")
 						.arg(m_pView->m_iCurrentFileDBID)
 						.arg(page_no)
 						.arg(tag_id);

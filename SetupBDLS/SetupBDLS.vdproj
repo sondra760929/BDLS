@@ -1509,6 +1509,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_32BA3E9719C547EBA7E6C3C23F47144E"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_32D83971D9C7448BAC86CC5B1D2B576A"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -3435,6 +3441,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_6F4B18726A8446F4990D7FAD7540CD12"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_6F5081782F814B2C8DF8344D46B80A7E"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -4486,6 +4498,12 @@
         "Entry"
         {
         "MsmKey" = "8:_901E5AC26CF94CE7B021D16132A718FF"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_904474D28AD94655BEF3C058E19C18B3"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -6381,6 +6399,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_C5FF8EE313DB4AFCB61661C8B4BA00C4"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_C626BD5CE3E3447EAFD3ECE276AF1EDA"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -7575,6 +7599,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_EC060D57D81C4F0CA67AD3FEB6022CB0"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_EC28CBC593DE481881F78CDC286DCAE5"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -7816,6 +7846,12 @@
         "Entry"
         {
         "MsmKey" = "8:_F3ED5E64BF6C41F7A3511B152AFCCC66"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F3F0EADADB7E4ED58D175F1EB2A0A088"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -13178,6 +13214,26 @@
             "TargetName" = "8:runtimeloader16.png"
             "Tag" = "8:"
             "Folder" = "8:_4AE60D1CC8C143A7AD2D18A8AB09C945"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_32BA3E9719C547EBA7E6C3C23F47144E"
+            {
+            "SourcePath" = "8:..\\x64\\Release\\Qt6QmlWorkerScript.dll"
+            "TargetName" = "8:Qt6QmlWorkerScript.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_997BE83248D545E9A9BDFFD1D9F1511D"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -19612,6 +19668,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6F4B18726A8446F4990D7FAD7540CD12"
+            {
+            "SourcePath" = "8:..\\x64\\Release\\Qt6Quick.dll"
+            "TargetName" = "8:Qt6Quick.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_997BE83248D545E9A9BDFFD1D9F1511D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6F5081782F814B2C8DF8344D46B80A7E"
             {
             "SourcePath" = "8:..\\x64\\Release\\qml\\QtQuick\\VirtualKeyboard\\Components\\qtvkbcomponentsplugin.dll"
@@ -23118,6 +23194,26 @@
             "TargetName" = "8:model-particle-24px.png"
             "Tag" = "8:"
             "Folder" = "8:_CC696980B8CA419DB66BD3647C39A698"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_904474D28AD94655BEF3C058E19C18B3"
+            {
+            "SourcePath" = "8:..\\x64\\Release\\Qt6QmlModels.dll"
+            "TargetName" = "8:Qt6QmlModels.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_997BE83248D545E9A9BDFFD1D9F1511D"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -29432,6 +29528,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C5FF8EE313DB4AFCB61661C8B4BA00C4"
+            {
+            "SourcePath" = "8:..\\x64\\Release\\Qt6Qml.dll"
+            "TargetName" = "8:Qt6Qml.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_997BE83248D545E9A9BDFFD1D9F1511D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C626BD5CE3E3447EAFD3ECE276AF1EDA"
             {
             "SourcePath" = "8:..\\x64\\Release\\qml\\QtCharts\\designer\\default\\PercentBarSeries.qml"
@@ -33392,6 +33508,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_EC060D57D81C4F0CA67AD3FEB6022CB0"
+            {
+            "SourcePath" = "8:..\\x64\\Release\\Qt6PdfQuick.dll"
+            "TargetName" = "8:Qt6PdfQuick.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_997BE83248D545E9A9BDFFD1D9F1511D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_EC28CBC593DE481881F78CDC286DCAE5"
             {
             "SourcePath" = "8:..\\x64\\Release\\qml\\QtQuick\\Controls\\Fusion\\impl\\ButtonPanel.qml"
@@ -34198,6 +34334,26 @@
             "TargetName" = "8:TargetDirection3DSection.qml"
             "Tag" = "8:"
             "Folder" = "8:_BACD8EFF1D104BE3AD4222847598C8F5"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F3F0EADADB7E4ED58D175F1EB2A0A088"
+            {
+            "SourcePath" = "8:..\\x64\\Release\\Qt6QmlCore.dll"
+            "TargetName" = "8:Qt6QmlCore.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_997BE83248D545E9A9BDFFD1D9F1511D"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -36675,7 +36831,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:BDLS"
         "ProductCode" = "8:{CD2E3BA2-4F2D-4E5F-95C0-3B242CDF0CBD}"
-        "PackageCode" = "8:{7D29F758-BCE2-4478-A3D1-E51356A5DA2D}"
+        "PackageCode" = "8:{81C379B3-E732-4FDD-8BC5-FAD24BE4761F}"
         "UpgradeCode" = "8:{A8315FA8-6274-4C3A-80BC-2BC20D38896D}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
