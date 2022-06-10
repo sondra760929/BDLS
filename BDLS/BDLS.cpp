@@ -145,6 +145,8 @@ BDLS::BDLS(QWidget* parent)
 	m_bAutoSave = (auto_save == "T") ? true : false;
 
 	readSettings();
+
+	qApp->installEventFilter(this);
 }
 
 void BDLS::DoAutoSave()
@@ -2046,4 +2048,37 @@ void BDLS::resetSelectBySearch()
 			originModel->setData(originModel->index(i, cols - 2), "");
 		}
 	}
+}
+
+void BDLS::setFocusTable()
+{
+	ui.tableView->setFocus();
+}
+
+bool BDLS::eventFilter(QObject* obj, QEvent* event)
+{
+	if (event->type() == QEvent::KeyRelease)
+	{
+		QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+		//qDebug() << "key " << keyEvent->key() << "from" << obj;
+		if (keyEvent->key() == Qt::Key_PageUp)
+		{
+			//qDebug() << obj->objectName();
+			if (obj->objectName() == "QQuickWidgetOffscreenWindow")
+			{
+				QMetaObject::invokeMethod(_widgetRightView->roots[_widgetRightView->m_iCurrentPDFView], "goPrev");
+				return true;
+			}
+		}
+		else if (keyEvent->key() == Qt::Key_PageDown)
+		{
+			//qDebug() << obj->objectName();
+			if (obj->objectName() == "QQuickWidgetOffscreenWindow")
+			{
+				QMetaObject::invokeMethod(_widgetRightView->roots[_widgetRightView->m_iCurrentPDFView], "goNext");
+				return true;
+			}
+		}
+	}
+	return QObject::eventFilter(obj, event);
 }

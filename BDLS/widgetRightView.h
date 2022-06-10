@@ -14,6 +14,7 @@
 #include <QQuickWidget>
 #include <QQuickitem>
 #include <qqmlcontext.h>
+#include <QElapsedTimer>
 
 class BDLS;
 class QSpinBox;
@@ -48,6 +49,13 @@ public:
 	QList< QObject* > roots;
 	QList< bool > is_read_pdf;
 	int current_page_no;
+	QElapsedTimer pdf_set_time;
+	QElapsedTimer pdf_load_time;
+	int pdf_loading_time = 3000;
+	int pdf_setting_time = 1000;
+	QTimer* pdf_check_time;
+	bool set_pdf_path = false;
+
 private:
 	Ui::widgetRightView ui;
 
@@ -61,6 +69,7 @@ private slots:
 	void onPageModeChanged1();
 	void onPageModeChanged2();
 	void OnQmlPrint();
+	void checkPdfLoading();
 	//// action handlers
 	//void on_actionQuit_triggered();
 	//void on_actionAbout_triggered();

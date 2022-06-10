@@ -36831,7 +36831,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:BDLS"
         "ProductCode" = "8:{CD2E3BA2-4F2D-4E5F-95C0-3B242CDF0CBD}"
-        "PackageCode" = "8:{81C379B3-E732-4FDD-8BC5-FAD24BE4761F}"
+        "PackageCode" = "8:{EC544934-DD27-47AF-9251-2839F40BAAD5}"
         "UpgradeCode" = "8:{A8315FA8-6274-4C3A-80BC-2BC20D38896D}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -36962,7 +36962,7 @@
             "Target" = "8:_EA29E97829E34953A0753BA4E9636E73"
             "Folder" = "8:_0E9B3D45F05D447787099BE215E1B48A"
             "WorkingFolder" = "8:_997BE83248D545E9A9BDFFD1D9F1511D"
-            "Icon" = "8:"
+            "Icon" = "8:_E1E3C6F9BD26400AB9028A45C09A7405"
             "Feature" = "8:"
             }
         }

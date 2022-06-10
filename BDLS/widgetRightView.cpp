@@ -211,6 +211,11 @@ widgetRightView::widgetRightView(QWidget *parent)
 	sizes.append(0);
 	sizes.append(100);
 	ui.splitter->setSizes(sizes);
+
+	pdf_check_time = new QTimer(this);
+	connect(pdf_check_time, SIGNAL(timeout()), this, SLOT(checkPdfLoading()));
+	pdf_check_time->start(500);
+
 }
 
 widgetRightView::~widgetRightView()
@@ -232,12 +237,41 @@ void widgetRightView::ViewPDF(QString file_path, QString file_info, bool update_
 
 	if (m_currentPDFPath != file_path)
 	{
+		set_pdf_path = true;
 		is_read_pdf[0] = false;
 		is_read_pdf[1] = false;
 
 		m_currentPDFPath = file_path;
-		roots[m_iCurrentPDFView]->setProperty("source", QUrl::fromLocalFile(file_path));
-		is_read_pdf[m_iCurrentPDFView] = true;
+
+		if (pdf_load_time.isValid())
+		{
+			if (pdf_load_time.elapsed() > pdf_loading_time)
+			{
+				//	이전 파일 로딩 후 시간이 지났나?
+				if (pdf_set_time.elapsed() > pdf_setting_time)
+				{
+					//	이전 파일 설정 후 시간이 지났나?
+					pdf_load_time.start();
+
+					roots[m_iCurrentPDFView]->setProperty("source", QUrl::fromLocalFile(file_path));
+					is_read_pdf[m_iCurrentPDFView] = true;
+					QMetaObject::invokeMethod(roots[m_iCurrentPDFView], "fitPage");
+				}
+				else
+				{
+					pdf_set_time.start();
+				}
+			}
+		}
+		else
+		{
+			pdf_load_time.start();
+			pdf_set_time.start();
+
+			roots[m_iCurrentPDFView]->setProperty("source", QUrl::fromLocalFile(file_path));
+			is_read_pdf[m_iCurrentPDFView] = true;
+			QMetaObject::invokeMethod(roots[m_iCurrentPDFView], "fitPage");
+		}
 	}
 	//m_document->load(file_path);
 	//m_pageSelector->setMaximum(m_document->pageCount() - 1); 
@@ -349,6 +383,7 @@ void widgetRightView::onPageModeChanged1()
 		{
 			roots[1]->setProperty("source", QUrl::fromLocalFile(m_currentPDFPath));
 			is_read_pdf[1] = true;
+			QMetaObject::invokeMethod(roots[1], "fitPage");
 		}
 	}
 
@@ -366,6 +401,7 @@ void widgetRightView::onPageModeChanged2()
 		{
 			roots[0]->setProperty("source", QUrl::fromLocalFile(m_currentPDFPath));
 			is_read_pdf[0] = true;
+			QMetaObject::invokeMethod(roots[0], "fitPage");
 		}
 	}
 
@@ -630,3 +666,30 @@ void widgetRightView::updateDurationInfo(qint64 currentInfo)
 //    auto device = m_audioOutputCombo->itemData(index).value<QAudioDevice>();
 //    m_player->audioOutput()->setDevice(device);
 //}
+
+void widgetRightView::checkPdfLoading()
+{
+	if (set_pdf_path)
+	{
+		if (is_read_pdf[m_iCurrentPDFView] == false)
+		{
+			if (pdf_load_time.elapsed() > pdf_loading_time)
+			{
+				//	이전 파일 로딩 후 시간이 지났나?
+				if (pdf_set_time.elapsed() > pdf_setting_time)
+				{
+					//	이전 파일 설정 후 시간이 지났나?
+					pdf_load_time.start();
+
+					roots[m_iCurrentPDFView]->setProperty("source", QUrl::fromLocalFile(m_currentPDFPath));
+					is_read_pdf[m_iCurrentPDFView] = true;
+					QMetaObject::invokeMethod(roots[m_iCurrentPDFView], "fitPage");
+				}
+				else
+				{
+					pdf_set_time.start();
+				}
+			}
+		}
+	}
+}

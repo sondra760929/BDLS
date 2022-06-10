@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="BDLS.qrc">
-    <normaloff>:/BDLS/icons/database_search_icon.png</normaloff>:/BDLS/icons/database_search_icon.png</iconset>
+    <normaloff>:/BDLS/icons/database_search_icon.ico</normaloff>:/BDLS/icons/database_search_icon.ico</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">

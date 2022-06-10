@@ -81,6 +81,32 @@ Rectangle {
 //        root.qmlSignal(view.currentPage)
     }
 
+    function goPrev()
+    {
+        if(view.currentPage > 0)
+        {
+            view.goToPage(view.currentPage - 1)
+            page_no = view.currentPage
+            root.qmlSignal(view.currentPage)
+        }
+    }
+
+    function goNext()
+    {
+        if(view.currentPage < doc.pageCount - 1)
+        {
+            view.goToPage(view.currentPage + 1)
+            page_no = view.currentPage
+            root.qmlSignal(view.currentPage)
+        }
+    }
+
+    function fitPage()
+    {
+        page_mode = 2
+        view.scaleToPage(root.width, root.height)
+    }
+
     function resizeArea()
     {
 //        if(page_mode == 1)
@@ -313,16 +339,8 @@ Rectangle {
                     ToolTip.delay: 2000
                     ToolTip.text: "go forward"
                 }
-//                ToolButton {
-//                    action: Action {
-//                        shortcut: StandardKey.SelectAll
-//                        icon.source: "qrc:/BDLS/icons/edit-select-all.svg"
-//                        onTriggered: view.selectAll()
-//                    }
-//                }
                 ToolButton {
                     action: Action {
-                        shortcut: StandardKey.Copy
                         icon.source: "qrc:/BDLS/icons/edit-copy.svg"
                         onTriggered: root.qmlSignal1()
                     }

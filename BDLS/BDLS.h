@@ -58,6 +58,7 @@ public:
     QString selectFromFileID(int file_id);
     void generateFilters();
     void updateFilter(size_t column, const QString& value);
+    void setFocusTable();
 
     QString m_strDBfilepath;
     QString m_strDBfolderpath;
@@ -120,6 +121,7 @@ public:
     void writeSettings();
 protected:
     void closeEvent(QCloseEvent* event) override;
+    bool eventFilter(QObject* obj, QEvent* event);
 
 private:
     Ui::BDLSClass ui;
