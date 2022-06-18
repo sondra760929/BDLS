@@ -140,47 +140,47 @@ widgetRightView::widgetRightView(QWidget *parent)
 
 	layout->addLayout(controlLayout);
 
-	//	page3
+	////	page3
 
-	layout = new QVBoxLayout(ui.pagePDF);
+	//layout = new QVBoxLayout(ui.pagePDF);
 
-	qmlView1 = new QQuickWidget;
-	qmlView1->setResizeMode(QQuickWidget::SizeRootObjectToView);
-	qmlView1->setSource(QUrl("qrc:///BDLS/viewer.qml"));
+	//qmlView1 = new QQuickWidget;
+	//qmlView1->setResizeMode(QQuickWidget::SizeRootObjectToView);
+	//qmlView1->setSource(QUrl("qrc:///BDLS/viewer.qml"));
 
-	layout->addWidget(qmlView1);
+	//layout->addWidget(qmlView1);
 
-	//qmlView->rootObject()->setProperty("source", QUrl::fromLocalFile("D:/test/1.pdf"));
-	qmlView1->show();
+	////qmlView->rootObject()->setProperty("source", QUrl::fromLocalFile("D:/test/1.pdf"));
+	//qmlView1->show();
 
-	qmlRoot1 = (QObject*)qmlView1->rootObject();
-	connect(qmlRoot1, SIGNAL(qmlSignal(int)), this, SLOT(onPageSelected1(int)));
-	connect(qmlRoot1, SIGNAL(qmlSignal1()), this, SLOT(onPageModeChanged1()));
-	connect(qmlRoot1, SIGNAL(qmlSignalPrint()), this, SLOT(OnQmlPrint()));
+	//qmlRoot1 = (QObject*)qmlView1->rootObject();
+	//connect(qmlRoot1, SIGNAL(qmlSignal(int)), this, SLOT(onPageSelected1(int)));
+	//connect(qmlRoot1, SIGNAL(qmlSignal1()), this, SLOT(onPageModeChanged1()));
+	//connect(qmlRoot1, SIGNAL(qmlSignalPrint()), this, SLOT(OnQmlPrint()));
 
-	//	page4
+	////	page4
 
-	layout = new QVBoxLayout(ui.pagePDF2);
+	//layout = new QVBoxLayout(ui.pagePDF2);
 
-	qmlView2 = new QQuickWidget;
-	qmlView2->setResizeMode(QQuickWidget::SizeRootObjectToView);
-	qmlView2->setSource(QUrl("qrc:///BDLS/viewer2.qml"));
+	//qmlView2 = new QQuickWidget;
+	//qmlView2->setResizeMode(QQuickWidget::SizeRootObjectToView);
+	//qmlView2->setSource(QUrl("qrc:///BDLS/viewer2.qml"));
 
-	layout->addWidget(qmlView2);
+	//layout->addWidget(qmlView2);
 
-	//qmlView->rootObject()->setProperty("source", QUrl::fromLocalFile("D:/test/1.pdf"));
-	qmlView2->show();
+	////qmlView->rootObject()->setProperty("source", QUrl::fromLocalFile("D:/test/1.pdf"));
+	//qmlView2->show();
 
-	qmlRoot2 = (QObject*)qmlView2->rootObject();
-	connect(qmlRoot2, SIGNAL(qmlSignal(int)), this, SLOT(onPageSelected2(int)));
-	connect(qmlRoot2, SIGNAL(qmlSignal1()), this, SLOT(onPageModeChanged2()));
+	//qmlRoot2 = (QObject*)qmlView2->rootObject();
+	//connect(qmlRoot2, SIGNAL(qmlSignal(int)), this, SLOT(onPageSelected2(int)));
+	//connect(qmlRoot2, SIGNAL(qmlSignal1()), this, SLOT(onPageModeChanged2()));
 
-	views.append(qmlView1);
-	views.append(qmlView2);
-	roots.append(qmlRoot1);
-	roots.append(qmlRoot2);
-	is_read_pdf.append(false);
-	is_read_pdf.append(false);
+	//views.append(qmlView1);
+	//views.append(qmlView2);
+	//roots.append(qmlRoot1);
+	//roots.append(qmlRoot2);
+	//is_read_pdf.append(false);
+	//is_read_pdf.append(false);
 	//QLabel* metaDataLabel = new QLabel(tr("Metadata for file:"));
 	//layout->addWidget(metaDataLabel);
 
@@ -212,9 +212,9 @@ widgetRightView::widgetRightView(QWidget *parent)
 	sizes.append(100);
 	ui.splitter->setSizes(sizes);
 
-	pdf_check_time = new QTimer(this);
-	connect(pdf_check_time, SIGNAL(timeout()), this, SLOT(checkPdfLoading()));
-	pdf_check_time->start(500);
+	//pdf_check_time = new QTimer(this);
+	//connect(pdf_check_time, SIGNAL(timeout()), this, SLOT(checkPdfLoading()));
+	//pdf_check_time->start(500);
 
 }
 
@@ -233,59 +233,103 @@ void widgetRightView::ViewPDF(QString file_path, QString file_info, bool update_
 {
 	m_player->stop();
 
-	ui.stackedWidget->setCurrentIndex(m_iCurrentPDFView + 2);
+	//ui.stackedWidget->setCurrentIndex(m_iCurrentPDFView + 2);
+	ui.stackedWidget->setCurrentIndex(0);
+
+	int page_no = 0;
+	if (file_info != "")
+	{
+		page_no = file_info.toInt();
+	}
 
 	if (m_currentPDFPath != file_path)
 	{
-		set_pdf_path = true;
-		is_read_pdf[0] = false;
-		is_read_pdf[1] = false;
+		//set_pdf_path = true;
+		//is_read_pdf[0] = false;
+		//is_read_pdf[1] = false;
 
 		m_currentPDFPath = file_path;
 
-		if (pdf_load_time.isValid())
+		//if (pdf_load_time.isValid())
+		//{
+		//	if (pdf_load_time.elapsed() > pdf_loading_time)
+		//	{
+		//		//	이전 파일 로딩 후 시간이 지났나?
+		//		if (pdf_set_time.elapsed() > pdf_setting_time)
+		//		{
+		//			//	이전 파일 설정 후 시간이 지났나?
+		//			pdf_load_time.start();
+
+		//			roots[m_iCurrentPDFView]->setProperty("source", QUrl::fromLocalFile(file_path));
+		//			is_read_pdf[m_iCurrentPDFView] = true;
+		//			QMetaObject::invokeMethod(roots[m_iCurrentPDFView], "fitPage");
+		//		}
+		//		else
+		//		{
+		//			pdf_set_time.start();
+		//		}
+		//	}
+		//}
+		//else
+		//{
+		//	pdf_load_time.start();
+		//	pdf_set_time.start();
+
+		//	roots[m_iCurrentPDFView]->setProperty("source", QUrl::fromLocalFile(file_path));
+		//	is_read_pdf[m_iCurrentPDFView] = true;
+		//	QMetaObject::invokeMethod(roots[m_iCurrentPDFView], "fitPage");
+		//}
+
 		{
-			if (pdf_load_time.elapsed() > pdf_loading_time)
+			QString cmdLine;
+			//if (thumbnail)
+			//    cmdLine = QString("-plugin -reuse-instance %1 \"%2\" -page %3 -view \"continuous facing\" -zoom \"fit content\"").arg((int)m_hWnd).arg(target_path).arg(page_no);
+			//else
+			cmdLine = QString("-plugin -reuse-instance %1 \"%2\" -page %3 -zoom \"fit page\"").arg((int)m_hWnd).arg(file_path).arg(page_no);
+			//cmdLine.Format(_T("\"%s\""), target_path);
+			SHELLEXECUTEINFO seinfo = { 0 };
+			QString verb("open");
+			QString file("SumatraPDF.exe");
+			seinfo.cbSize = sizeof(SHELLEXECUTEINFO);
+			seinfo.fMask = SEE_MASK_NOCLOSEPROCESS;
+			seinfo.lpVerb = reinterpret_cast<const WCHAR*>(verb.utf16());
+			seinfo.lpDirectory = reinterpret_cast<const WCHAR*>(QCoreApplication::applicationDirPath().utf16());
+			seinfo.lpFile = reinterpret_cast<const WCHAR*>(file.utf16());
+			seinfo.lpParameters = reinterpret_cast<const WCHAR*>(cmdLine.utf16());
+			seinfo.nShow = SW_SHOWNORMAL;
+			ShellExecuteEx(&seinfo);
+			HANDLE prev_process = m_pdfViewer;
+			m_pdfViewer = seinfo.hProcess;
+			if (prev_process != m_pdfViewer && prev_process != 0)
 			{
-				//	이전 파일 로딩 후 시간이 지났나?
-				if (pdf_set_time.elapsed() > pdf_setting_time)
-				{
-					//	이전 파일 설정 후 시간이 지났나?
-					pdf_load_time.start();
-
-					roots[m_iCurrentPDFView]->setProperty("source", QUrl::fromLocalFile(file_path));
-					is_read_pdf[m_iCurrentPDFView] = true;
-					QMetaObject::invokeMethod(roots[m_iCurrentPDFView], "fitPage");
-				}
-				else
-				{
-					pdf_set_time.start();
-				}
+				TerminateProcess(prev_process, 0);
 			}
-		}
-		else
-		{
-			pdf_load_time.start();
-			pdf_set_time.start();
 
-			roots[m_iCurrentPDFView]->setProperty("source", QUrl::fromLocalFile(file_path));
-			is_read_pdf[m_iCurrentPDFView] = true;
-			QMetaObject::invokeMethod(roots[m_iCurrentPDFView], "fitPage");
+			//HINSTANCE prev_inst = m_pdfViewer;
+			//m_pdfViewer = ShellExecute(m_hWnd, _T("open"), m_strAppPath + _T("\\SumatraPDF.exe"), cmdLine, nullptr, SW_SHOWNOACTIVATE);
+			//if (prev_inst != m_pdfViewer && prev_inst != 0)
+			//{
+
+			//}
+			Sleep(500);
 		}
+
 	}
 	//m_document->load(file_path);
 	//m_pageSelector->setMaximum(m_document->pageCount() - 1); 
-	
-	if (file_info != "")
-	{
-		int page_no = file_info.toInt();
-		if (page_no > 0)
-		{
-			pageSelectedwithMemo(page_no, update_memo);
-			return;
-		}
-	}
-	pageSelectedwithMemo(0, update_memo);
+
+	pageSelectedwithMemo(page_no, update_memo);
+
+	//if (file_info != "")
+	//{
+	//	int page_no = file_info.toInt();
+	//	if (page_no > 0)
+	//	{
+	//		pageSelectedwithMemo(page_no, update_memo);
+	//		return;
+	//	}
+	//}
+	//pageSelectedwithMemo(0, update_memo);
 }
 
 int widgetRightView::getPageNo()

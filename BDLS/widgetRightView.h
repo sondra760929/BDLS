@@ -38,23 +38,28 @@ public:
 	void pageSelectedwithMemo(int page, bool update_memo);
 	int getPageNo();
 	void setCurrentPage(int page);
-	QQuickWidget* qmlView1;
-	QObject* qmlRoot1;
-	QQuickWidget* qmlView2;
-	QObject* qmlRoot2;
-	int m_iCurrentPDFView = 0;
+
+	//	quick_widget
+	//QQuickWidget* qmlView1;
+	//QObject* qmlRoot1;
+	//QQuickWidget* qmlView2;
+	//QObject* qmlRoot2;
+	//int m_iCurrentPDFView = 0;
+	//QList< QQuickWidget* > views;
+	//QList< QObject* > roots;
+	//QList< bool > is_read_pdf;
+	//QElapsedTimer pdf_set_time;
+	//QElapsedTimer pdf_load_time;
+	//int pdf_loading_time = 3000;
+	//int pdf_setting_time = 1000;
+	//QTimer* pdf_check_time;
+	//bool set_pdf_path = false;
+
 	QString m_currentPDFPath;
 
-	QList< QQuickWidget* > views;
-	QList< QObject* > roots;
-	QList< bool > is_read_pdf;
 	int current_page_no;
-	QElapsedTimer pdf_set_time;
-	QElapsedTimer pdf_load_time;
-	int pdf_loading_time = 3000;
-	int pdf_setting_time = 1000;
-	QTimer* pdf_check_time;
-	bool set_pdf_path = false;
+
+	Qt::HANDLE m_pdfViewer = NULL;
 
 private:
 	Ui::widgetRightView ui;
