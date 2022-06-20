@@ -39,6 +39,9 @@ public:
 	int getPageNo();
 	void setCurrentPage(int page);
 
+	HWND GetFormHandle();
+	HWND Sumatra_FrameHandle();
+
 	//	quick_widget
 	//QQuickWidget* qmlView1;
 	//QObject* qmlRoot1;
@@ -68,13 +71,13 @@ signals:
 	void fullScreenChanged(bool fullScreen);
 
 private slots:
-	void bookmarkSelected(const QModelIndex& index);
-	void onPageSelected1(int page);
-	void onPageSelected2(int page);
-	void onPageModeChanged1();
-	void onPageModeChanged2();
-	void OnQmlPrint();
-	void checkPdfLoading();
+	//void bookmarkSelected(const QModelIndex& index);
+	//void onPageSelected1(int page);
+	//void onPageSelected2(int page);
+	//void onPageModeChanged1();
+	//void onPageModeChanged2();
+	//void OnQmlPrint();
+	//void checkPdfLoading();
 	//// action handlers
 	//void on_actionQuit_triggered();
 	//void on_actionAbout_triggered();

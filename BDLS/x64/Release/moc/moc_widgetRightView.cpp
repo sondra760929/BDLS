@@ -22,8 +22,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_widgetRightView_t {
-    const uint offsetsAndSize[56];
-    char stringdata0[380];
+    const uint offsetsAndSize[36];
+    char stringdata0[243];
 };
 #define QT_MOC_LITERAL(ofs, len) \
     uint(offsetof(qt_meta_stringdata_widgetRightView_t, stringdata0) + ofs), len 
@@ -33,41 +33,28 @@ QT_MOC_LITERAL(0, 15), // "widgetRightView"
 QT_MOC_LITERAL(16, 17), // "fullScreenChanged"
 QT_MOC_LITERAL(34, 0), // ""
 QT_MOC_LITERAL(35, 10), // "fullScreen"
-QT_MOC_LITERAL(46, 16), // "bookmarkSelected"
-QT_MOC_LITERAL(63, 11), // "QModelIndex"
-QT_MOC_LITERAL(75, 5), // "index"
-QT_MOC_LITERAL(81, 15), // "onPageSelected1"
-QT_MOC_LITERAL(97, 4), // "page"
-QT_MOC_LITERAL(102, 15), // "onPageSelected2"
-QT_MOC_LITERAL(118, 18), // "onPageModeChanged1"
-QT_MOC_LITERAL(137, 18), // "onPageModeChanged2"
-QT_MOC_LITERAL(156, 10), // "OnQmlPrint"
-QT_MOC_LITERAL(167, 15), // "checkPdfLoading"
-QT_MOC_LITERAL(183, 15), // "durationChanged"
-QT_MOC_LITERAL(199, 8), // "duration"
-QT_MOC_LITERAL(208, 15), // "positionChanged"
-QT_MOC_LITERAL(224, 8), // "progress"
-QT_MOC_LITERAL(233, 15), // "metaDataChanged"
-QT_MOC_LITERAL(249, 4), // "seek"
-QT_MOC_LITERAL(254, 8), // "mseconds"
-QT_MOC_LITERAL(263, 13), // "statusChanged"
-QT_MOC_LITERAL(277, 25), // "QMediaPlayer::MediaStatus"
-QT_MOC_LITERAL(303, 6), // "status"
-QT_MOC_LITERAL(310, 17), // "bufferingProgress"
-QT_MOC_LITERAL(328, 21), // "videoAvailableChanged"
-QT_MOC_LITERAL(350, 9), // "available"
-QT_MOC_LITERAL(360, 19) // "displayErrorMessage"
+QT_MOC_LITERAL(46, 15), // "durationChanged"
+QT_MOC_LITERAL(62, 8), // "duration"
+QT_MOC_LITERAL(71, 15), // "positionChanged"
+QT_MOC_LITERAL(87, 8), // "progress"
+QT_MOC_LITERAL(96, 15), // "metaDataChanged"
+QT_MOC_LITERAL(112, 4), // "seek"
+QT_MOC_LITERAL(117, 8), // "mseconds"
+QT_MOC_LITERAL(126, 13), // "statusChanged"
+QT_MOC_LITERAL(140, 25), // "QMediaPlayer::MediaStatus"
+QT_MOC_LITERAL(166, 6), // "status"
+QT_MOC_LITERAL(173, 17), // "bufferingProgress"
+QT_MOC_LITERAL(191, 21), // "videoAvailableChanged"
+QT_MOC_LITERAL(213, 9), // "available"
+QT_MOC_LITERAL(223, 19) // "displayErrorMessage"
 
     },
     "widgetRightView\0fullScreenChanged\0\0"
-    "fullScreen\0bookmarkSelected\0QModelIndex\0"
-    "index\0onPageSelected1\0page\0onPageSelected2\0"
-    "onPageModeChanged1\0onPageModeChanged2\0"
-    "OnQmlPrint\0checkPdfLoading\0durationChanged\0"
-    "duration\0positionChanged\0progress\0"
-    "metaDataChanged\0seek\0mseconds\0"
-    "statusChanged\0QMediaPlayer::MediaStatus\0"
-    "status\0bufferingProgress\0videoAvailableChanged\0"
+    "fullScreen\0durationChanged\0duration\0"
+    "positionChanged\0progress\0metaDataChanged\0"
+    "seek\0mseconds\0statusChanged\0"
+    "QMediaPlayer::MediaStatus\0status\0"
+    "bufferingProgress\0videoAvailableChanged\0"
     "available\0displayErrorMessage"
 };
 #undef QT_MOC_LITERAL
@@ -78,7 +65,7 @@ static const uint qt_meta_data_widgetRightView[] = {
       10,       // revision
        0,       // classname
        0,    0, // classinfo
-      16,   14, // methods
+       9,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -86,43 +73,29 @@ static const uint qt_meta_data_widgetRightView[] = {
        1,       // signalCount
 
  // signals: name, argc, parameters, tag, flags, initial metatype offsets
-       1,    1,  110,    2, 0x06,    1 /* Public */,
+       1,    1,   68,    2, 0x06,    1 /* Public */,
 
  // slots: name, argc, parameters, tag, flags, initial metatype offsets
-       4,    1,  113,    2, 0x08,    3 /* Private */,
-       7,    1,  116,    2, 0x08,    5 /* Private */,
-       9,    1,  119,    2, 0x08,    7 /* Private */,
-      10,    0,  122,    2, 0x08,    9 /* Private */,
-      11,    0,  123,    2, 0x08,   10 /* Private */,
-      12,    0,  124,    2, 0x08,   11 /* Private */,
-      13,    0,  125,    2, 0x08,   12 /* Private */,
-      14,    1,  126,    2, 0x08,   13 /* Private */,
-      16,    1,  129,    2, 0x08,   15 /* Private */,
-      18,    0,  132,    2, 0x08,   17 /* Private */,
-      19,    1,  133,    2, 0x08,   18 /* Private */,
-      21,    1,  136,    2, 0x08,   20 /* Private */,
-      24,    1,  139,    2, 0x08,   22 /* Private */,
-      25,    1,  142,    2, 0x08,   24 /* Private */,
-      27,    0,  145,    2, 0x08,   26 /* Private */,
+       4,    1,   71,    2, 0x08,    3 /* Private */,
+       6,    1,   74,    2, 0x08,    5 /* Private */,
+       8,    0,   77,    2, 0x08,    7 /* Private */,
+       9,    1,   78,    2, 0x08,    8 /* Private */,
+      11,    1,   81,    2, 0x08,   10 /* Private */,
+      14,    1,   84,    2, 0x08,   12 /* Private */,
+      15,    1,   87,    2, 0x08,   14 /* Private */,
+      17,    0,   90,    2, 0x08,   16 /* Private */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::Bool,    3,
 
  // slots: parameters
-    QMetaType::Void, 0x80000000 | 5,    6,
-    QMetaType::Void, QMetaType::Int,    8,
-    QMetaType::Void, QMetaType::Int,    8,
+    QMetaType::Void, QMetaType::LongLong,    5,
+    QMetaType::Void, QMetaType::LongLong,    7,
     QMetaType::Void,
-    QMetaType::Void,
-    QMetaType::Void,
-    QMetaType::Void,
-    QMetaType::Void, QMetaType::LongLong,   15,
-    QMetaType::Void, QMetaType::LongLong,   17,
-    QMetaType::Void,
-    QMetaType::Void, QMetaType::Int,   20,
-    QMetaType::Void, 0x80000000 | 22,   23,
-    QMetaType::Void, QMetaType::Float,   17,
-    QMetaType::Void, QMetaType::Bool,   26,
+    QMetaType::Void, QMetaType::Int,   10,
+    QMetaType::Void, 0x80000000 | 12,   13,
+    QMetaType::Void, QMetaType::Float,    7,
+    QMetaType::Void, QMetaType::Bool,   16,
     QMetaType::Void,
 
        0        // eod
@@ -135,21 +108,14 @@ void widgetRightView::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int 
         (void)_t;
         switch (_id) {
         case 0: _t->fullScreenChanged((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
-        case 1: _t->bookmarkSelected((*reinterpret_cast< std::add_pointer_t<QModelIndex>>(_a[1]))); break;
-        case 2: _t->onPageSelected1((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
-        case 3: _t->onPageSelected2((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
-        case 4: _t->onPageModeChanged1(); break;
-        case 5: _t->onPageModeChanged2(); break;
-        case 6: _t->OnQmlPrint(); break;
-        case 7: _t->checkPdfLoading(); break;
-        case 8: _t->durationChanged((*reinterpret_cast< std::add_pointer_t<qint64>>(_a[1]))); break;
-        case 9: _t->positionChanged((*reinterpret_cast< std::add_pointer_t<qint64>>(_a[1]))); break;
-        case 10: _t->metaDataChanged(); break;
-        case 11: _t->seek((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
-        case 12: _t->statusChanged((*reinterpret_cast< std::add_pointer_t<QMediaPlayer::MediaStatus>>(_a[1]))); break;
-        case 13: _t->bufferingProgress((*reinterpret_cast< std::add_pointer_t<float>>(_a[1]))); break;
-        case 14: _t->videoAvailableChanged((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
-        case 15: _t->displayErrorMessage(); break;
+        case 1: _t->durationChanged((*reinterpret_cast< std::add_pointer_t<qint64>>(_a[1]))); break;
+        case 2: _t->positionChanged((*reinterpret_cast< std::add_pointer_t<qint64>>(_a[1]))); break;
+        case 3: _t->metaDataChanged(); break;
+        case 4: _t->seek((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
+        case 5: _t->statusChanged((*reinterpret_cast< std::add_pointer_t<QMediaPlayer::MediaStatus>>(_a[1]))); break;
+        case 6: _t->bufferingProgress((*reinterpret_cast< std::add_pointer_t<float>>(_a[1]))); break;
+        case 7: _t->videoAvailableChanged((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
+        case 8: _t->displayErrorMessage(); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -172,7 +138,7 @@ const QMetaObject widgetRightView::staticMetaObject = { {
     nullptr,
 qt_incomplete_metaTypeArray<qt_meta_stringdata_widgetRightView_t
 , QtPrivate::TypeAndForceComplete<widgetRightView, std::true_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<bool, std::false_type>
-, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<const QModelIndex &, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<int, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<int, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<qint64, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<qint64, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<int, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QMediaPlayer::MediaStatus, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<float, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<bool, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>
+, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<qint64, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<qint64, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<int, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QMediaPlayer::MediaStatus, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<float, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<bool, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>
 
 
 >,
@@ -199,13 +165,13 @@ int widgetRightView::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 16)
+        if (_id < 9)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 16;
+        _id -= 9;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 16)
+        if (_id < 9)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 16;
+        _id -= 9;
     }
     return _id;
 }

@@ -2057,27 +2057,32 @@ void BDLS::setFocusTable()
 
 bool BDLS::eventFilter(QObject* obj, QEvent* event)
 {
-	if (event->type() == QEvent::KeyRelease)
+	if (event->type() == QEvent::KeyPress)
 	{
 		QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
-		//qDebug() << "key " << keyEvent->key() << "from" << obj;
+		qDebug() << "key press " << keyEvent->key() << "from" << obj;
+	}
+	else if (event->type() == QEvent::KeyRelease)
+	{
+		QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+		qDebug() << "key release " << keyEvent->key() << "from" << obj;
 		if (keyEvent->key() == Qt::Key_PageUp)
 		{
 			//qDebug() << obj->objectName();
-			if (obj->objectName() == "QQuickWidgetOffscreenWindow")
-			{
-				QMetaObject::invokeMethod(_widgetRightView->roots[_widgetRightView->m_iCurrentPDFView], "goPrev");
-				return true;
-			}
+			//if (obj->objectName() == "QQuickWidgetOffscreenWindow")
+			//{
+			//	QMetaObject::invokeMethod(_widgetRightView->roots[_widgetRightView->m_iCurrentPDFView], "goPrev");
+			//	return true;
+			//}
 		}
 		else if (keyEvent->key() == Qt::Key_PageDown)
 		{
 			//qDebug() << obj->objectName();
-			if (obj->objectName() == "QQuickWidgetOffscreenWindow")
-			{
-				QMetaObject::invokeMethod(_widgetRightView->roots[_widgetRightView->m_iCurrentPDFView], "goNext");
-				return true;
-			}
+			//if (obj->objectName() == "QQuickWidgetOffscreenWindow")
+			//{
+			//	QMetaObject::invokeMethod(_widgetRightView->roots[_widgetRightView->m_iCurrentPDFView], "goNext");
+			//	return true;
+			//}
 		}
 	}
 	return QObject::eventFilter(obj, event);

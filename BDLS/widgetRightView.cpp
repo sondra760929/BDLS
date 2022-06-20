@@ -224,10 +224,66 @@ widgetRightView::~widgetRightView()
 
 void widgetRightView::SearchText(QString search_text, int search_index)
 {
-	QMetaObject::invokeMethod(roots[m_iCurrentPDFView], "goSearch"
-		, Q_ARG(QString, search_text)
-		, Q_ARG(int, search_index));
+	//QMetaObject::invokeMethod(roots[m_iCurrentPDFView], "goSearch"
+	//	, Q_ARG(QString, search_text)
+	//	, Q_ARG(int, search_index));
 }
+
+HWND widgetRightView::GetFormHandle()
+{
+	HWND m_hWnd = (HWND)(ui.stackedWidget->widget(0)->winId());
+	return m_hWnd;
+}
+
+HWND widgetRightView::Sumatra_FrameHandle()
+{
+	QString frame("SUMATRA_PDF_FRAME");
+	return FindWindowEx(GetFormHandle(), 0, reinterpret_cast<const WCHAR*>(frame.utf16()), 0);
+}
+
+int widgetRightView()
+{
+
+FUNCTION Sumatra_PageNumber(cPanel)
+LOCAL nPage : = 0
+LOCAL nHFrame : = Sumatra_FrameHandle(cPanel)
+LOCAL nHReBar
+LOCAL aHWnd
+
+LOCAL cText
+LOCAL nPos
+LOCAL n
+
+IF nHFrame != 0
+nHReBar : = FindWindowEx(nHFrame, 0, "ReBarWindow32", 0)
+
+IF nHReBar != 0
+aHWnd : = EnumChildWindows(nHReBar)
+
+FOR n : = 1 TO Len(aHWnd)
+IF(GetClassName(aHWnd[n]) == "Static")
+cText : = GetWindowText2(aHWnd[n])
+nPos : = HB_UAt("(", cText)
+
+IF nPos > 0
+nPage : = Val(Substr(cText, nPos + 1))
+EXIT
+ENDIF
+ENDIF
+NEXT
+
+IF nPage == 0
+FOR n : = 1 TO Len(aHWnd)
+IF(GetClassName(aHWnd[n]) == "Edit") . and . (HB_BitAnd(GetWindowLongPtr(aHWnd[n], -16 /*GWL_STYLE*/), 0x2002 /*ES_NUMBER|ES_RIGHT*/) != 0)
+nPage : = Val(GetWindowText2(aHWnd[n]))
+EXIT
+ENDIF
+NEXT
+ENDIF
+ENDIF
+ENDIF
+
+RETURN nPage
 
 void widgetRightView::ViewPDF(QString file_path, QString file_info, bool update_memo)
 {
@@ -285,25 +341,27 @@ void widgetRightView::ViewPDF(QString file_path, QString file_info, bool update_
 			//if (thumbnail)
 			//    cmdLine = QString("-plugin -reuse-instance %1 \"%2\" -page %3 -view \"continuous facing\" -zoom \"fit content\"").arg((int)m_hWnd).arg(target_path).arg(page_no);
 			//else
-			cmdLine = QString("-plugin -reuse-instance %1 \"%2\" -page %3 -zoom \"fit page\"").arg((int)m_hWnd).arg(file_path).arg(page_no);
-			//cmdLine.Format(_T("\"%s\""), target_path);
-			SHELLEXECUTEINFO seinfo = { 0 };
 			QString verb("open");
-			QString file("SumatraPDF.exe");
-			seinfo.cbSize = sizeof(SHELLEXECUTEINFO);
-			seinfo.fMask = SEE_MASK_NOCLOSEPROCESS;
-			seinfo.lpVerb = reinterpret_cast<const WCHAR*>(verb.utf16());
-			seinfo.lpDirectory = reinterpret_cast<const WCHAR*>(QCoreApplication::applicationDirPath().utf16());
-			seinfo.lpFile = reinterpret_cast<const WCHAR*>(file.utf16());
-			seinfo.lpParameters = reinterpret_cast<const WCHAR*>(cmdLine.utf16());
-			seinfo.nShow = SW_SHOWNORMAL;
-			ShellExecuteEx(&seinfo);
-			HANDLE prev_process = m_pdfViewer;
-			m_pdfViewer = seinfo.hProcess;
-			if (prev_process != m_pdfViewer && prev_process != 0)
-			{
-				TerminateProcess(prev_process, 0);
-			}
+			QString file(QCoreApplication::applicationDirPath() + "/SumatraPDF.exe");
+			cmdLine = QString("-plugin -reuse-instance %1 \"%2\" -page %3 -zoom \"fit page\"").arg((int)GetFormHandle()).arg(file_path).arg(page_no);
+			//cmdLine.Format(_T("\"%s\""), target_path);
+			ShellExecute(0, reinterpret_cast<const WCHAR*>(verb.utf16()), reinterpret_cast<const WCHAR*>(file.utf16()), reinterpret_cast<const WCHAR*>(cmdLine.utf16()), NULL, 10 /*SW_SHOWDEFAULT*/);
+
+			//SHELLEXECUTEINFO seinfo = { 0 };
+			//seinfo.cbSize = sizeof(SHELLEXECUTEINFO);
+			//seinfo.fMask = SEE_MASK_NOCLOSEPROCESS;
+			//seinfo.lpVerb = reinterpret_cast<const WCHAR*>(verb.utf16());
+			//seinfo.lpDirectory = reinterpret_cast<const WCHAR*>(QCoreApplication::applicationDirPath().utf16());
+			//seinfo.lpFile = reinterpret_cast<const WCHAR*>(file.utf16());
+			//seinfo.lpParameters = reinterpret_cast<const WCHAR*>(cmdLine.utf16());
+			//seinfo.nShow = SW_SHOWNORMAL;
+			//ShellExecuteEx(&seinfo);
+			//HANDLE prev_process = m_pdfViewer;
+			//m_pdfViewer = seinfo.hProcess;
+			//if (prev_process != m_pdfViewer && prev_process != 0)
+			//{
+			//	TerminateProcess(prev_process, 0);
+			//}
 
 			//HINSTANCE prev_inst = m_pdfViewer;
 			//m_pdfViewer = ShellExecute(m_hWnd, _T("open"), m_strAppPath + _T("\\SumatraPDF.exe"), cmdLine, nullptr, SW_SHOWNOACTIVATE);
@@ -311,7 +369,7 @@ void widgetRightView::ViewPDF(QString file_path, QString file_info, bool update_
 			//{
 
 			//}
-			Sleep(500);
+			//Sleep(500);
 		}
 
 	}
@@ -334,7 +392,9 @@ void widgetRightView::ViewPDF(QString file_path, QString file_info, bool update_
 
 int widgetRightView::getPageNo()
 {
-	return roots[m_iCurrentPDFView]->property("page_no").toInt();
+	return 0;
+	//return roots[m_iCurrentPDFView]->property("page_no").toInt();
+
 	//auto nav = ui.pdfView->pageNavigation();
 	//return nav->currentPage();
 }
@@ -345,21 +405,21 @@ void widgetRightView::ViewMovie(QString file_path, QString file_info, bool updat
 	m_player->play();
 }
 
-void widgetRightView::bookmarkSelected(const QModelIndex& index)
-{
-	if (!index.isValid())
-		return;
-
-	const int page = index.data(int(QPdfBookmarkModel::Role::Page)).toInt();
-	const qreal zoomLevel = index.data(int(QPdfBookmarkModel::Role::Level)).toReal();
-	ui.pdfView->pageNavigation()->jump(page, {}, zoomLevel);
-}
+//void widgetRightView::bookmarkSelected(const QModelIndex& index)
+//{
+//	if (!index.isValid())
+//		return;
+//
+//	const int page = index.data(int(QPdfBookmarkModel::Role::Page)).toInt();
+//	const qreal zoomLevel = index.data(int(QPdfBookmarkModel::Role::Level)).toReal();
+//	ui.pdfView->pageNavigation()->jump(page, {}, zoomLevel);
+//}
 
 void widgetRightView::pageSelectedwithMemo(int page, bool update_memo)
 {
 	int return_value = 0;
-	QMetaObject::invokeMethod(roots[m_iCurrentPDFView], "goPage",
-		Q_ARG(int, page));
+	//QMetaObject::invokeMethod(roots[m_iCurrentPDFView], "goPage",
+	//	Q_ARG(int, page));
 
 	//auto nav = ui.pdfView->pageNavigation();
 	//nav->jump(page, {}, nav->currentZoom());
@@ -391,69 +451,69 @@ void widgetRightView::setCurrentPage(int page)
 	pageSelectedwithMemo(page, false);
 }
 
-void widgetRightView::onPageSelected1(int page)
-{
-	pageSelectedwithMemo(page, false);
-}
-
-void widgetRightView::onPageSelected2(int page)
-{
-	pageSelectedwithMemo(page, false);
-}
-
-void widgetRightView::OnQmlPrint()
-{
-	QStringList arguments;
-	arguments.append("-print-dialog");
-	arguments.append("-exit-when-done");
-	arguments.append(m_currentPDFPath);
-
-	int i_return = QProcess::execute("SumatraPDF.exe", arguments);
-	if (i_return == 0)
-	{
-	}
-	else
-	{
-		/*QMessageBox::critical(this, QString("파일 생성 오류"), QString("PDF 파일 생성에 실패했습니다. 관리자에게 문의하십시요."));*/
-		//	text 추출 오류
-	}
-}
-
-void widgetRightView::onPageModeChanged1()
-{
-	if (!is_read_pdf[1])
-	{
-		if (is_read_pdf[0])
-		{
-			roots[1]->setProperty("source", QUrl::fromLocalFile(m_currentPDFPath));
-			is_read_pdf[1] = true;
-			QMetaObject::invokeMethod(roots[1], "fitPage");
-		}
-	}
-
-	m_iCurrentPDFView = 1;
-	if(is_read_pdf[0] && is_read_pdf[1])
-		QMetaObject::invokeMethod(roots[m_iCurrentPDFView], "goPage", Q_ARG(int, roots[0]->property("page_no").toInt()));
-	ui.stackedWidget->setCurrentIndex(m_iCurrentPDFView + 2);
-}
-
-void widgetRightView::onPageModeChanged2()
-{
-	if (!is_read_pdf[0])
-	{
-		if (is_read_pdf[1])
-		{
-			roots[0]->setProperty("source", QUrl::fromLocalFile(m_currentPDFPath));
-			is_read_pdf[0] = true;
-			QMetaObject::invokeMethod(roots[0], "fitPage");
-		}
-	}
-
-	m_iCurrentPDFView = 0;
-	if (is_read_pdf[0] && is_read_pdf[1])
-		QMetaObject::invokeMethod(roots[m_iCurrentPDFView], "goPage", Q_ARG(int, roots[1]->property("page_no").toInt()));
-	ui.stackedWidget->setCurrentIndex(m_iCurrentPDFView + 2);
-}
+//void widgetRightView::onPageSelected1(int page)
+//{
+//	pageSelectedwithMemo(page, false);
+//}
+//
+//void widgetRightView::onPageSelected2(int page)
+//{
+//	pageSelectedwithMemo(page, false);
+//}
+//
+//void widgetRightView::OnQmlPrint()
+//{
+//	QStringList arguments;
+//	arguments.append("-print-dialog");
+//	arguments.append("-exit-when-done");
+//	arguments.append(m_currentPDFPath);
+//
+//	int i_return = QProcess::execute("SumatraPDF.exe", arguments);
+//	if (i_return == 0)
+//	{
+//	}
+//	else
+//	{
+//		/*QMessageBox::critical(this, QString("파일 생성 오류"), QString("PDF 파일 생성에 실패했습니다. 관리자에게 문의하십시요."));*/
+//		//	text 추출 오류
+//	}
+//}
+//
+//void widgetRightView::onPageModeChanged1()
+//{
+//	//if (!is_read_pdf[1])
+//	//{
+//	//	if (is_read_pdf[0])
+//	//	{
+//	//		roots[1]->setProperty("source", QUrl::fromLocalFile(m_currentPDFPath));
+//	//		is_read_pdf[1] = true;
+//	//		QMetaObject::invokeMethod(roots[1], "fitPage");
+//	//	}
+//	//}
+//
+//	//m_iCurrentPDFView = 1;
+//	//if(is_read_pdf[0] && is_read_pdf[1])
+//	//	QMetaObject::invokeMethod(roots[m_iCurrentPDFView], "goPage", Q_ARG(int, roots[0]->property("page_no").toInt()));
+//	//ui.stackedWidget->setCurrentIndex(m_iCurrentPDFView + 2);
+//}
+//
+//void widgetRightView::onPageModeChanged2()
+//{
+//	//if (!is_read_pdf[0])
+//	//{
+//	//	if (is_read_pdf[1])
+//	//	{
+//	//		roots[0]->setProperty("source", QUrl::fromLocalFile(m_currentPDFPath));
+//	//		is_read_pdf[0] = true;
+//	//		QMetaObject::invokeMethod(roots[0], "fitPage");
+//	//	}
+//	//}
+//
+//	//m_iCurrentPDFView = 0;
+//	//if (is_read_pdf[0] && is_read_pdf[1])
+//	//	QMetaObject::invokeMethod(roots[m_iCurrentPDFView], "goPage", Q_ARG(int, roots[1]->property("page_no").toInt()));
+//	//ui.stackedWidget->setCurrentIndex(m_iCurrentPDFView + 2);
+//}
 
 //void widgetRightView::on_actionQuit_triggered()
 //{
@@ -711,29 +771,29 @@ void widgetRightView::updateDurationInfo(qint64 currentInfo)
 //    m_player->audioOutput()->setDevice(device);
 //}
 
-void widgetRightView::checkPdfLoading()
-{
-	if (set_pdf_path)
-	{
-		if (is_read_pdf[m_iCurrentPDFView] == false)
-		{
-			if (pdf_load_time.elapsed() > pdf_loading_time)
-			{
-				//	이전 파일 로딩 후 시간이 지났나?
-				if (pdf_set_time.elapsed() > pdf_setting_time)
-				{
-					//	이전 파일 설정 후 시간이 지났나?
-					pdf_load_time.start();
-
-					roots[m_iCurrentPDFView]->setProperty("source", QUrl::fromLocalFile(m_currentPDFPath));
-					is_read_pdf[m_iCurrentPDFView] = true;
-					QMetaObject::invokeMethod(roots[m_iCurrentPDFView], "fitPage");
-				}
-				else
-				{
-					pdf_set_time.start();
-				}
-			}
-		}
-	}
-}
+//void widgetRightView::checkPdfLoading()
+//{
+//	if (set_pdf_path)
+//	{
+//		if (is_read_pdf[m_iCurrentPDFView] == false)
+//		{
+//			if (pdf_load_time.elapsed() > pdf_loading_time)
+//			{
+//				//	이전 파일 로딩 후 시간이 지났나?
+//				if (pdf_set_time.elapsed() > pdf_setting_time)
+//				{
+//					//	이전 파일 설정 후 시간이 지났나?
+//					pdf_load_time.start();
+//
+//					roots[m_iCurrentPDFView]->setProperty("source", QUrl::fromLocalFile(m_currentPDFPath));
+//					is_read_pdf[m_iCurrentPDFView] = true;
+//					QMetaObject::invokeMethod(roots[m_iCurrentPDFView], "fitPage");
+//				}
+//				else
+//				{
+//					pdf_set_time.start();
+//				}
+//			}
+//		}
+//	}
+//}
