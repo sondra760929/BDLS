@@ -41,6 +41,7 @@ public:
 
 	HWND GetFormHandle();
 	HWND Sumatra_FrameHandle();
+	int Sumatra_PageNumber();
 
 	//	quick_widget
 	//QQuickWidget* qmlView1;
@@ -128,4 +129,6 @@ private:
 
 	QWidget* m_metaDataFields[QMediaMetaData::NumMetaData] = {};
 	QLabel* m_metaDataLabels[QMediaMetaData::NumMetaData] = {};
+protected:
+	virtual void resizeEvent(QResizeEvent* i_pEvent);
 };

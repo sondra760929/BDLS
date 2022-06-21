@@ -7,6 +7,7 @@
 #include "xlsxworkbook.h"
 #include <QtCore5Compat/QTextCodec>
 #include "FilterTableHeader.h"
+#include "FilterLineEdit.h"
 
 QString m_strKey = QString("HKEY_CURRENT_USER\\SOFTWARE\\DIGIBOOK\\PDFIndexExplorer\\Settings");
 QSettings m(m_strKey, QSettings::Registry64Format);
@@ -82,7 +83,7 @@ BDLS::BDLS(QWidget* parent)
 
 	ui.tableView->m_pView = this;
 	ui.tableView->setModel(proxyModel);
-	ui.tableView->setAlternatingRowColors(true);
+	//ui.tableView->setAlternatingRowColors(true);
 	ui.tableView->setSortingEnabled(true);
 
 	connect(ui.tableView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)), this, SLOT(onTableCellClicked(const QItemSelection&, const QItemSelection&)));
@@ -1089,7 +1090,7 @@ QString BDLS::selectFromFileID(int file_id)
 
 		file_name = originModel->data(originModel->index(orgin_model_index_row, originModel->columnCount() - 1)).toString();
 
-		ui.tableView->selectionModel()->select(proxyModel->mapFromSource(originModel->index(orgin_model_index_row, 0)), QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+		//ui.tableView->selectionModel()->select(proxyModel->mapFromSource(originModel->index(orgin_model_index_row, 0)), QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
 	}
 
 	return file_name;
@@ -1110,6 +1111,7 @@ void BDLS::onTableCellClicked(const QItemSelection& selected, const QItemSelecti
 			if (file_path != m_strCurrentSelectedItemPath)
 			{
 				SetCurrentFile(NONE, file_name);
+				SetFocus((HWND)(ui.tableView->winId()));
 			}
 		}
 	}
@@ -2034,6 +2036,8 @@ void BDLS::setSelectBySearch(int file_id)
 	if (Items.count() > 0)
 	{
 		originModel->setData(originModel->index(Items[0].row(), originModel->columnCount() - 2), "V");
+		for (int i = 0; i< originModel->columnCount(); i++)
+			originModel->setData(originModel->index(Items[0].row(), i), QVariant(QColor(Qt::green)), Qt::BackgroundRole);
 	}
 }
 
@@ -2046,6 +2050,8 @@ void BDLS::resetSelectBySearch()
 		for (int i = 0; i < rows; i++)
 		{
 			originModel->setData(originModel->index(i, cols - 2), "");
+			for (int j = 0; j < originModel->columnCount(); j++)
+				originModel->setData(originModel->index(i, j), QVariant(QColor(Qt::white)), Qt::BackgroundRole);
 		}
 	}
 }

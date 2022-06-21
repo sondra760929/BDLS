@@ -16,6 +16,7 @@ public:
     QSize sizeHint() const override;
     bool hasFilters() const { return (filterWidgets.size() > 0); }
     QString filterValue(size_t column) const;
+    std::vector<FilterLineEdit*> filterWidgets;
 
 public slots:
     void generateFilters(size_t number, size_t number_of_hidden_filters = 1);
@@ -39,7 +40,6 @@ private slots:
     void editCondFormats();
 
 private:
-    std::vector<FilterLineEdit*> filterWidgets;
 };
 
 #endif

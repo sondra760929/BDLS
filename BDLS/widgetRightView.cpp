@@ -222,8 +222,18 @@ widgetRightView::~widgetRightView()
 {
 }
 
+void widgetRightView::resizeEvent(QResizeEvent* i_pEvent)
+{
+	QSize size = i_pEvent->size();
+	SetWindowPos(Sumatra_FrameHandle(), 0, 0, 0, size.width(), size.height(), 0x0016 /*SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOMOVE*/);
+}
+
 void widgetRightView::SearchText(QString search_text, int search_index)
 {
+	HWND hFrame = Sumatra_FrameHandle();
+	if (hFrame)
+	{
+	}
 	//QMetaObject::invokeMethod(roots[m_iCurrentPDFView], "goSearch"
 	//	, Q_ARG(QString, search_text)
 	//	, Q_ARG(int, search_index));
@@ -241,49 +251,43 @@ HWND widgetRightView::Sumatra_FrameHandle()
 	return FindWindowEx(GetFormHandle(), 0, reinterpret_cast<const WCHAR*>(frame.utf16()), 0);
 }
 
-int widgetRightView()
+BOOL CALLBACK EnumProc(HWND hwnd, LPARAM lParam)
 {
+	wchar_t strvar[255];
+	GetClassName(hwnd, (LPWSTR)strvar, 255);
+	QString str_string = QString::fromWCharArray(strvar);
+	if (str_string == "Edit")
+	{
+		*(HWND*)lParam = hwnd;
+		return FALSE;
+	}
+	else
+		return TRUE;
+}
 
-FUNCTION Sumatra_PageNumber(cPanel)
-LOCAL nPage : = 0
-LOCAL nHFrame : = Sumatra_FrameHandle(cPanel)
-LOCAL nHReBar
-LOCAL aHWnd
-
-LOCAL cText
-LOCAL nPos
-LOCAL n
-
-IF nHFrame != 0
-nHReBar : = FindWindowEx(nHFrame, 0, "ReBarWindow32", 0)
-
-IF nHReBar != 0
-aHWnd : = EnumChildWindows(nHReBar)
-
-FOR n : = 1 TO Len(aHWnd)
-IF(GetClassName(aHWnd[n]) == "Static")
-cText : = GetWindowText2(aHWnd[n])
-nPos : = HB_UAt("(", cText)
-
-IF nPos > 0
-nPage : = Val(Substr(cText, nPos + 1))
-EXIT
-ENDIF
-ENDIF
-NEXT
-
-IF nPage == 0
-FOR n : = 1 TO Len(aHWnd)
-IF(GetClassName(aHWnd[n]) == "Edit") . and . (HB_BitAnd(GetWindowLongPtr(aHWnd[n], -16 /*GWL_STYLE*/), 0x2002 /*ES_NUMBER|ES_RIGHT*/) != 0)
-nPage : = Val(GetWindowText2(aHWnd[n]))
-EXIT
-ENDIF
-NEXT
-ENDIF
-ENDIF
-ENDIF
-
-RETURN nPage
+int widgetRightView::Sumatra_PageNumber()
+{
+	HWND hFrame = Sumatra_FrameHandle();
+	if (hFrame)
+	{
+		QString rebar("ReBarWindow32");
+		HWND nHReBar = FindWindowEx(hFrame, 0, reinterpret_cast<const WCHAR*>(rebar.utf16()), 0);
+		if (nHReBar)
+		{
+			HWND aHWnd;
+			EnumChildWindows(nHReBar, EnumProc, (LPARAM)&aHWnd);
+			wchar_t strvar[255];
+			SendMessage(aHWnd, WM_GETTEXT, (WPARAM)255, (LPARAM)strvar);
+			//int return_no = GetWindowTextW(aHWnd, (LPWSTR)strvar, 255);
+			QString str_string = QString::fromWCharArray(strvar);
+			int page_no = str_string.toInt();
+			if (page_no > 0)
+				page_no--;
+			return page_no;
+		}
+	}
+	return 0;
+}
 
 void widgetRightView::ViewPDF(QString file_path, QString file_info, bool update_memo)
 {
@@ -298,7 +302,9 @@ void widgetRightView::ViewPDF(QString file_path, QString file_info, bool update_
 		page_no = file_info.toInt();
 	}
 
-	if (m_currentPDFPath != file_path)
+	int current_page_no = getPageNo();
+
+	if (m_currentPDFPath != file_path || current_page_no != page_no)
 	{
 		//set_pdf_path = true;
 		//is_read_pdf[0] = false;
@@ -343,7 +349,8 @@ void widgetRightView::ViewPDF(QString file_path, QString file_info, bool update_
 			//else
 			QString verb("open");
 			QString file(QCoreApplication::applicationDirPath() + "/SumatraPDF.exe");
-			cmdLine = QString("-plugin -reuse-instance %1 \"%2\" -page %3 -zoom \"fit page\"").arg((int)GetFormHandle()).arg(file_path).arg(page_no);
+			cmdLine = QString("-plugin -reuse-instance %1 \"%2\" -page %3").arg((int)GetFormHandle()).arg(file_path).arg(page_no + 1);
+			//cmdLine = QString("-plugin -reuse-instance %1 \"%2\" -page %3 -zoom \"fit page\"").arg((int)GetFormHandle()).arg(file_path).arg(page_no + 1);
 			//cmdLine.Format(_T("\"%s\""), target_path);
 			ShellExecute(0, reinterpret_cast<const WCHAR*>(verb.utf16()), reinterpret_cast<const WCHAR*>(file.utf16()), reinterpret_cast<const WCHAR*>(cmdLine.utf16()), NULL, 10 /*SW_SHOWDEFAULT*/);
 
@@ -369,7 +376,9 @@ void widgetRightView::ViewPDF(QString file_path, QString file_info, bool update_
 			//{
 
 			//}
-			//Sleep(500);
+			Sleep(500);
+
+			//Sumatra_PageNumber();
 		}
 
 	}
@@ -392,7 +401,7 @@ void widgetRightView::ViewPDF(QString file_path, QString file_info, bool update_
 
 int widgetRightView::getPageNo()
 {
-	return 0;
+	return Sumatra_PageNumber();
 	//return roots[m_iCurrentPDFView]->property("page_no").toInt();
 
 	//auto nav = ui.pdfView->pageNavigation();

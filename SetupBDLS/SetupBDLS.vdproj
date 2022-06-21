@@ -4737,6 +4737,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_96ED6DF880B640B2AE8A349E0A4FFCE1"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_96F9D9BA45FC43D0AD3696AD508480FE"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -7546,12 +7552,6 @@
         "Entry"
         {
         "MsmKey" = "8:_E9C446A4121D4C8DBBC7C4C796F9968A"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_EA29E97829E34953A0753BA4E9636E73"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -23988,6 +23988,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_96ED6DF880B640B2AE8A349E0A4FFCE1"
+            {
+            "SourcePath" = "8:..\\x64\\Release\\BDLS.exe"
+            "TargetName" = "8:BDLS.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_997BE83248D545E9A9BDFFD1D9F1511D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_96F9D9BA45FC43D0AD3696AD508480FE"
             {
             "SourcePath" = "8:..\\x64\\Release\\qml\\QtQuick\\Controls\\designer\\images\\toolseparator-icon@2x.png"
@@ -36831,7 +36851,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:BDLS"
         "ProductCode" = "8:{CD2E3BA2-4F2D-4E5F-95C0-3B242CDF0CBD}"
-        "PackageCode" = "8:{EC544934-DD27-47AF-9251-2839F40BAAD5}"
+        "PackageCode" = "8:{808F0994-8F6F-461A-930C-9CFBE419F80D}"
         "UpgradeCode" = "8:{A8315FA8-6274-4C3A-80BC-2BC20D38896D}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -36951,15 +36971,15 @@
         }
         "Shortcut"
         {
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_E8A9B764E80144F9A85ACE30C1D5C8B9"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_F5284D108C554FF29F1975A82863420B"
             {
-            "Name" = "8:BDLS"
+            "Name" = "8:Shortcut to BDLS.exe"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
-            "Target" = "8:_EA29E97829E34953A0753BA4E9636E73"
+            "Target" = "8:_96ED6DF880B640B2AE8A349E0A4FFCE1"
             "Folder" = "8:_0E9B3D45F05D447787099BE215E1B48A"
             "WorkingFolder" = "8:_997BE83248D545E9A9BDFFD1D9F1511D"
             "Icon" = "8:_E1E3C6F9BD26400AB9028A45C09A7405"
@@ -37364,34 +37384,6 @@
         }
         "ProjectOutput"
         {
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_EA29E97829E34953A0753BA4E9636E73"
-            {
-            "SourcePath" = "8:..\\x64\\Release\\BDLS.exe"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_997BE83248D545E9A9BDFFD1D9F1511D"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            "ProjectOutputGroupRegister" = "3:1"
-            "OutputConfiguration" = "8:"
-            "OutputGroupCanonicalName" = "8:Built"
-            "OutputProjectGuid" = "8:{5E5D1836-91FD-43C2-A38B-5904AED63CE9}"
-            "ShowKeyOutput" = "11:TRUE"
-                "ExcludeFilters"
-                {
-                }
-            }
         }
     }
 }

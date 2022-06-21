@@ -302,7 +302,7 @@ ExtendedTableWidget::ExtendedTableWidget(QWidget* parent) :
     if (m_frozen_table_view)
     {
         // Set up widget
-        m_frozen_table_view->setFocusPolicy(Qt::NoFocus);
+        //m_frozen_table_view->setFocusPolicy(Qt::NoFocus);
         m_frozen_table_view->verticalHeader()->hide();
         m_frozen_table_view->setStyleSheet("QTableView { border: none; }"
             "QTableView::item:selected{ background-color: " + palette().color(QPalette::Active, QPalette::Highlight).name() + "}");

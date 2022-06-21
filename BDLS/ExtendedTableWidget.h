@@ -63,6 +63,8 @@ public:
 
     void setEditTriggers(QAbstractItemView::EditTriggers editTriggers);
 
+    ExtendedTableWidget* m_frozen_table_view;
+
 public slots:
     void selectTableLine(int lineToSelect);
     void selectTableLines(int firstLine, int count);
@@ -90,7 +92,6 @@ private:
     static std::vector<std::vector<QByteArray>> m_buffer;
     static QString m_generatorStamp;
 
-    ExtendedTableWidget* m_frozen_table_view;
     size_t m_frozen_column_count;
     ItemBorderDelegate* m_item_border_delegate;
     void updateFrozenTableGeometry();
