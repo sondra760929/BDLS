@@ -7,24 +7,40 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BDLS", "BDLS\BDLS.vcxproj",
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SetupBDLS", "SetupBDLS\SetupBDLS.vdproj", "{498E45FD-1517-46F4-9586-2EC9AA020B6C}"
 EndProject
+Project("{29E15B7A-B420-4782-B51D-1BE2F663A160}") = "Setup_BDLS", "Setup_BDLS\Setup_BDLS.innoproj", "{7F016469-C0A3-4BCA-B03E-4CB0EC3A7537}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
 		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{5E5D1836-91FD-43C2-A38B-5904AED63CE9}.Debug|x64.ActiveCfg = Debug|x64
 		{5E5D1836-91FD-43C2-A38B-5904AED63CE9}.Debug|x64.Build.0 = Debug|x64
+		{5E5D1836-91FD-43C2-A38B-5904AED63CE9}.Debug|x86.ActiveCfg = Debug|x64
 		{5E5D1836-91FD-43C2-A38B-5904AED63CE9}.Release|x64.ActiveCfg = Release|x64
 		{5E5D1836-91FD-43C2-A38B-5904AED63CE9}.Release|x64.Build.0 = Release|x64
+		{5E5D1836-91FD-43C2-A38B-5904AED63CE9}.Release|x86.ActiveCfg = Release|x64
 		{498E45FD-1517-46F4-9586-2EC9AA020B6C}.Debug|x64.ActiveCfg = Debug
+		{498E45FD-1517-46F4-9586-2EC9AA020B6C}.Debug|x86.ActiveCfg = Debug
+		{498E45FD-1517-46F4-9586-2EC9AA020B6C}.Debug|x86.Build.0 = Debug
 		{498E45FD-1517-46F4-9586-2EC9AA020B6C}.Release|x64.ActiveCfg = Release
+		{498E45FD-1517-46F4-9586-2EC9AA020B6C}.Release|x86.ActiveCfg = Release
+		{498E45FD-1517-46F4-9586-2EC9AA020B6C}.Release|x86.Build.0 = Release
+		{7F016469-C0A3-4BCA-B03E-4CB0EC3A7537}.Debug|x64.ActiveCfg = Debug|x86
+		{7F016469-C0A3-4BCA-B03E-4CB0EC3A7537}.Debug|x86.ActiveCfg = Debug|x86
+		{7F016469-C0A3-4BCA-B03E-4CB0EC3A7537}.Debug|x86.Build.0 = Debug|x86
+		{7F016469-C0A3-4BCA-B03E-4CB0EC3A7537}.Release|x64.ActiveCfg = Release|x86
+		{7F016469-C0A3-4BCA-B03E-4CB0EC3A7537}.Release|x86.ActiveCfg = Release|x86
+		{7F016469-C0A3-4BCA-B03E-4CB0EC3A7537}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {A9CD5BF8-FD37-4136-A6C9-389225230D69}
 		Qt5Version = 6.3.0_msvc2019_64
+		SolutionGuid = {A9CD5BF8-FD37-4136-A6C9-389225230D69}
 	EndGlobalSection
 EndGlobal
