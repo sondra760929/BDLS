@@ -119,6 +119,9 @@ public:
 
     void readSettings();
     void writeSettings();
+
+    bool SkipSelectedEvent = false;
+
 protected:
     void closeEvent(QCloseEvent* event) override;
     bool eventFilter(QObject* obj, QEvent* event);

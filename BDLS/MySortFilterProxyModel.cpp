@@ -95,7 +95,7 @@ Qt::ItemFlags MySortFilterProxyModel::flags(const QModelIndex& index) const
 {
     if (!index.isValid())
         return Qt::NoItemFlags;
-    if (index.column() == 0)
+    if (index.column() == 0 || IsEditable == false)
     {
         return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
     }
