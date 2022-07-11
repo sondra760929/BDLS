@@ -230,10 +230,11 @@ void widgetRightView::resizeEvent(QResizeEvent* i_pEvent)
 
 void widgetRightView::SearchText(QString search_text, int search_index)
 {
-	HWND hFrame = Sumatra_FrameHandle();
-	if (hFrame)
-	{
-	}
+	//HWND hFrame = Sumatra_FrameHandle();
+	//if (hFrame)
+	//{
+	//	PostMessage(hFrame, 273 /*WM_COMMAND*/, 435, 0);
+	//}
 	//QMetaObject::invokeMethod(roots[m_iCurrentPDFView], "goSearch"
 	//	, Q_ARG(QString, search_text)
 	//	, Q_ARG(int, search_index));
@@ -409,9 +410,20 @@ int widgetRightView::getPageNo()
 }
 void widgetRightView::ViewMovie(QString file_path, QString file_info, bool update_memo)
 {
+	target_time = file_info.toInt();
 	ui.stackedWidget->setCurrentIndex(1);
-	m_player->setSource(QUrl::fromLocalFile(file_path));
-	m_player->play();
+
+	if (m_currentMVPath == file_path)
+	{
+		JumpTo(target_time);
+		target_time = 0;
+		m_player->play();
+	}
+	else
+	{
+		m_player->setSource(QUrl::fromLocalFile(file_path));
+		m_currentMVPath = file_path;
+	}
 }
 
 //void widgetRightView::bookmarkSelected(const QModelIndex& index)
@@ -663,6 +675,9 @@ void widgetRightView::statusChanged(QMediaPlayer::MediaStatus status)
 	case QMediaPlayer::NoMedia:
 	case QMediaPlayer::LoadedMedia:
 		setStatusInfo(QString());
+		JumpTo(target_time);
+		target_time = 0;
+		m_player->play();
 		break;
 	case QMediaPlayer::LoadingMedia:
 		setStatusInfo(tr("Loading..."));

@@ -104,9 +104,9 @@ void widgetBottomView::itemChanged(QTreeWidgetItem* current, QTreeWidgetItem* pr
 				}
 				else if (data_list[1] == "V")
 				{
-					if (data_list.count() > 2)
+					if (data_list.count() > 3)
 					{
-						m_pView->SetCurrentFile(MV, file_name, data_list[2]);
+						m_pView->SetCurrentFile(MV, file_name, data_list[3]);
 					}
 				}
 				else if (data_list[1] == "MC")

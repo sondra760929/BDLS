@@ -1367,6 +1367,7 @@ void widgetLeftView::doSearch4()
 	QMap< int, bool > total_search_file_index;
 	QMap< int, QList<QString>> total_file_find_info;
 	QMap< int, QList<QString>> total_file_search_word;
+	QMap< int, QList<int>> total_file_search_time;
 
 	QString prev_condition_name;
 	QString query;
@@ -1381,7 +1382,7 @@ void widgetLeftView::doSearch4()
 
 			QList< int > search_file_index;
 
-			query = QString("SELECT file_id, s_title FROM play_info WHERE s_title LIKE \"%%1%\"").arg(search_word);
+			query = QString("SELECT file_id, s_title, s_time FROM play_info WHERE s_title LIKE \"%%1%\"").arg(search_word);
 			//query = QString("SELECT file_to_hash.file_id, file_to_hash.tag_id FROM file_to_hash INNER JOIN hsah_tags ON file_to_hash.tag_id = hsah_tags.id WHERE hsah_tags.tags LIKE \"%%1%\"").arg(search_word);
 			m_pView->db->exec(query, data);
 			for (const auto& item : data)
@@ -1390,6 +1391,7 @@ void widgetLeftView::doSearch4()
 				int file_id = map["file_id"].toInt();
 				search_file_index.append(file_id);
 				QString s_title = map["s_title"].toString();
+				int s_time = map["s_time"].toInt();
 
 				QList<int> find_index;
 				int index = s_title.indexOf(search_word);
@@ -1412,8 +1414,14 @@ void widgetLeftView::doSearch4()
 				}
 				result_info += s_title.right(s_title.length() - index);
 
+				QTime temp_time(0, 0, 0);
+				temp_time = temp_time.addSecs(s_time);
+				result_info += " : ";
+				result_info += temp_time.toString("hh:mm:ss");
+
 				total_file_find_info[file_id].append(result_info);
 				total_file_search_word[file_id].append(search_word);
+				total_file_search_time[file_id].append(s_time);
 			}
 
 			if (i == 0)
@@ -1492,7 +1500,7 @@ void widgetLeftView::doSearch4()
 				QLabel* this_info_label = new QLabel();
 				this_info_label->setText(total_file_find_info[file_id][j]);
 				m_pView->_widgetBottomView->m_outputTree->setItemWidget(this_info, 0, this_info_label);
-				QString data_str = QString("%1/V/%2").arg(file_id).arg(total_file_search_word[file_id][j]);
+				QString data_str = QString("%1/V/%2/%3").arg(file_id).arg(total_file_search_word[file_id][j]).arg(total_file_search_time[file_id][j]);
 				this_info->setData(0, Qt::AccessibleTextRole, data_str);
 				//this_info->setText(0, total_file_to_header[file_id][j].second);
 				total_count++;

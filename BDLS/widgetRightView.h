@@ -60,6 +60,7 @@ public:
 	//bool set_pdf_path = false;
 
 	QString m_currentPDFPath;
+	QString m_currentMVPath;
 
 	int current_page_no;
 
@@ -126,6 +127,7 @@ private:
 	QString m_trackInfo;
 	QString m_statusInfo;
 	qint64 m_duration;
+	int target_time = 0;
 
 	QWidget* m_metaDataFields[QMediaMetaData::NumMetaData] = {};
 	QLabel* m_metaDataLabels[QMediaMetaData::NumMetaData] = {};
