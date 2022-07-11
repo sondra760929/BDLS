@@ -668,7 +668,7 @@ void BDLS::setTagList()
 
 void BDLS::OnOpenSingle()
 {
-	if (m_UserLevel == ADMIN)
+	if (m_UserLevel >= SUPER)
 	{
 		QFileInfo f_info(m_strCurrentSelectedItemPath);
 		QString ext = f_info.suffix().toLower();
@@ -1081,6 +1081,7 @@ void BDLS::onTableDoubleClicked(const QModelIndex& index)
 
 QString BDLS::selectFromFileID(int file_id)
 {
+	SkipSelectedEvent = true;
 	QModelIndexList Items = originModel->match(originModel->index(0, 0), Qt::AccessibleTextRole, QVariant::fromValue(file_id), 1, Qt::MatchRecursive);
 	QString file_name;
 
@@ -1090,15 +1091,16 @@ QString BDLS::selectFromFileID(int file_id)
 
 		file_name = originModel->data(originModel->index(orgin_model_index_row, originModel->columnCount() - 1)).toString();
 
+		ui.tableView->selectTableLine(proxyModel->mapFromSource(originModel->index(orgin_model_index_row, 0)).row());
 		//ui.tableView->selectionModel()->select(proxyModel->mapFromSource(originModel->index(orgin_model_index_row, 0)), QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
 	}
-
+	SkipSelectedEvent = false;
 	return file_name;
 }
 
 void BDLS::onTableCellClicked(const QItemSelection& selected, const QItemSelection& deselected)
 {
-	if (proxyModel)
+	if (proxyModel && SkipSelectedEvent == false)
 	{
 		if (selected.indexes().count() > 0)
 		{
@@ -1268,7 +1270,7 @@ void BDLS::doLogin()
 				ui.actionDelRow->setEnabled(true);
 				ui.actionDBUpdate->setEnabled(true);
 				_widgetLeftView->ViewUser(true);
-
+				proxyModel->IsEditable = true;
 				SelectFileFromTree(m_strCurrentSelectedItemPath);
 			}
 			else
@@ -1278,10 +1280,6 @@ void BDLS::doLogin()
 		}
 		else
 		{
-			ui.actionAddFolder->setEnabled(false);
-			ui.actionAddRow->setEnabled(false);
-			ui.actionDelRow->setEnabled(false);
-			ui.actionDBUpdate->setEnabled(false);
 
 			if (DBConnected())
 			{
@@ -1318,13 +1316,23 @@ void BDLS::doLogin()
 						if (db_user_super == 1)
 						{
 							m_UserLevel = SUPER;
+							ui.actionAddFolder->setEnabled(true);
+							ui.actionAddRow->setEnabled(true);
+							ui.actionDelRow->setEnabled(true);
+							ui.actionDBUpdate->setEnabled(true);
+							proxyModel->IsEditable = true;
 							_widgetLeftView->ViewUser(true);
 							setWindowTitle(QString("%1 > [%2] - 관리자").arg(title_string).arg(user_id));
 						}
 						else
 						{
 							m_UserLevel = NORMAL;
+							ui.actionAddFolder->setEnabled(false);
+							ui.actionAddRow->setEnabled(false);
+							ui.actionDelRow->setEnabled(false);
+							ui.actionDBUpdate->setEnabled(false);
 							_widgetLeftView->ViewUser(false);
+							proxyModel->IsEditable = false;
 							setWindowTitle(QString("%1 > [%2] - 사용자").arg(title_string).arg(user_id));
 						}
 
@@ -1346,7 +1354,7 @@ void BDLS::doLogin()
 
 void BDLS::doAddFolder()
 {
-	if (m_UserLevel == ADMIN)
+	if (m_UserLevel >= SUPER)
 	{
 		QFileInfo f_info(m_strCurrentSelectedItemPath);
 		if (f_info.isDir())
@@ -1388,7 +1396,7 @@ void BDLS::doAddFolder()
 
 void BDLS::doAddRow()
 {
-	if (m_UserLevel == ADMIN)
+	if (m_UserLevel >= SUPER)
 	{
 		int new_index = originModel->rowCount();
 		originModel->insertRow(new_index);
