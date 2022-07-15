@@ -90,6 +90,10 @@ public:
     void doAddRow();
     void doDellRow();
     void doDBUpdate();
+    void UpdatePDFandPassword(int row, bool update = false);
+    void setFunctionEnable(bool enable);
+    void doLock();
+    void doUnlock();
     QString NextFileMNO(QString last_mno);
     void ClearTable();
     void setSearchCombo();

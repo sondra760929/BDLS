@@ -8,6 +8,7 @@
     <AssemblyName>Setup_BDLS</AssemblyName>
     <Name>Setup_BDLS</Name>
     <RootNamespace>Setup_BDLS</RootNamespace>
+    <InnoSetupPath>C:\Program Files (x86)\Inno Setup 6\Compil32.exe</InnoSetupPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <OutputPath>

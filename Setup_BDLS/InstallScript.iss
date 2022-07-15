@@ -76,6 +76,7 @@ Source: "E:\source\BDLS\x64\Release\Qt6Widgets.dll"; DestDir: "{app}"; Flags: ig
 Source: "E:\source\BDLS\x64\Release\QtWebEngineProcess.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "E:\source\BDLS\x64\Release\SumatraPDF.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "E:\source\BDLS\x64\Release\SumatraPDF-settings.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "E:\source\BDLS\x64\Release\cpdf.exe"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

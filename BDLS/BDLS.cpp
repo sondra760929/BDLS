@@ -8,10 +8,37 @@
 #include <QtCore5Compat/QTextCodec>
 #include "FilterTableHeader.h"
 #include "FilterLineEdit.h"
+#include "widgetInputPass.h"
+
+#include "mupdf/fitz.h"
 
 QString m_strKey = QString("HKEY_CURRENT_USER\\SOFTWARE\\DIGIBOOK\\PDFIndexExplorer\\Settings");
 QSettings m(m_strKey, QSettings::Registry64Format);
 QStringList media_file_format;
+
+bool CheckEncrypted(QString file_path)
+{
+	bool is_encrypted = false;
+		fz_context* ctx;
+		fz_document* doc;
+
+		ctx = fz_new_context(NULL, NULL, FZ_STORE_UNLIMITED);
+		fz_try(ctx) {
+			fz_register_document_handlers(ctx);
+			doc = fz_open_document(ctx, reinterpret_cast<const char*>(file_path.toUtf8().data()));
+			if (fz_needs_password(ctx, doc) == 1)
+				is_encrypted = true;
+		}fz_catch(ctx) {
+			fz_drop_context(ctx);
+			return is_encrypted;
+		}
+		fz_drop_document(ctx, doc);
+		fz_drop_context(ctx);
+
+	return is_encrypted;
+}
+
+
 BDLS::BDLS(QWidget* parent)
 	: QMainWindow(parent)
 	, db(NULL)
@@ -120,6 +147,10 @@ BDLS::BDLS(QWidget* parent)
 
 	//player->setMedia(QUrl::fromLocalFile("E:\\Library\\opencv-3.4.2\\sources\\samples\\data\\vtest.avi"));
 	//player->play();
+
+	QPalette p = ui.tableView->palette();
+	p.setColor(QPalette::Inactive, QPalette::Highlight, p.color(QPalette::Active, QPalette::Highlight));
+	setPalette(p);
 
 	QString m_strExcelTempFile = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation);
 	m_strExcelTempFile += "/backup.xlsx";
@@ -549,7 +580,7 @@ void BDLS::InitFromDB()
 								originModel->setHeaderData(col_size - 1, Qt::Horizontal, "파일 경로");
 							}
 
-							if (m_UserLevel == ADMIN)
+							if (m_UserLevel >= SUPER)
 							{
 								db->exec("SELECT id, file_name, file_path FROM file_info ORDER BY id", data);
 							}
@@ -591,6 +622,22 @@ void BDLS::InitFromDB()
 									originModel->setData(originModel->index(i, header_id + 2), value);
 								}
 								originModel->setData(originModel->index(i, col_size - 1), file_name_list[i]);
+
+								QString file_path = m_strCurrentFolderPath + "\\" + file_name_list[i];
+								if (DBConnected())
+									file_path = m_strDBfolderpath + "\\" + file_name_list[i];
+
+								QString cell_string, cell_string1;
+								if (IsPDF(file_path))
+								{
+									cell_string = "O";
+									if (CheckEncrypted(file_path))
+									{
+										cell_string1 = "V";
+									}
+								}
+								originModel->setData(originModel->index(i, 2), cell_string);
+								originModel->setData(originModel->index(i, 1), cell_string1);
 							}
 
 						}
@@ -822,14 +869,14 @@ void BDLS::OnOpenSingle()
 							QString pdf_file_path = folder_path + "\\" + cell_string;
 							cell_string = "";
 							QString cell_string1 = "";
-							//if (IsPDF(pdf_file_path))
-							//{
-							//	cell_string = "O";
-							//	if (CheckEncrypted(pdf_file_path))
-							//	{
-							//		cell_string1 = "V";
-							//	}
-							//}
+							if (IsPDF(pdf_file_path))
+							{
+								cell_string = "O";
+								if (CheckEncrypted(pdf_file_path))
+								{
+									cell_string1 = "V";
+								}
+							}
 							//m_lstGridText[data_row_count - 1][2] = cell_string;
 							originModel->setData(originModel->index(0, 2), cell_string);
 							//m_Grid.QuickSetAlignment(2, grid_row_count - 1, UG_ALIGNCENTER);
@@ -993,17 +1040,14 @@ void BDLS::OnOpenSingle()
 					QString pdf_file_path = folder_path + "\\" + cell_string;
 					cell_string = "";
 					QString cell_string1 = "";
-					//if (IsPDF(pdf_file_path))
-					//{
-					//	cell_string = "O";
-					//	if (CheckEncrypted(pdf_file_path))
-					//	{
-					//		cell_string1 = "V";
-					//	}
-					//}
-					//m_lstGridText[row - 2][2] = cell_string;
-					//SetItemData(row - 2, 2, cell_string);
-					//SetItemData(row - 2, 1, cell_string1);
+					if (IsPDF(pdf_file_path))
+					{
+						cell_string = "O";
+						if (CheckEncrypted(pdf_file_path))
+						{
+							cell_string1 = "V";
+						}
+					}
 					originModel->setData(originModel->index(row_index, 2), cell_string);
 					originModel->setData(originModel->index(row_index, 1), cell_string1);
 					//QString exist_file_path = GetExistingFilePath(folder_path, m_Grid.QuickGetText(2, row - 2), m_Grid.QuickGetText(1, row - 2));
@@ -1051,7 +1095,7 @@ void BDLS::SetCurrentFile(SEARCH_TYPE search_type, QString file_name, QString fi
 		{
 			_widgetRightView->SearchText(file_info2, file_info3.toInt());
 		}
-		//m_pFrame->m_wndProperties.DoPreview(file_path, 1, m_bViewThumbInPreview);
+		//SetFocus((HWND)(ui.tableView->winId()));
 	}
 	else if (IsMV(file_path))
 	{
@@ -1233,6 +1277,16 @@ void BDLS::createActions()
 
 	ui.mainToolBar->addSeparator();
 
+	connect(ui.actionLockFile, &QAction::triggered, this, &BDLS::doLock);
+	ui.mainToolBar->addAction(ui.actionLockFile);
+	ui.actionLockFile->setEnabled(false);
+
+	connect(ui.actionUnLockFile, &QAction::triggered, this, &BDLS::doUnlock);
+	ui.mainToolBar->addAction(ui.actionUnLockFile);
+	ui.actionUnLockFile->setEnabled(false);
+
+	ui.mainToolBar->addSeparator();
+
 	connect(dockLeft->toggleViewAction(), &QAction::triggered, this, &BDLS::toogleViewLeft);
 	ui.mainToolBar->addAction(dockLeft->toggleViewAction());
 
@@ -1241,6 +1295,17 @@ void BDLS::createActions()
 
 	connect(dockBottom->toggleViewAction(), &QAction::triggered, this, &BDLS::toogleViewBottom);
 	ui.mainToolBar->addAction(dockBottom->toggleViewAction());
+}
+
+void BDLS::setFunctionEnable(bool enable)
+{
+	ui.actionAddFolder->setEnabled(enable);
+	ui.actionAddRow->setEnabled(enable);
+	ui.actionDelRow->setEnabled(enable);
+	ui.actionDBUpdate->setEnabled(enable);
+	ui.actionLockFile->setEnabled(enable);
+	ui.actionUnLockFile->setEnabled(enable);
+	_widgetLeftView->ViewUser(enable);
 }
 
 void BDLS::doLogin()
@@ -1265,11 +1330,7 @@ void BDLS::doLogin()
 
 				setWindowTitle(title_string + " > [admin]");
 
-				ui.actionAddFolder->setEnabled(true);
-				ui.actionAddRow->setEnabled(true);
-				ui.actionDelRow->setEnabled(true);
-				ui.actionDBUpdate->setEnabled(true);
-				_widgetLeftView->ViewUser(true);
+				setFunctionEnable(true);
 				proxyModel->IsEditable = true;
 				SelectFileFromTree(m_strCurrentSelectedItemPath);
 			}
@@ -1316,22 +1377,14 @@ void BDLS::doLogin()
 						if (db_user_super == 1)
 						{
 							m_UserLevel = SUPER;
-							ui.actionAddFolder->setEnabled(true);
-							ui.actionAddRow->setEnabled(true);
-							ui.actionDelRow->setEnabled(true);
-							ui.actionDBUpdate->setEnabled(true);
+							setFunctionEnable(true);
 							proxyModel->IsEditable = true;
-							_widgetLeftView->ViewUser(true);
 							setWindowTitle(QString("%1 > [%2] - 관리자").arg(title_string).arg(user_id));
 						}
 						else
 						{
 							m_UserLevel = NORMAL;
-							ui.actionAddFolder->setEnabled(false);
-							ui.actionAddRow->setEnabled(false);
-							ui.actionDelRow->setEnabled(false);
-							ui.actionDBUpdate->setEnabled(false);
-							_widgetLeftView->ViewUser(false);
+							setFunctionEnable(false);
 							proxyModel->IsEditable = false;
 							setWindowTitle(QString("%1 > [%2] - 사용자").arg(title_string).arg(user_id));
 						}
@@ -1555,6 +1608,197 @@ void BDLS::CheckAndCreateTable()
 	}
 }
 
+void BDLS::doLock()
+{
+	QList< QString > file_list;
+	QList< int > index_list;
+	QMessageBox::StandardButton reply = QMessageBox::question(this, QString("확인"), QString("현재 리스트 전체를 대상으로 암호를 설정할까요? (YES : 전체, NO : 하나만, Cancel : 취소)"), QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+
+	int col_size = proxyModel->columnCount();
+	QString temp_folder_path = m_strCurrentFolderPath;
+	if (DBConnected())
+		temp_folder_path = m_strDBfolderpath;
+
+
+	int rows = proxyModel->rowCount();
+	if (reply == QMessageBox::Yes)
+	{
+		for (int i = 0; i < rows; i++)
+		{
+			QString file_name = proxyModel->data(proxyModel->index(i, col_size - 1)).toString();
+			QString file_path = temp_folder_path + "\\" + file_name;
+			if (IsPDF(file_path))
+			{
+				file_list.push_back(file_path);
+				index_list.push_back(i);
+			}
+		}
+	}
+	else if (reply == QMessageBox::No)
+	{
+		int row = ui.tableView->selectionModel()->currentIndex().row();
+		if (row >= 0 && row < rows)
+		{
+			QString file_name = proxyModel->data(proxyModel->index(row, col_size - 1)).toString();
+			QString file_path = temp_folder_path + "\\" + file_name;
+			if (IsPDF(file_path))
+			{
+				file_list.push_back(file_path);
+				index_list.push_back(row);
+			}
+		}
+	}
+
+	if (file_list.size() > 0)
+	{
+		widgetInputPass pass_dlg(this);
+		pass_dlg.setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+		pass_dlg.move(this->rect().center() - QPoint(pass_dlg.width() / 2, pass_dlg.height() / 2));
+		if (pass_dlg.exec() == QDialog::Accepted)
+		{
+			QString password = pass_dlg.pass;
+			if (password != "")
+			{
+				for (int i = 0; i < file_list.size(); i++)
+				{
+					QString cmdLine;
+					cmdLine = QString("-encrypt 40bit \"\" %1 \"%2\" -o \"%2\"").arg(password).arg(file_list[i]);
+					//ShellExecute(m_hWnd, _T("open"), m_strAppPath + "\\cpdf.exe", cmdLine, nullptr, SW_HIDE);
+					QString file(QCoreApplication::applicationDirPath() + "/cpdf.exe");
+
+					SHELLEXECUTEINFO ShExecInfo = { 0 };
+					ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
+					ShExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
+					ShExecInfo.hwnd = NULL;
+					ShExecInfo.lpVerb = NULL;
+					ShExecInfo.lpFile = reinterpret_cast<const WCHAR*>(file.utf16());
+					ShExecInfo.lpParameters = reinterpret_cast<const WCHAR*>(cmdLine.utf16());
+					ShExecInfo.lpDirectory = NULL;
+					ShExecInfo.nShow = SW_HIDE;
+					ShExecInfo.hInstApp = NULL;
+					ShellExecuteEx(&ShExecInfo);
+					WaitForSingleObject(ShExecInfo.hProcess, INFINITE);
+					CloseHandle(ShExecInfo.hProcess);
+				}
+				for (int i = 0; i < index_list.size(); i++)
+				{
+					UpdatePDFandPassword(index_list[i]);
+				}
+				proxyModel->invalidate();
+			}
+		}
+	}
+}
+
+void BDLS::UpdatePDFandPassword(int row, bool update)
+{
+	int origin_row = proxyModel->mapToSource(proxyModel->index(row, 0)).row();
+
+	QString file_name = originModel->data(originModel->index(origin_row, originModel->columnCount() - 1)).toString();
+	QString file_path = m_strCurrentFolderPath + "\\" + file_name;
+	if (DBConnected())
+		file_path = m_strDBfolderpath + "\\" + file_name;
+
+	QString cell_string, cell_string1;
+	if (IsPDF(file_path))
+	{
+		cell_string = "O";
+		if (CheckEncrypted(file_path))
+		{
+			cell_string1 = "V";
+		}
+	}
+	originModel->setData(originModel->index(origin_row, 2), cell_string);
+	originModel->setData(originModel->index(origin_row, 1), cell_string1);
+
+	if (update)
+	{
+		proxyModel->invalidate();
+	}
+}
+
+void BDLS::doUnlock()
+{
+	QList< QString > file_list;
+	QList< int > index_list;
+	QMessageBox::StandardButton reply = QMessageBox::question(this, QString("확인"), QString("현재 리스트 전체를 대상으로 암호를 해제할까요? (YES : 전체, NO : 하나만, Cancel : 취소)"), QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+
+	int col_size = proxyModel->columnCount();
+	QString temp_folder_path = m_strCurrentFolderPath;
+	if (DBConnected())
+		temp_folder_path = m_strDBfolderpath;
+
+
+	int rows = proxyModel->rowCount();
+	if (reply == QMessageBox::Yes)
+	{
+		for (int i = 0; i < rows; i++)
+		{
+			QString file_name = proxyModel->data(proxyModel->index(i, col_size - 1)).toString();
+			QString file_path = temp_folder_path + "\\" + file_name;
+			if (IsPDF(file_path))
+			{
+				file_list.push_back(file_path);
+				index_list.push_back(i);
+			}
+		}
+	}
+	else if (reply == QMessageBox::No)
+	{
+		int row = ui.tableView->selectionModel()->currentIndex().row();
+		if (row >= 0 && row < rows)
+		{
+			QString file_name = proxyModel->data(proxyModel->index(row, col_size - 1)).toString();
+			QString file_path = temp_folder_path + "\\" + file_name;
+			if (IsPDF(file_path))
+			{
+				file_list.push_back(file_path);
+				index_list.push_back(row);
+			}
+		}
+	}
+
+	if (file_list.size() > 0)
+	{
+		widgetInputPass pass_dlg(this);
+		pass_dlg.setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+		pass_dlg.move(this->rect().center() - QPoint(pass_dlg.width() / 2, pass_dlg.height() / 2));
+		if (pass_dlg.exec() == QDialog::Accepted)
+		{
+			QString password = pass_dlg.pass;
+			if (password != "")
+			{
+				for (int i = 0; i < file_list.size(); i++)
+				{
+					QString cmdLine;
+					cmdLine = QString("-decrypt \"%2\" owner=%1 user=%1 -o \"%2\"").arg(password).arg(file_list[i]);
+					//ShellExecute(m_hWnd, _T("open"), m_strAppPath + "\\cpdf.exe", cmdLine, nullptr, SW_HIDE);
+					QString file(QCoreApplication::applicationDirPath() + "/cpdf.exe");
+
+					SHELLEXECUTEINFO ShExecInfo = { 0 };
+					ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
+					ShExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
+					ShExecInfo.hwnd = NULL;
+					ShExecInfo.lpVerb = NULL;
+					ShExecInfo.lpFile = reinterpret_cast<const WCHAR*>(file.utf16());
+					ShExecInfo.lpParameters = reinterpret_cast<const WCHAR*>(cmdLine.utf16());
+					ShExecInfo.lpDirectory = NULL;
+					ShExecInfo.nShow = SW_HIDE;
+					ShExecInfo.hInstApp = NULL;
+					ShellExecuteEx(&ShExecInfo);
+					WaitForSingleObject(ShExecInfo.hProcess, INFINITE);
+					CloseHandle(ShExecInfo.hProcess);
+				}
+				for (int i = 0; i < index_list.size(); i++)
+				{
+					UpdatePDFandPassword(index_list[i]);
+				}
+				proxyModel->invalidate();
+			}
+		}
+	}
+}
+
 void BDLS::doDBUpdate()
 {
 	int row_count = originModel->rowCount();
@@ -1570,7 +1814,7 @@ void BDLS::doDBUpdate()
 			if (QFile::exists(str_file_path))
 			{
 				db_file_exist = true;
-				QMessageBox::StandardButton reply = QMessageBox::question(this, QString("확인"), QString("DB 파일이 존재합니다. 새로 저장하시겠습니까?"), QMessageBox::Yes | QMessageBox::No);
+				QMessageBox::StandardButton reply = QMessageBox::question(this, QString("확인"), QString("DB 파일이 존재합니다. 저장하시겠습니까?"), QMessageBox::Yes | QMessageBox::No);
 				if (reply != QMessageBox::Yes)
 				{
 					return;
@@ -1590,6 +1834,9 @@ void BDLS::doDBUpdate()
 		bool update_pass_status = 
 			(QMessageBox::question(this, QString("확인"), QString("파일 암호 설정 상태를 업데이트 하시겠습니까? 저장 시간이 늘어날 수 있습니다."), 
 				QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes);
+
+		bool update_for_select = (QMessageBox::question(this, QString("확인"), QString("선택항 항목만 저장하시겠습니까? 이 경우 텍스트 추출을 새로 진행합니다."),
+			QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes);
 		QString temp_string;
 		QString temp_string1;
 		try
@@ -1626,36 +1873,58 @@ void BDLS::doDBUpdate()
 						managed_file_no = map["m_no"].toString();
 				}
 
-				for (int i = 0; i < row_count; i++)
+				QList< int > db_update_rows;
+				if (update_for_select)
 				{
-					QString file_name = originModel->data(originModel->index(i, file_name_index)).toString();
+					QModelIndexList setected_indexes = ui.tableView->selectionModel()->selectedIndexes();
+					for (int i = 0; i < setected_indexes.count(); i++)
+					{
+						int sel_row = proxyModel->mapToSource(setected_indexes[i]).row();
+						db_update_rows.append(sel_row);
+					}
+
+					row_count = db_update_rows.size();
+					total = row_count;
+				}
+
+				int row_index;
+				for (int _i = 0; _i < row_count; _i++)
+				{
+					if (update_for_select)
+					{
+						row_index = db_update_rows[_i];
+					}
+					else
+					{
+						row_index = _i;
+					}
+					QString file_name = originModel->data(originModel->index(row_index, file_name_index)).toString();
 					QString file_name_only = file_name;
 					file_name_only.chop(4);
 
 					QString file_path = m_strDBfolderpath + "\\" + file_name;
 					QString target_file_path = m_strDBfolderpath + "\\" + file_name_only + ".txt";
 
-					QString cell_string = ("");
-					QString cell_string1 = ("");
-					//if (IsPDF(file_path))
-					//{
-					//	cell_string = "O";
-					//	if (CheckEncrypted(file_path))
-					//	{
-					//		cell_string1 = "V";
-					//	}
-					//	m_lstGridText[i][2] = cell_string;
-					//	m_lstGridText[i][1] = cell_string1;
-					//	if (m_lstGridIndex[i] > -1)
-					//	{
-					//		m_Grid.QuickSetText(2, m_lstGridIndex[i], cell_string);
-					//		m_Grid.QuickSetText(1, m_lstGridIndex[i], cell_string1);
-					//	}
-					//}
+					if (update_pass_status)
+					{
+						QString cell_string = ("");
+						QString cell_string1 = ("");
+						if (IsPDF(file_path))
+						{
+							cell_string = "O";
+							if (CheckEncrypted(file_path))
+							{
+								cell_string1 = "V";
+							}
 
-					status_string = QString("%1 행 저장 중").arg(i + 1);
+							originModel->setData(originModel->index(row_index, 2), cell_string);
+							originModel->setData(originModel->index(row_index, 1), cell_string1);
+						}
+					}
+
+					status_string = QString("%1 행 저장 중").arg(_i + 1);
 					UpdateProgress2("", 0, 100, false);
-					UpdateProgress(status_string, i + 1, total);
+					UpdateProgress(status_string, _i + 1, total);
 
 					int file_db_id = 0;
 					//	file id 확인
@@ -1667,7 +1936,7 @@ void BDLS::doDBUpdate()
 						file_db_id = map["id"].toInt();
 						for (int j = 3; j < col_count; j++)
 						{
-							QString header_name = originModel->data(originModel->index(i, j)).toString();
+							QString header_name = originModel->data(originModel->index(row_index, j)).toString();
 							temp_string = QString("UPDATE header_info SET value=\"%3\" WHERE file_id=%1 AND header_id=%2").arg(file_db_id).arg(j - 2).arg(header_name);
 							db->exec(temp_string);
 						}
@@ -1687,10 +1956,11 @@ void BDLS::doDBUpdate()
 							//	존재할 경우
 							auto map = data[0].toMap();
 							file_db_id = map["id"].toInt();
+							originModel->setData(originModel->index(row_index, 0), file_db_id, Qt::AccessibleTextRole);
 
 							for (int j = 3; j < col_count; j++)
 							{
-								QString header_name = originModel->data(originModel->index(i, j)).toString();
+								QString header_name = originModel->data(originModel->index(row_index, j)).toString();
 								temp_string = QString("INSERT INTO header_info VALUES (%1, %2, \"%3\")").arg(file_db_id).arg(j - 2).arg(header_name);
 								db->exec(temp_string);
 							}
@@ -1703,16 +1973,21 @@ void BDLS::doDBUpdate()
 
 					//	file id 확인
 					db->exec(QString("SELECT page_no FROM page_info WHERE file_id=%1").arg(file_db_id), data);
-					if (data.count() > 0)
+					if (data.count() > 0 && update_for_select == false)
 					{
 						//	존재할 경우
 					}
 					else
 					{
-						if ((!QFile::exists(target_file_path)) && QFile::exists(file_path))
+						if (QFile::exists(file_path) && ((!QFile::exists(target_file_path)) || update_for_select))
 						{
 							//status_string.Format(_T("%d 행 저장 중 (텍스트 추출)"), i + 1);
 							UpdateProgress2("(텍스트 추출)", 0, 100);
+
+							if (QFile::exists(target_file_path))
+							{
+								QFile::remove(target_file_path);
+							}
 
 							QStringList arguments;
 							arguments.append(file_path);
@@ -1745,6 +2020,7 @@ void BDLS::doDBUpdate()
 								QStringList listOfLines = in.readAll().split("\n");
 
 								int index = 0;
+								db->exec("BEGIN IMMEDIATE TRANSACTION;");
 								while (index < listOfLines.count() - 1)
 								{
 									UpdateProgress2("텍스트 저장", index + 1, listOfLines.count());
@@ -1771,6 +2047,7 @@ void BDLS::doDBUpdate()
 										.arg(line);
 									db->exec(temp_string);
 								}
+								db->exec("END TRANSACTION;");
 
 								//while (!in.atEnd())
 								//{

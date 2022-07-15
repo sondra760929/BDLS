@@ -7,8 +7,14 @@
 #include <QMediaDevices>
 #include "BDLS.h"
 #include <QPdfNavigationStack>
+#include "ddecomm.h"
 
 const qreal zoomMultiplier = qSqrt(2.0);
+#define DDEAPP      QString::fromUtf8("SUMATRA")
+#define DDETOPIC    QString::fromUtf8("control")
+#define DDEITEM     QString::fromUtf8("R1C1")
+#define DDEPOKE     QString::fromUtf8("1234ABCD")
+#define DDECOMMAND  QString::fromUtf8("[SELECT(\"R1C1:R2C2\")]")
 
 widgetRightView::widgetRightView(QWidget *parent)
 	: QWidget(parent)
@@ -268,6 +274,7 @@ BOOL CALLBACK EnumProc(HWND hwnd, LPARAM lParam)
 
 int widgetRightView::Sumatra_PageNumber()
 {
+	int page_no = -1;
 	HWND hFrame = Sumatra_FrameHandle();
 	if (hFrame)
 	{
@@ -281,13 +288,13 @@ int widgetRightView::Sumatra_PageNumber()
 			SendMessage(aHWnd, WM_GETTEXT, (WPARAM)255, (LPARAM)strvar);
 			//int return_no = GetWindowTextW(aHWnd, (LPWSTR)strvar, 255);
 			QString str_string = QString::fromWCharArray(strvar);
-			int page_no = str_string.toInt();
+			page_no = str_string.toInt();
 			if (page_no > 0)
 				page_no--;
 			return page_no;
 		}
 	}
-	return 0;
+	return page_no;
 }
 
 void widgetRightView::ViewPDF(QString file_path, QString file_info, bool update_memo)
@@ -307,6 +314,7 @@ void widgetRightView::ViewPDF(QString file_path, QString file_info, bool update_
 
 	if (m_currentPDFPath != file_path || current_page_no != page_no)
 	{
+
 		//set_pdf_path = true;
 		//is_read_pdf[0] = false;
 		//is_read_pdf[1] = false;
@@ -353,17 +361,32 @@ void widgetRightView::ViewPDF(QString file_path, QString file_info, bool update_
 			cmdLine = QString("-plugin -reuse-instance %1 \"%2\" -page %3").arg((int)GetFormHandle()).arg(file_path).arg(page_no + 1);
 			//cmdLine = QString("-plugin -reuse-instance %1 \"%2\" -page %3 -zoom \"fit page\"").arg((int)GetFormHandle()).arg(file_path).arg(page_no + 1);
 			//cmdLine.Format(_T("\"%s\""), target_path);
-			ShellExecute(0, reinterpret_cast<const WCHAR*>(verb.utf16()), reinterpret_cast<const WCHAR*>(file.utf16()), reinterpret_cast<const WCHAR*>(cmdLine.utf16()), NULL, 10 /*SW_SHOWDEFAULT*/);
+			//ShellExecute(0, reinterpret_cast<const WCHAR*>(verb.utf16()), reinterpret_cast<const WCHAR*>(file.utf16()), reinterpret_cast<const WCHAR*>(cmdLine.utf16()), NULL, 10 /*SW_SHOWDEFAULT*/);
 
-			//SHELLEXECUTEINFO seinfo = { 0 };
-			//seinfo.cbSize = sizeof(SHELLEXECUTEINFO);
-			//seinfo.fMask = SEE_MASK_NOCLOSEPROCESS;
-			//seinfo.lpVerb = reinterpret_cast<const WCHAR*>(verb.utf16());
-			//seinfo.lpDirectory = reinterpret_cast<const WCHAR*>(QCoreApplication::applicationDirPath().utf16());
-			//seinfo.lpFile = reinterpret_cast<const WCHAR*>(file.utf16());
-			//seinfo.lpParameters = reinterpret_cast<const WCHAR*>(cmdLine.utf16());
-			//seinfo.nShow = SW_SHOWNORMAL;
-			//ShellExecuteEx(&seinfo);
+			//if (LoadingSumatra)
+			//{
+			//	DdeComm comm;
+			//	// Execute
+			//	cmdLine = QString("[Open(\"%1\", 0, 0, 0)]").arg(file_path);
+			//	comm.execute(DDEAPP, DDETOPIC, cmdLine);
+			//}
+			//else
+			//{
+				SHELLEXECUTEINFO seinfo = { 0 };
+				seinfo.cbSize = sizeof(SHELLEXECUTEINFO);
+				//seinfo.fMask = SEE_MASK_ASYNCOK;
+				seinfo.lpVerb = reinterpret_cast<const WCHAR*>(verb.utf16());
+				seinfo.lpDirectory = reinterpret_cast<const WCHAR*>(QCoreApplication::applicationDirPath().utf16());
+				seinfo.lpFile = reinterpret_cast<const WCHAR*>(file.utf16());
+				seinfo.lpParameters = reinterpret_cast<const WCHAR*>(cmdLine.utf16());
+				seinfo.nShow = SW_SHOWNOACTIVATE;
+				ShellExecuteEx(&seinfo);
+				//WaitForSingleObject(seinfo.hProcess, INFINITE);
+				//CloseHandle(seinfo.hProcess);
+			//	LoadingSumatra = true;
+			//}
+
+
 			//HANDLE prev_process = m_pdfViewer;
 			//m_pdfViewer = seinfo.hProcess;
 			//if (prev_process != m_pdfViewer && prev_process != 0)
@@ -377,7 +400,12 @@ void widgetRightView::ViewPDF(QString file_path, QString file_info, bool update_
 			//{
 
 			//}
-			Sleep(500);
+			Sleep(1000);
+			//while (getPageNo() < 0)
+			//{
+			//	Sleep(100);
+			//}
+
 
 			//Sumatra_PageNumber();
 		}
@@ -416,7 +444,7 @@ void widgetRightView::ViewMovie(QString file_path, QString file_info, bool updat
 	if (m_currentMVPath == file_path)
 	{
 		JumpTo(target_time);
-		target_time = 0;
+		target_time = -1;
 		m_player->play();
 	}
 	else
@@ -675,9 +703,12 @@ void widgetRightView::statusChanged(QMediaPlayer::MediaStatus status)
 	case QMediaPlayer::NoMedia:
 	case QMediaPlayer::LoadedMedia:
 		setStatusInfo(QString());
-		JumpTo(target_time);
-		target_time = 0;
-		m_player->play();
+		if (target_time >= 0)
+		{
+			JumpTo(target_time);
+			target_time = -1;
+			m_player->play();
+		}
 		break;
 	case QMediaPlayer::LoadingMedia:
 		setStatusInfo(tr("Loading..."));

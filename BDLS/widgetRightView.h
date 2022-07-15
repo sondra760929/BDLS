@@ -33,7 +33,7 @@ public:
 	//QSpinBox* m_pageSelector;
 	void SearchText(QString search_text, int search_index);
 	void ViewPDF(QString file_path, QString file_info = "", bool update_memo = true);
-	void ViewMovie(QString file_path, QString file_info = "", bool update_memo = true);
+	void ViewMovie(QString file_path, QString file_info = "0", bool update_memo = true);
 	void JumpTo(int secs);
 	void pageSelectedwithMemo(int page, bool update_memo);
 	int getPageNo();
@@ -42,6 +42,8 @@ public:
 	HWND GetFormHandle();
 	HWND Sumatra_FrameHandle();
 	int Sumatra_PageNumber();
+
+	bool LoadingSumatra = false;
 
 	//	quick_widget
 	//QQuickWidget* qmlView1;
@@ -127,7 +129,7 @@ private:
 	QString m_trackInfo;
 	QString m_statusInfo;
 	qint64 m_duration;
-	int target_time = 0;
+	int target_time = -1;
 
 	QWidget* m_metaDataFields[QMediaMetaData::NumMetaData] = {};
 	QLabel* m_metaDataLabels[QMediaMetaData::NumMetaData] = {};

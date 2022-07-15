@@ -32,7 +32,7 @@
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
     <QtInstall>6.4.0_msvc2019_64</QtInstall>
-    <QtModules>core;sql;gui;multimedia;widgets;quickwidgets;multimediawidgets;webenginewidgets;charts</QtModules>
+    <QtModules>core;gui;widgets;core5compat;multimedia;quickwidgets;sql;charts;webenginewidgets;multimediawidgets</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
@@ -55,21 +55,21 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <IncludePath>E:\source\BDLS\QXlsx\header;$(QTDIR)\include\;$(QTDIR)\include\QtGui\6.4.0;$(QTDIR)\include\QtGui\6.4.0\QtGui;$(QTDIR)\include\QtCore\6.4.0;$(QTDIR)\include\QtCore\6.4.0\QtCore;E:\Library\Qt6\6.4.0\msvc2019_64\include\QtPdf;E:\Library\Qt6\6.4.0\msvc2019_64\include\QtPdfWidgets;E:\library\Qt6\6.4.0\msvc2019_64\include\QtQuickWidgets;$(IncludePath)</IncludePath>
-    <LibraryPath>E:\Library\Qt6\6.4.0\msvc2019_64\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>E:\source\BDLS\QXlsx\header;$(QTDIR)\include\;$(QTDIR)\include\QtGui\6.4.0;$(QTDIR)\include\QtGui\6.4.0\QtGui;$(QTDIR)\include\QtCore\6.4.0;$(QTDIR)\include\QtCore\6.4.0\QtCore;E:\Library\Qt6\6.4.0\msvc2019_64\include\QtPdf;E:\Library\Qt6\6.4.0\msvc2019_64\include\QtPdfWidgets;E:\library\Qt6\6.4.0\msvc2019_64\include\QtQuickWidgets;E:\library\mupdf-1.13.0-source\include;$(IncludePath)</IncludePath>
+    <LibraryPath>E:\Library\Qt6\6.4.0\msvc2019_64\lib;E:\library\mupdf-1.13.0-source\platform\win32\x64\Release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <IncludePath>E:\source\BDLS\QXlsx\header;$(QTDIR)\include\;$(QTDIR)\include\QtGui\6.4.0;$(QTDIR)\include\QtGui\6.4.0\QtGui;$(QTDIR)\include\QtCore\6.4.0;$(QTDIR)\include\QtCore\6.4.0\QtCore;E:\library\Qt6\6.4.0\msvc2019_64\include\QtPdf;E:\library\Qt6\6.4.0\msvc2019_64\include\QtPdfWidgets;E:\library\Qt6\6.4.0\msvc2019_64\include\QtQuickWidgets;$(IncludePath)</IncludePath>
-    <LibraryPath>E:\Library\Qt6\6.4.0\msvc2019_64\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>E:\source\BDLS\QXlsx\header;$(QTDIR)\include\;$(QTDIR)\include\QtGui\6.4.0;$(QTDIR)\include\QtGui\6.4.0\QtGui;$(QTDIR)\include\QtCore\6.4.0;$(QTDIR)\include\QtCore\6.4.0\QtCore;E:\library\Qt6\6.4.0\msvc2019_64\include\QtPdf;E:\library\Qt6\6.4.0\msvc2019_64\include\QtPdfWidgets;E:\library\Qt6\6.4.0\msvc2019_64\include\QtQuickWidgets;E:\library\mupdf-1.13.0-source\include;$(IncludePath)</IncludePath>
+    <LibraryPath>E:\Library\Qt6\6.4.0\msvc2019_64\lib;E:\library\mupdf-1.13.0-source\platform\win32\x64\Release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
-      <AdditionalDependencies>Qt6Pdfd.lib;Qt6PdfWidgetsd.lib;Qt6Core5Compatd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Qt6Pdfd.lib;Qt6PdfWidgetsd.lib;Qt6Core5Compatd.lib;libmupdf.lib;libpkcs7.lib;libresources.lib;libthirdparty.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Link>
-      <AdditionalDependencies>Qt6Pdf.lib;Qt6PdfWidgets.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Qt6Pdf.lib;Qt6PdfWidgets.lib;libmupdf.lib;libpkcs7.lib;libresources.lib;libthirdparty.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <QtRcc>
       <QmlCacheGenerate>true</QmlCacheGenerate>
@@ -147,6 +147,7 @@
     <ClCompile Include="widgetAddUser.cpp" />
     <ClCompile Include="widgetBottomView.cpp" />
     <ClCompile Include="widgetDBTextView.cpp" />
+    <ClCompile Include="widgetInputPass.cpp" />
     <ClCompile Include="widgetLeftView.cpp" />
     <ClCompile Include="widgetLogin.cpp" />
     <ClCompile Include="widgetMemo.cpp" />
@@ -162,6 +163,7 @@
     <QtUic Include="widgetAddUser.ui" />
     <QtUic Include="widgetBottomView.ui" />
     <QtUic Include="widgetDBTextView.ui" />
+    <QtUic Include="widgetInputPass.ui" />
     <QtUic Include="widgetLeftView.ui" />
     <QtUic Include="widgetLogin.ui" />
     <QtUic Include="widgetMemo.ui" />
@@ -217,6 +219,7 @@
     <ClInclude Include="..\QXlsx\header\xlsxsharedstrings_p.h" />
     <ClInclude Include="..\QXlsx\header\xlsxsimpleooxmlfile_p.h" />
     <ClInclude Include="db_manager.h" />
+    <QtMoc Include="widgetInputPass.h" />
     <QtMoc Include="widgetTag.h" />
     <QtMoc Include="widgetDBTextView.h" />
     <QtMoc Include="TitleBar.h" />

@@ -35,7 +35,11 @@
      <number>2</number>
     </property>
     <item>
-     <widget class="ExtendedTableWidget" name="tableView"/>
+     <widget class="ExtendedTableWidget" name="tableView">
+      <property name="styleSheet">
+       <string notr="true">selection-background-color: rgb(173, 216, 230);</string>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>

@@ -199,6 +199,9 @@
     <ClCompile Include="widgetTag.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="widgetInputPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="widgetLeftView.h">
@@ -261,6 +264,9 @@
     <QtMoc Include="widgetTag.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="widgetInputPass.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="widgetLeftView.ui">
@@ -288,6 +294,9 @@
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="widgetTag.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="widgetInputPass.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>
