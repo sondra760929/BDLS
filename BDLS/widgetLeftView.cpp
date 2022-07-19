@@ -584,6 +584,12 @@ void widgetLeftView::doSearch1()
 {
 	if (m_pView->DBConnected())
 	{
+		QElapsedTimer test_timer;
+		qint64 t1 = 0;
+		qint64 t2 = 0;
+		qint64 t3 = 0;
+		qint64 t4 = 0;
+
 		QVariantList data;
 		QMap< int, bool > total_search_file_index;
 		//QMap< int, QList<QPair<int, int>>> total_file_to_block;
@@ -701,6 +707,43 @@ void widgetLeftView::doSearch1()
 		int total_count = 0;
 		int file_count = 0;
 		QList<int> file_id_list = total_search_file_index.keys();
+
+		QString file_id_string = "";
+		for (int i = 0; i < file_id_list.size(); i++)
+		{
+			if (file_id_string == "")
+			{
+				file_id_string += QString("%1").arg(file_id_list[i]);
+			}
+			else
+			{
+				file_id_string += QString(", %1").arg(file_id_list[i]);
+			}
+		}
+
+		QMap<int, QMap<int, QMap<int, int>> > file_page_block_to_index;
+		QMap<int, QList<int> > file_page_block_to_index_order;
+		QMap<int, QString > file_to_contents;
+
+		test_timer.start();
+		QString temp_query = QString("SELECT file_id, block_text, page_no, block_no FROM page_info WHERE file_id IN (%1) ORDER BY page_no, block_no").arg(file_id_string);
+		m_pView->db->exec(temp_query, data);
+		for (const auto& item : data)
+		{
+			auto map = item.toMap();
+			int temp_file_id = map["file_id"].toInt();
+			int temp_page_no = map["page_no"].toInt();
+			int temp_block_no = map["block_no"].toInt();
+			if (file_to_contents[temp_file_id] != "")
+				file_to_contents[temp_file_id] += " ";
+
+			file_page_block_to_index[temp_file_id][temp_page_no][temp_block_no] = file_to_contents[temp_file_id].length();
+			file_page_block_to_index_order[temp_file_id].append(file_to_contents[temp_file_id].length());
+
+			file_to_contents[temp_file_id] += map["block_text"].toString();
+		}
+		t1 += test_timer.elapsed();
+
 		for (int i = 0; i < file_id_list.size(); i++)
 		{
 			file_count = 0;
@@ -736,26 +779,29 @@ void widgetLeftView::doSearch1()
 
 				if (total_file_to_block2.contains(file_id))
 				{
-					QString file_contents;
-					QMap<int, QMap<int, int> > page_block_to_index;
-					QList<int> page_block_to_index_order;
-					query = QString("SELECT block_text, page_no, block_no FROM page_info WHERE file_id=%1 ORDER BY page_no, block_no").arg(file_id);
-					m_pView->db->exec(query, data);
-					for (const auto& item : data)
-					{
-						auto map = item.toMap();
-						if (file_contents != "")
-							file_contents += " ";
+					//QString file_contents;
+					//QMap<int, QMap<int, int> > page_block_to_index;
+					//QList<int> page_block_to_index_order;
+					//query = QString("SELECT block_text, page_no, block_no FROM page_info WHERE file_id=%1 ORDER BY page_no, block_no").arg(file_id);
+					//m_pView->db->exec(query, data);
+					//for (const auto& item : data)
+					//{
+					//	auto map = item.toMap();
+					//	if (file_contents != "")
+					//		file_contents += " ";
 
-						int temp_page_no = map["page_no"].toInt();
-						int temp_block_no = map["block_no"].toInt();
-						page_block_to_index[temp_page_no][temp_block_no] = file_contents.length();
-						page_block_to_index_order.append(file_contents.length());
+					//	int temp_page_no = map["page_no"].toInt();
+					//	int temp_block_no = map["block_no"].toInt();
+					//	page_block_to_index[temp_page_no][temp_block_no] = file_contents.length();
+					//	page_block_to_index_order.append(file_contents.length());
 
-						file_contents += map["block_text"].toString();
-					}
+					//	file_contents += map["block_text"].toString();
+					//}
 
-					int file_length = file_contents.length();
+					test_timer.start();
+
+					//int file_length = file_contents.length();
+					int file_length = file_to_contents[file_id].length();
 					QList<int> page_no_keys = total_file_to_block2[file_id].keys();
 					for (int j = 0; j < page_no_keys.size(); j++)
 					{
@@ -766,14 +812,14 @@ void widgetLeftView::doSearch1()
 							QStringList search_words = total_file_to_block2[file_id][page_no_keys[j]][block_no_keys[k]];
 							for (int l = 0; l < search_words.size(); l++)
 							{
-								int start_index = page_block_to_index[page_no_keys[j]][block_no_keys[k]];
-								int next_index = page_block_to_index_order.indexOf(start_index) + 1;
-								int end_index = file_contents.length();
-								if (next_index < page_block_to_index_order.count())
+								int start_index = file_page_block_to_index[file_id][page_no_keys[j]][block_no_keys[k]];
+								int next_index = file_page_block_to_index_order[file_id].indexOf(start_index) + 1;
+								int end_index = file_to_contents[file_id].length();
+								if (next_index < file_page_block_to_index_order[file_id].count())
 								{
-									end_index = page_block_to_index_order[next_index];
+									end_index = file_page_block_to_index_order[file_id][next_index];
 								}
-								int search_index = file_contents.indexOf(search_words[l], start_index);
+								int search_index = file_to_contents[file_id].indexOf(search_words[l], start_index);
 								int search_word_count = search_words[l].length();
 								if (!search_to_count.contains(l))
 									search_to_count[l] = 0;
@@ -787,7 +833,7 @@ void widgetLeftView::doSearch1()
 										.arg(page_no_keys[j] + 1)
 										.arg(block_no_keys[k])
 										.arg(search_words[l])
-										.arg(file_contents.mid(search_index + search_word_count, temp_length));
+										.arg(file_to_contents[file_id].mid(search_index + search_word_count, temp_length));
 
 									QTreeWidgetItem* this_info = new QTreeWidgetItem(this_file);
 									QLabel* this_info_label = new QLabel();
@@ -796,7 +842,7 @@ void widgetLeftView::doSearch1()
 									//QString data_str = QString("%1/C/%2/%3").arg(file_id).arg(page_no_keys[j]).arg(block_no_keys[k]);
 									QString data_str = QString("%1/CC/%2/%3/%4").arg(file_id).arg(page_no_keys[j]).arg(search_words[l]).arg(search_to_count[l]);
 									this_info->setData(0, Qt::AccessibleTextRole, data_str);
-									search_index = file_contents.indexOf(search_words[l], search_index + search_word_count);
+									search_index = file_to_contents[file_id].indexOf(search_words[l], search_index + search_word_count);
 									total_count++;
 									file_count++;
 									search_to_count[l]++;
@@ -805,6 +851,7 @@ void widgetLeftView::doSearch1()
 							}
 						}
 					}
+					t2 += test_timer.elapsed();
 				}
 				QString temp_info_str = QString("<font color=\"blue\">%1 [%2]</font>").arg(file_name).arg(file_count);
 				QLabel* temp_label = new QLabel();
@@ -814,7 +861,7 @@ void widgetLeftView::doSearch1()
 				this_file->setExpanded(true);
 			}
 		}
-		QString temp_str = QString("%1 [%2]").arg(QDateTime::currentDateTime().toString()).arg(total_count);
+		QString temp_str = QString("%1 [%2] : %3, %4").arg(QDateTime::currentDateTime().toString()).arg(total_count).arg(t1).arg(t2);
 		this_search->setText(0, temp_str);
 		this_search->setExpanded(true);
 		m_pView->_widgetBottomView->AddResult(this_search);
