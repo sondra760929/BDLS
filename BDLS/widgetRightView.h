@@ -12,8 +12,8 @@
 #include <QAudioOutput>
 #include <QStatusBar>
 #include <QQuickWidget>
-#include <QQuickitem>
-#include <qqmlcontext.h>
+//#include <QQuickitem>
+//#include <qqmlcontext.h>
 #include <QElapsedTimer>
 
 class BDLS;

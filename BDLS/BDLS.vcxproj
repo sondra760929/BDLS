@@ -32,7 +32,7 @@
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
     <QtInstall>6.4.0_msvc2019_64</QtInstall>
-    <QtModules>core;gui;widgets;core5compat;multimedia;quickwidgets;sql;charts;webenginewidgets;multimediawidgets</QtModules>
+    <QtModules>core;gui;widgets;multimedia;sql;multimediawidgets</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
@@ -64,7 +64,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
-      <AdditionalDependencies>Qt6Pdfd.lib;Qt6PdfWidgetsd.lib;Qt6Core5Compatd.lib;libmupdf.lib;libpkcs7.lib;libresources.lib;libthirdparty.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Qt6Pdfd.lib;Qt6PdfWidgetsd.lib;libmupdf.lib;libpkcs7.lib;libresources.lib;libthirdparty.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
