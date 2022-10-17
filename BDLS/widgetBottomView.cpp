@@ -20,6 +20,7 @@ void HtmlDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, 
 	QStyle* style = optionV4.widget ? optionV4.widget->style() : QApplication::style();
 
 	QTextDocument doc;
+	doc.setDefaultFont(optionV4.font);
 	doc.setHtml(optionV4.text);
 
 	/// Painting item without text
@@ -46,6 +47,7 @@ QSize HtmlDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelInd
 	initStyleOption(&optionV4, index);
 
 	QTextDocument doc;
+	doc.setDefaultFont(optionV4.font);
 	doc.setHtml(optionV4.text);
 	doc.setTextWidth(optionV4.rect.width());
 	return QSize(doc.idealWidth(), doc.size().height());
@@ -113,11 +115,13 @@ void widgetBottomView::AddResult(QTreeWidgetItem* item)
 void widgetBottomView::onPlus()
 {
 	font_size++;
+	model->layoutChanged();
 	//m_outputTree->setStyleSheet("QTreeView::item { font-size: " + QString::number(font_size) + "pt; } QLabel { font-size: " + QString::number(font_size) + "pt; }");
 }
 void widgetBottomView::onMinus()
 {
 	font_size--;
+	model->layoutChanged();
 	//m_outputTree->setStyleSheet("QTreeView::item { font-size: " + QString::number(font_size) + "pt; } QLabel { font-size: " + QString::number(font_size) + "pt; }");
 }
 void widgetBottomView::onClear()

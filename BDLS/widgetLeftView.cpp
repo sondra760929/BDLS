@@ -711,7 +711,6 @@ void widgetLeftView::doSearch1()
 		}
 
 		m_pView->_widgetBottomView->m_outputTree->setUpdatesEnabled(false);
-		//QTreeWidgetItem* this_search = new QTreeWidgetItem();
 		QStandardItem* this_search = new QStandardItem();
 		//	결과 표시
 		int total_count = 0;
@@ -770,22 +769,13 @@ void widgetLeftView::doSearch1()
 				//	file_name = map["file_name"].toString();
 				//}
 
-				//QTreeWidgetItem* this_file = new QTreeWidgetItem(this_search);
 				QStandardItem* this_file = new QStandardItem();
 				this_search->appendRow(this_file);
 				if (total_file_to_header.contains(file_id))
 				{
 					for (int j = 0; j < total_file_to_header[file_id].size(); j++)
 					{
-						//QTreeWidgetItem* this_info = new QTreeWidgetItem(this_file);
-						QLabel* this_info_label = new QLabel();
-						this_info_label->setText(total_file_to_header[file_id][j].second);
-						//this_info->setText(0, total_file_to_header[file_id][j].second);
-						//m_pView->_widgetBottomView->m_outputTree->setItemWidget(this_info, 0, this_info_label);
 						QString data_str = QString("%1/CH/0/0").arg(file_id);
-						//this_info->setData(0, Qt::AccessibleTextRole, data_str);
-						//this_info->setText(0, total_file_to_header[file_id][j].second);
-
 						QStandardItem* this_info = new QStandardItem(total_file_to_header[file_id][j].second);
 						this_info->setData(data_str, Qt::AccessibleTextRole);
 						this_file->appendRow(this_info);
@@ -858,15 +848,7 @@ void widgetLeftView::doSearch1()
 										.arg(search_words[l])
 										.arg(block_content.mid(search_index + search_word_count, temp_length));
 
-									//QTreeWidgetItem* this_info = new QTreeWidgetItem(this_file);
-									QLabel* this_info_label = new QLabel();
-									this_info_label->setText(info_str);
-									//this_info->setText(0, info_str);
-									//m_pView->_widgetBottomView->m_outputTree->setItemWidget(this_info, 0, this_info_label);
-									//QString data_str = QString("%1/C/%2/%3").arg(file_id).arg(page_no_keys[j]).arg(block_no_keys[k]);
 									QString data_str = QString("%1/CC/%2/%3/%4").arg(file_id).arg(page_no_keys[j]).arg(search_words[l]).arg(search_to_count[l]);
-									//this_info->setData(0, Qt::AccessibleTextRole, data_str);
-
 									QStandardItem* this_info = new QStandardItem(info_str);
 									this_info->setData(data_str, Qt::AccessibleTextRole);
 									this_file->appendRow(this_info);
@@ -883,18 +865,12 @@ void widgetLeftView::doSearch1()
 					t2 += test_timer.elapsed();
 				}
 				QString temp_info_str = QString("<font color=\"blue\">%1 [%2]</font>").arg(file_name).arg(file_count);
-				QLabel* temp_label = new QLabel();
-				temp_label->setText(temp_info_str);
 				this_file->setText(temp_info_str);
-				//m_pView->_widgetBottomView->m_outputTree->setItemWidget(this_file, 0, temp_label);
-				//this_file->setText(0, QString("<font color=\"blue\">%1 [%2]</font>").arg(file_name).arg(file_count));
-				//this_file->setExpanded(true);
 			}
 		}
-		QString temp_str = QString("%1 [%2] : %3, %4").arg(QDateTime::currentDateTime().toString()).arg(total_count).arg(t1).arg(t2);
+		//QString temp_str = QString("%1 [%2] : %3, %4").arg(QDateTime::currentDateTime().toString()).arg(total_count).arg(t1).arg(t2);
+		QString temp_str = QString("%1 [%2]").arg(QDateTime::currentDateTime().toString()).arg(total_count);
 		this_search->setText(temp_str);
-		//this_search->setExpanded(true);
-		//m_pView->_widgetBottomView->AddResult(this_search);
 		m_pView->_widgetBottomView->model->insertRow(0, this_search);
 		m_pView->_widgetBottomView->m_outputTree->expandAll();
 		m_pView->_widgetBottomView->m_outputTree->setUpdatesEnabled(true);
@@ -903,432 +879,430 @@ void widgetLeftView::doSearch1()
 
 void widgetLeftView::doSearch2()
 {
-	//if (m_pView->DBConnected())
-	//{
-	//	QVariantList data;
-	//	QMap< int, bool > total_search_file_index;
-	//	QMap< int, QList<QString>> total_file_find;
-	//	QMap< int, QList<QString>> total_file_find_info;
+	if (m_pView->DBConnected())
+	{
+		QVariantList data;
+		QMap< int, bool > total_search_file_index;
+		QMap< int, QList<QString>> total_file_find;
+		QMap< int, QList<QString>> total_file_find_info;
 
-	//	QString prev_condition_name;
-	//	QString query;
-	//	for (int i = 0; i < memo_list.size(); i++)
-	//	{
-	//		SearchControls* sc = memo_list[i];
-	//		QString header_name = sc->m_searchTitle->currentText();
-	//		QString search_word = sc->m_searchWord->text();
+		QString prev_condition_name;
+		QString query;
+		for (int i = 0; i < memo_list.size(); i++)
+		{
+			SearchControls* sc = memo_list[i];
+			QString header_name = sc->m_searchTitle->currentText();
+			QString search_word = sc->m_searchWord->text();
 
-	//		if (search_word.length() > 0)
-	//		{
-	//			QString condition_name = sc->m_searchCondition->currentText();
+			if (search_word.length() > 0)
+			{
+				QString condition_name = sc->m_searchCondition->currentText();
 
-	//			QList< int > search_file_index;
+				QList< int > search_file_index;
 
-	//			if (sc->m_searchTitle->currentText() == QString("내용"))
-	//			{QString
-	//				query = QString("SELECT reply_info.id, reply_info.file_id, reply_info.page_no, reply_info.parent_id, reply_info.user_id, reply_info.value, reply_info.date_time, user_info.user_name FROM reply_info INNER JOIN user_info ON reply_info.user_id = user_info.user_id WHERE reply_info.value LIKE \"%%1%\"").arg(search_word);
-	//				m_pView->db->exec(query, data);
-	//				for (const auto& item : data)
-	//				{
-	//					auto map = item.toMap();
-	//					int memo_id = map["id"].toInt();
-	//					int file_id = map["file_id"].toInt();
-	//					int page_no = map["page_no"].toInt();
-	//					int parent_id = map["parent_id"].toInt();
-	//					QString user_id = map["user_id"].toString();
-	//					QString user_name = map["user_name"].toString();
-	//					QString memo_str = map["value"].toString();
-	//					QString date_time = map["date_time"].toString();
-	//					search_file_index.append(file_id);
-	//					if (prev_condition_name != "NOT")
-	//					{
-	//						int index = memo_str.indexOf(search_word);
-	//						while (index > -1)
-	//						{
-	//							QString info_str = QString("[내용] %1 p : %2<font color=\"red\">%3</font>%4").arg(page_no + 1).arg(memo_str.left(index)).arg(search_word).arg(memo_str.right(memo_str.length() - index - search_word.length()));
-	//							info_str = info_str.insert(0, "<p>");
-	//							info_str = info_str + "</p>";
-	//							info_str = info_str.replace("\n", " ");
+				if (sc->m_searchTitle->currentText() == QString("내용"))
+				{QString
+					query = QString("SELECT reply_info.id, reply_info.file_id, reply_info.page_no, reply_info.parent_id, reply_info.user_id, reply_info.value, reply_info.date_time, user_info.user_name FROM reply_info INNER JOIN user_info ON reply_info.user_id = user_info.user_id WHERE reply_info.value LIKE \"%%1%\"").arg(search_word);
+					m_pView->db->exec(query, data);
+					for (const auto& item : data)
+					{
+						auto map = item.toMap();
+						int memo_id = map["id"].toInt();
+						int file_id = map["file_id"].toInt();
+						int page_no = map["page_no"].toInt();
+						int parent_id = map["parent_id"].toInt();
+						QString user_id = map["user_id"].toString();
+						QString user_name = map["user_name"].toString();
+						QString memo_str = map["value"].toString();
+						QString date_time = map["date_time"].toString();
+						search_file_index.append(file_id);
+						if (prev_condition_name != "NOT")
+						{
+							int index = memo_str.indexOf(search_word);
+							while (index > -1)
+							{
+								QString info_str = QString("[내용] %1 p : %2<font color=\"red\">%3</font>%4").arg(page_no + 1).arg(memo_str.left(index)).arg(search_word).arg(memo_str.right(memo_str.length() - index - search_word.length()));
+								info_str = info_str.insert(0, "<p>");
+								info_str = info_str + "</p>";
+								info_str = info_str.replace("\n", " ");
 
-	//							total_file_find[file_id].append(info_str);
-	//							QString info_info_str = QString("%1/MC/%2/%3/%4/%5").arg(file_id).arg(memo_id).arg(index).arg(search_word.length()).arg(page_no);
-	//							total_file_find_info[file_id].append(info_info_str);
+								total_file_find[file_id].append(info_str);
+								QString info_info_str = QString("%1/MC/%2/%3/%4/%5").arg(file_id).arg(memo_id).arg(index).arg(search_word.length()).arg(page_no);
+								total_file_find_info[file_id].append(info_info_str);
 
-	//							index = memo_str.indexOf(search_word, index + search_word.length());
-	//						}
-	//					}
-	//				}
-	//			}
-	//			else if (sc->m_searchTitle->currentText() == QString("작성자"))
-	//			{
-	//				query = QString("SELECT reply_info.id, reply_info.file_id, reply_info.page_no, reply_info.parent_id, reply_info.user_id, reply_info.value, reply_info.date_time, user_info.user_name FROM reply_info INNER JOIN user_info ON reply_info.user_id = user_info.user_id WHERE user_info.user_name LIKE \"%%1%\"").arg(search_word);
-	//				m_pView->db->exec(query, data);
-	//				for (const auto& item : data)
-	//				{
-	//					auto map = item.toMap();
-	//					int memo_id = map["id"].toInt();
-	//					int file_id = map["file_id"].toInt();
-	//					int page_no = map["page_no"].toInt();
-	//					int parent_id = map["parent_id"].toInt();
-	//					QString user_id = map["user_id"].toString();
-	//					QString user_name = map["user_name"].toString();
-	//					QString memo_str = map["value"].toString();
-	//					QString date_time = map["date_time"].toString();
-	//					search_file_index.append(file_id);
-	//					if (prev_condition_name != "NOT")
-	//					{
-	//						int index = user_name.indexOf(search_word);
-	//						while (index > -1)
-	//						{
-	//							QString info_str = QString("[작성자 : %2<font color=\"red\">%3</font>%4] %1 p : %5")
-	//								.arg(page_no + 1)
-	//								.arg(user_name.left(index))
-	//								.arg(search_word)
-	//								.arg(user_name.right(user_name.length() - index - search_word.length()))
-	//								.arg(memo_str);
-	//							total_file_find[file_id].append(info_str);
-	//							QString info_info_str = QString("%1/MW/%2/%3/%4/%5").arg(file_id).arg(memo_id).arg(index).arg(search_word.length()).arg(page_no);
-	//							total_file_find_info[file_id].append(info_info_str);
+								index = memo_str.indexOf(search_word, index + search_word.length());
+							}
+						}
+					}
+				}
+				else if (sc->m_searchTitle->currentText() == QString("작성자"))
+				{
+					query = QString("SELECT reply_info.id, reply_info.file_id, reply_info.page_no, reply_info.parent_id, reply_info.user_id, reply_info.value, reply_info.date_time, user_info.user_name FROM reply_info INNER JOIN user_info ON reply_info.user_id = user_info.user_id WHERE user_info.user_name LIKE \"%%1%\"").arg(search_word);
+					m_pView->db->exec(query, data);
+					for (const auto& item : data)
+					{
+						auto map = item.toMap();
+						int memo_id = map["id"].toInt();
+						int file_id = map["file_id"].toInt();
+						int page_no = map["page_no"].toInt();
+						int parent_id = map["parent_id"].toInt();
+						QString user_id = map["user_id"].toString();
+						QString user_name = map["user_name"].toString();
+						QString memo_str = map["value"].toString();
+						QString date_time = map["date_time"].toString();
+						search_file_index.append(file_id);
+						if (prev_condition_name != "NOT")
+						{
+							int index = user_name.indexOf(search_word);
+							while (index > -1)
+							{
+								QString info_str = QString("[작성자 : %2<font color=\"red\">%3</font>%4] %1 p : %5")
+									.arg(page_no + 1)
+									.arg(user_name.left(index))
+									.arg(search_word)
+									.arg(user_name.right(user_name.length() - index - search_word.length()))
+									.arg(memo_str);
+								total_file_find[file_id].append(info_str);
+								QString info_info_str = QString("%1/MW/%2/%3/%4/%5").arg(file_id).arg(memo_id).arg(index).arg(search_word.length()).arg(page_no);
+								total_file_find_info[file_id].append(info_info_str);
 
-	//							index = user_name.indexOf(search_word, index + search_word.length());
-	//						}
-	//					}
-	//				}
-	//			}
-	//			else if (sc->m_searchTitle->currentText() == QString("날짜"))
-	//			{
-	//				QDateTime search_time = QDateTime::fromString(search_word, "yyyy-MM-dd");
-	//				query = QString("SELECT reply_info.id, reply_info.file_id, reply_info.page_no, reply_info.parent_id, reply_info.user_id, reply_info.value, reply_info.date_time, user_info.user_name FROM reply_info INNER JOIN user_info ON reply_info.user_id = user_info.user_id WHERE reply_info.date_time LIKE \"%%1%\"").arg(search_time.toString("yyyy-MM-dd"));
-	//				m_pView->db->exec(query, data);
-	//				for (const auto& item : data)
-	//				{
-	//					auto map = item.toMap();
-	//					int memo_id = map["id"].toInt();
-	//					int file_id = map["file_id"].toInt();
-	//					int page_no = map["page_no"].toInt();
-	//					int parent_id = map["parent_id"].toInt();
-	//					QString user_id = map["user_id"].toString();
-	//					QString user_name = map["user_name"].toString();
-	//					QString memo_str = map["value"].toString();
-	//					QString date_time = map["date_time"].toString();
-	//					search_file_index.append(file_id);
-	//					if (prev_condition_name != "NOT")
-	//					{
-	//						QString info_str = QString("[날짜 : <font color=\"red\">%2</font>] %1 p : %3")
-	//							.arg(page_no + 1)
-	//							.arg(search_time.toString("yyyy-MM-dd"))
-	//							.arg(memo_str);
-	//						total_file_find[file_id].append(info_str);
-	//						QString info_info_str = QString("%1/MD/%2/%3/%4").arg(file_id).arg(memo_id).arg(search_time.toString("yyyy-MM-dd")).arg(page_no);
-	//						total_file_find_info[file_id].append(info_info_str);
-	//					}
-	//				}
-	//			}
+								index = user_name.indexOf(search_word, index + search_word.length());
+							}
+						}
+					}
+				}
+				else if (sc->m_searchTitle->currentText() == QString("날짜"))
+				{
+					QDateTime search_time = QDateTime::fromString(search_word, "yyyy-MM-dd");
+					query = QString("SELECT reply_info.id, reply_info.file_id, reply_info.page_no, reply_info.parent_id, reply_info.user_id, reply_info.value, reply_info.date_time, user_info.user_name FROM reply_info INNER JOIN user_info ON reply_info.user_id = user_info.user_id WHERE reply_info.date_time LIKE \"%%1%\"").arg(search_time.toString("yyyy-MM-dd"));
+					m_pView->db->exec(query, data);
+					for (const auto& item : data)
+					{
+						auto map = item.toMap();
+						int memo_id = map["id"].toInt();
+						int file_id = map["file_id"].toInt();
+						int page_no = map["page_no"].toInt();
+						int parent_id = map["parent_id"].toInt();
+						QString user_id = map["user_id"].toString();
+						QString user_name = map["user_name"].toString();
+						QString memo_str = map["value"].toString();
+						QString date_time = map["date_time"].toString();
+						search_file_index.append(file_id);
+						if (prev_condition_name != "NOT")
+						{
+							QString info_str = QString("[날짜 : <font color=\"red\">%2</font>] %1 p : %3")
+								.arg(page_no + 1)
+								.arg(search_time.toString("yyyy-MM-dd"))
+								.arg(memo_str);
+							total_file_find[file_id].append(info_str);
+							QString info_info_str = QString("%1/MD/%2/%3/%4").arg(file_id).arg(memo_id).arg(search_time.toString("yyyy-MM-dd")).arg(page_no);
+							total_file_find_info[file_id].append(info_info_str);
+						}
+					}
+				}
 
-	//			if (i == 0)
-	//			{
-	//				for (int j = 0; j < search_file_index.size(); j++)
-	//				{
-	//					total_search_file_index[search_file_index[j]] = true;
-	//				}
-	//			}
-	//			else
-	//			{
-	//				if (prev_condition_name == "AND")
-	//				{
-	//					QList< int > temp_file_index;
-	//					for (int j = 0; j < search_file_index.size(); j++)
-	//					{
-	//						if (total_search_file_index.contains(search_file_index[j]))
-	//						{
-	//							temp_file_index.append(search_file_index[j]);
-	//						}
-	//					}
+				if (i == 0)
+				{
+					for (int j = 0; j < search_file_index.size(); j++)
+					{
+						total_search_file_index[search_file_index[j]] = true;
+					}
+				}
+				else
+				{
+					if (prev_condition_name == "AND")
+					{
+						QList< int > temp_file_index;
+						for (int j = 0; j < search_file_index.size(); j++)
+						{
+							if (total_search_file_index.contains(search_file_index[j]))
+							{
+								temp_file_index.append(search_file_index[j]);
+							}
+						}
 
-	//					total_search_file_index.clear();
-	//					for (int j = 0; j < temp_file_index.size(); j++)
-	//					{
-	//						total_search_file_index[temp_file_index[j]] = true;
-	//					}
-	//				}
-	//				else if (prev_condition_name == "OR")
-	//				{
-	//					for (int j = 0; j < search_file_index.size(); j++)
-	//					{
-	//						total_search_file_index[search_file_index[j]] = true;
-	//					}
-	//				}
-	//				else if (prev_condition_name == "NOT")
-	//				{
-	//					for (int j = 0; j < search_file_index.size(); j++)
-	//					{
-	//						total_search_file_index[search_file_index[j]] = false;
-	//					}
-	//				}
-	//				else
-	//				{
-	//					//	이상 버림
-	//				}
-	//			}
+						total_search_file_index.clear();
+						for (int j = 0; j < temp_file_index.size(); j++)
+						{
+							total_search_file_index[temp_file_index[j]] = true;
+						}
+					}
+					else if (prev_condition_name == "OR")
+					{
+						for (int j = 0; j < search_file_index.size(); j++)
+						{
+							total_search_file_index[search_file_index[j]] = true;
+						}
+					}
+					else if (prev_condition_name == "NOT")
+					{
+						for (int j = 0; j < search_file_index.size(); j++)
+						{
+							total_search_file_index[search_file_index[j]] = false;
+						}
+					}
+					else
+					{
+						//	이상 버림
+					}
+				}
 
-	//			prev_condition_name = condition_name;
-	//		}
-	//	}
+				prev_condition_name = condition_name;
+			}
+		}
 
-	//	QTreeWidgetItem* this_search = new QTreeWidgetItem();
-	//	//	결과 표시
-	//	int total_count = 0;
-	//	int file_count = 0;
-	//	QList<int> file_id_list = total_search_file_index.keys();
-	//	for (int i = 0; i < file_id_list.size(); i++)
-	//	{
-	//		file_count = 0;
-	//		int file_id = file_id_list[i];
-	//		if (total_search_file_index[file_id])
-	//		{
-	//			QString file_name;
-	//			m_pView->db->exec(QString("SELECT file_name FROM file_info WHERE id=%1").arg(file_id), data);
-	//			for (const auto& item : data)
-	//			{
-	//				auto map = item.toMap();
-	//				file_name = map["file_name"].toString();
-	//			}
+		m_pView->_widgetBottomView->m_outputTree->setUpdatesEnabled(false);
+		QStandardItem* this_search = new QStandardItem();
+		//	결과 표시
+		int total_count = 0;
+		int file_count = 0;
+		QList<int> file_id_list = total_search_file_index.keys();
+		for (int i = 0; i < file_id_list.size(); i++)
+		{
+			file_count = 0;
+			int file_id = file_id_list[i];
+			if (total_search_file_index[file_id])
+			{
+				QString file_name;
+				m_pView->db->exec(QString("SELECT file_name FROM file_info WHERE id=%1").arg(file_id), data);
+				for (const auto& item : data)
+				{
+					auto map = item.toMap();
+					file_name = map["file_name"].toString();
+				}
 
-	//			QTreeWidgetItem* this_file = new QTreeWidgetItem(this_search);
-	//			if (total_file_find.contains(file_id))
-	//			{
-	//				for (int j = 0; j < total_file_find[file_id].size(); j++)
-	//				{
-	//					QTreeWidgetItem* this_info = new QTreeWidgetItem(this_file);
-	//					QLabel* this_info_label = new QLabel();
-	//					this_info_label->setText(total_file_find[file_id][j]);
-	//					m_pView->_widgetBottomView->m_outputTree->setItemWidget(this_info, 0, this_info_label);
-	//					//QString data_str = QString("%1/0/0").arg(file_id);
-	//					this_info->setData(0, Qt::AccessibleTextRole, total_file_find_info[file_id][j]);
-	//					//this_info->setText(0, total_file_to_header[file_id][j].second);
-	//					total_count++;
-	//					file_count++;
-	//					m_pView->setSelectBySearch(file_id);
-	//				}
-	//			}
+				QStandardItem* this_file = new QStandardItem();
+				this_search->appendRow(this_file);
+				if (total_file_find.contains(file_id))
+				{
+					for (int j = 0; j < total_file_find[file_id].size(); j++)
+					{
+						QStandardItem* this_info = new QStandardItem(total_file_find[file_id][j]);
+						this_info->setData(total_file_find_info[file_id][j], Qt::AccessibleTextRole);
+						this_file->appendRow(this_info);
 
-	//			QString temp_str = QString("<font color=\"blue\">%1 [%2]</font>").arg(file_name).arg(file_count);
-	//			QLabel* this_info_label = new QLabel();
-	//			this_info_label->setText(temp_str);
-	//			m_pView->_widgetBottomView->m_outputTree->setItemWidget(this_file, 0, this_info_label);
-	//			//this_file->setText(0, QString("<font color=\"blue\">%1 [%2]</font>").arg(file_name).arg(file_count));
-	//		}
-	//	}
-	//	this_search->setText(0, QString("%1 [%2]").arg(QDateTime::currentDateTime().toString()).arg(total_count));
+						total_count++;
+						file_count++;
+						m_pView->setSelectBySearch(file_id);
+					}
+				}
 
-	//	m_pView->_widgetBottomView->AddResult(this_search);
-	//}
+				QString temp_str = QString("<font color=\"blue\">%1 [%2]</font>").arg(file_name).arg(file_count);
+				this_file->setText(temp_str);
+			}
+		}
+		this_search->setText(QString("%1 [%2]").arg(QDateTime::currentDateTime().toString()).arg(total_count));
+
+		m_pView->_widgetBottomView->model->insertRow(0, this_search);
+		m_pView->_widgetBottomView->m_outputTree->expandAll();
+		m_pView->_widgetBottomView->m_outputTree->setUpdatesEnabled(true);
+	}
 }
 
 void widgetLeftView::doSearch3()
 {
-	//if (m_pView->DBConnected())
-	//{
-	//	QVariantList data;
-	//	QMap< int, bool > total_search_file_index;
-	//	QMap< int, QList<QString>> total_file_find;
-	//	QMap< int, QList<QString>> total_file_find_info;
+	if (m_pView->DBConnected())
+	{
+		QVariantList data;
+		QMap< int, bool > total_search_file_index;
+		QMap< int, QList<QString>> total_file_find;
+		QMap< int, QList<QString>> total_file_find_info;
 
-	//	QMap< int, QList<int> > check_file_tags;
+		QMap< int, QList<int> > check_file_tags;
 
-	//	QString prev_condition_name;
-	//	QString query;
-	//	for (int i = 0; i < tag_list.size(); i++)
-	//	{
-	//		SearchControls* sc = tag_list[i];
-	//		QString header_name = sc->m_searchTitle->currentText();
-	//		QString search_word = sc->m_searchWord->text();
+		QString prev_condition_name;
+		QString query;
+		for (int i = 0; i < tag_list.size(); i++)
+		{
+			SearchControls* sc = tag_list[i];
+			QString header_name = sc->m_searchTitle->currentText();
+			QString search_word = sc->m_searchWord->text();
 
-	//		if (search_word.length() > 0)
-	//		{
-	//			QString condition_name = sc->m_searchCondition->currentText();
+			if (search_word.length() > 0)
+			{
+				QString condition_name = sc->m_searchCondition->currentText();
 
-	//			QList< int > search_file_index;
+				QList< int > search_file_index;
 
-	//			query = QString("SELECT file_to_hash.file_id, file_to_hash.tag_id FROM file_to_hash INNER JOIN hsah_tags ON file_to_hash.tag_id = hsah_tags.id WHERE hsah_tags.tags LIKE \"%%1%\"").arg(search_word);
-	//			m_pView->db->exec(query, data);
-	//			for (const auto& item : data)
-	//			{
-	//				auto map = item.toMap();
-	//				int file_id = map["file_id"].toInt();
-	//				int tag_id = map["tag_id"].toInt();
-	//				search_file_index.append(file_id);
-	//				check_file_tags[file_id].append(tag_id);
-	//			}
+				query = QString("SELECT file_to_hash.file_id, file_to_hash.tag_id FROM file_to_hash INNER JOIN hsah_tags ON file_to_hash.tag_id = hsah_tags.id WHERE hsah_tags.tags LIKE \"%%1%\"").arg(search_word);
+				m_pView->db->exec(query, data);
+				for (const auto& item : data)
+				{
+					auto map = item.toMap();
+					int file_id = map["file_id"].toInt();
+					int tag_id = map["tag_id"].toInt();
+					search_file_index.append(file_id);
+					check_file_tags[file_id].append(tag_id);
+				}
 
-	//			if (i == 0)
-	//			{
-	//				for (int j = 0; j < search_file_index.size(); j++)
-	//				{
-	//					total_search_file_index[search_file_index[j]] = true;
-	//				}
-	//			}
-	//			else
-	//			{
-	//				if (prev_condition_name == "AND")
-	//				{
-	//					QList< int > temp_file_index;
-	//					for (int j = 0; j < search_file_index.size(); j++)
-	//					{
-	//						if (total_search_file_index.contains(search_file_index[j]))
-	//						{
-	//							temp_file_index.append(search_file_index[j]);
-	//						}
-	//					}
+				if (i == 0)
+				{
+					for (int j = 0; j < search_file_index.size(); j++)
+					{
+						total_search_file_index[search_file_index[j]] = true;
+					}
+				}
+				else
+				{
+					if (prev_condition_name == "AND")
+					{
+						QList< int > temp_file_index;
+						for (int j = 0; j < search_file_index.size(); j++)
+						{
+							if (total_search_file_index.contains(search_file_index[j]))
+							{
+								temp_file_index.append(search_file_index[j]);
+							}
+						}
 
-	//					total_search_file_index.clear();
-	//					for (int j = 0; j < temp_file_index.size(); j++)
-	//					{
-	//						total_search_file_index[temp_file_index[j]] = true;
-	//					}
-	//				}
-	//				else if (prev_condition_name == "OR")
-	//				{
-	//					for (int j = 0; j < search_file_index.size(); j++)
-	//					{
-	//						total_search_file_index[search_file_index[j]] = true;
-	//					}
-	//				}
-	//				else if (prev_condition_name == "NOT")
-	//				{
-	//					for (int j = 0; j < search_file_index.size(); j++)
-	//					{
-	//						total_search_file_index[search_file_index[j]] = false;
-	//					}
-	//				}
-	//				else
-	//				{
-	//					//	이상 버림
-	//				}
-	//			}
+						total_search_file_index.clear();
+						for (int j = 0; j < temp_file_index.size(); j++)
+						{
+							total_search_file_index[temp_file_index[j]] = true;
+						}
+					}
+					else if (prev_condition_name == "OR")
+					{
+						for (int j = 0; j < search_file_index.size(); j++)
+						{
+							total_search_file_index[search_file_index[j]] = true;
+						}
+					}
+					else if (prev_condition_name == "NOT")
+					{
+						for (int j = 0; j < search_file_index.size(); j++)
+						{
+							total_search_file_index[search_file_index[j]] = false;
+						}
+					}
+					else
+					{
+						//	이상 버림
+					}
+				}
 
-	//			prev_condition_name = condition_name;
-	//		}
-	//	}
+				prev_condition_name = condition_name;
+			}
+		}
 
-	//	QTreeWidgetItem* this_search = new QTreeWidgetItem();
-	//	//	결과 표시
-	//	int total_count = 0;
-	//	int file_count = 0;
-	//	QList<int> file_id_list = total_search_file_index.keys();
-	//	for (int i = 0; i < file_id_list.size(); i++)
-	//	{
-	//		file_count = 0;
-	//		int file_id = file_id_list[i];
-	//		if (total_search_file_index[file_id])
-	//		{
-	//			QString file_name;
-	//			m_pView->db->exec(QString("SELECT file_name FROM file_info WHERE id=%1").arg(file_id), data);
-	//			for (const auto& item : data)
-	//			{
-	//				auto map = item.toMap();
-	//				file_name = map["file_name"].toString();
-	//			}
+		m_pView->_widgetBottomView->m_outputTree->setUpdatesEnabled(false);
+		QStandardItem* this_search = new QStandardItem();
+		//	결과 표시
+		int total_count = 0;
+		int file_count = 0;
+		QList<int> file_id_list = total_search_file_index.keys();
+		for (int i = 0; i < file_id_list.size(); i++)
+		{
+			file_count = 0;
+			int file_id = file_id_list[i];
+			if (total_search_file_index[file_id])
+			{
+				QString file_name;
+				m_pView->db->exec(QString("SELECT file_name FROM file_info WHERE id=%1").arg(file_id), data);
+				for (const auto& item : data)
+				{
+					auto map = item.toMap();
+					file_name = map["file_name"].toString();
+				}
 
-	//			m_pView->db->exec(QString("SELECT tag_id, page_no FROM file_to_hash WHERE file_id=%1").arg(file_id), data);
+				m_pView->db->exec(QString("SELECT tag_id, page_no FROM file_to_hash WHERE file_id=%1").arg(file_id), data);
 
-	//			QMap<int, QList<int> > page_to_tags;
-	//			for (const auto& item : data)
-	//			{
-	//				auto map = item.toMap();
-	//				int temp_tag_id = map["tag_id"].toInt();
-	//				int temp_page_no = map["page_no"].toInt();
+				QMap<int, QList<int> > page_to_tags;
+				for (const auto& item : data)
+				{
+					auto map = item.toMap();
+					int temp_tag_id = map["tag_id"].toInt();
+					int temp_page_no = map["page_no"].toInt();
 
-	//				page_to_tags[temp_page_no].append(temp_tag_id);
-	//				//QString temp_info_str;
-	//				//if (check_file_tags[file_id].contains(temp_tag_id))
-	//				//{
-	//				//	temp_info_str = QString("<font color=\"red\">#%1</font>").arg(tagDatas[temp_tag_id]);
-	//				//	if (tag_string == "")
-	//				//	{
-	//				//		tag_string = tagDatas[temp_tag_id];
-	//				//	}
-	//				//	else
-	//				//	{
-	//				//		tag_string += ("," + tagDatas[temp_tag_id]);
-	//				//	}
-	//				//}
-	//				//else
-	//				//{
-	//				//	temp_info_str = ("#" + tagDatas[temp_tag_id]);
-	//				//}
+					page_to_tags[temp_page_no].append(temp_tag_id);
+					//QString temp_info_str;
+					//if (check_file_tags[file_id].contains(temp_tag_id))
+					//{
+					//	temp_info_str = QString("<font color=\"red\">#%1</font>").arg(tagDatas[temp_tag_id]);
+					//	if (tag_string == "")
+					//	{
+					//		tag_string = tagDatas[temp_tag_id];
+					//	}
+					//	else
+					//	{
+					//		tag_string += ("," + tagDatas[temp_tag_id]);
+					//	}
+					//}
+					//else
+					//{
+					//	temp_info_str = ("#" + tagDatas[temp_tag_id]);
+					//}
 
-	//				//if (output_string == "")
-	//				//{
-	//				//	output_string = temp_info_str;
-	//				//}
-	//				//else
-	//				//{
-	//				//	output_string += (", " + temp_info_str);
-	//				//}
-	//			}
+					//if (output_string == "")
+					//{
+					//	output_string = temp_info_str;
+					//}
+					//else
+					//{
+					//	output_string += (", " + temp_info_str);
+					//}
+				}
 
-	//			QList<int> page_no_list = page_to_tags.keys();
-	//			std::sort(page_no_list.begin(), page_no_list.end());
-	//			for (int j = 0; j < page_no_list.size(); j++)
-	//			{
-	//				int temp_page_no = page_no_list[j];
-	//				QString tag_string = "";
-	//				QString output_string = "";
-	//				bool tag_exist = false;
+				QList<int> page_no_list = page_to_tags.keys();
+				std::sort(page_no_list.begin(), page_no_list.end());
+				for (int j = 0; j < page_no_list.size(); j++)
+				{
+					int temp_page_no = page_no_list[j];
+					QString tag_string = "";
+					QString output_string = "";
+					bool tag_exist = false;
 
-	//				for (int k = 0; k < page_to_tags[temp_page_no].size(); k++)
-	//				{
-	//					int temp_tag_id = page_to_tags[temp_page_no][k];
-	//					QString temp_info_str;
-	//					if (check_file_tags[file_id].contains(temp_tag_id))
-	//					{
-	//						tag_exist = true;
-	//						temp_info_str = QString("<font color=\"red\">#%1</font>").arg(tagDatas[temp_tag_id]);
-	//						if (tag_string == "")
-	//						{
-	//							tag_string = tagDatas[temp_tag_id];
-	//						}
-	//						else
-	//						{
-	//							tag_string += ("," + tagDatas[temp_tag_id]);
-	//						}
-	//					}
-	//					else
-	//					{
-	//						temp_info_str = ("#" + tagDatas[temp_tag_id]);
-	//					}
+					for (int k = 0; k < page_to_tags[temp_page_no].size(); k++)
+					{
+						int temp_tag_id = page_to_tags[temp_page_no][k];
+						QString temp_info_str;
+						if (check_file_tags[file_id].contains(temp_tag_id))
+						{
+							tag_exist = true;
+							temp_info_str = QString("<font color=\"red\">#%1</font>").arg(tagDatas[temp_tag_id]);
+							if (tag_string == "")
+							{
+								tag_string = tagDatas[temp_tag_id];
+							}
+							else
+							{
+								tag_string += ("," + tagDatas[temp_tag_id]);
+							}
+						}
+						else
+						{
+							temp_info_str = ("#" + tagDatas[temp_tag_id]);
+						}
 
-	//					if (output_string == "")
-	//					{
-	//						output_string = temp_info_str;
-	//					}
-	//					else
-	//					{
-	//						output_string += (", " + temp_info_str);
-	//					}
-	//				}
+						if (output_string == "")
+						{
+							output_string = temp_info_str;
+						}
+						else
+						{
+							output_string += (", " + temp_info_str);
+						}
+					}
 
-	//				if (tag_exist)
-	//				{
-	//					output_string = QString("%1[%2] : [%3]").arg(file_name).arg(temp_page_no + 1).arg(output_string);
-	//					QTreeWidgetItem* this_info = new QTreeWidgetItem(this_search);
-	//					QLabel* this_info_label = new QLabel();
-	//					this_info_label->setText(output_string);
-	//					m_pView->_widgetBottomView->m_outputTree->setItemWidget(this_info, 0, this_info_label);
-	//					QString data_str = QString("%1/H/%2/%3").arg(file_id).arg(tag_string).arg(temp_page_no);
-	//					this_info->setData(0, Qt::AccessibleTextRole, data_str);
-	//					//this_info->setText(0, total_file_to_header[file_id][j].second);
-	//					total_count++;
-	//					m_pView->setSelectBySearch(file_id);
-	//				}
-	//			}
-	//		}
-	//	}
-	//	this_search->setText(0, QString("%1 [%2]").arg(QDateTime::currentDateTime().toString()).arg(total_count));
+					if (tag_exist)
+					{
+						output_string = QString("%1[%2] : [%3]").arg(file_name).arg(temp_page_no + 1).arg(output_string);
+						QString data_str = QString("%1/H/%2/%3").arg(file_id).arg(tag_string).arg(temp_page_no);
+						QStandardItem* this_info = new QStandardItem(output_string);
+						this_info->setData(data_str, Qt::AccessibleTextRole);
+						this_search->appendRow(this_info);
 
-	//	m_pView->_widgetBottomView->AddResult(this_search);
-	//}
+						total_count++;
+						m_pView->setSelectBySearch(file_id);
+					}
+				}
+			}
+		}
+		this_search->setText(QString("%1 [%2]").arg(QDateTime::currentDateTime().toString()).arg(total_count));
+		m_pView->_widgetBottomView->model->insertRow(0, this_search);
+		m_pView->_widgetBottomView->m_outputTree->expandAll();
+		m_pView->_widgetBottomView->m_outputTree->setUpdatesEnabled(true);
+	}
 }
 
 //void widgetLeftView::onSearchMVClicked(QListWidgetItem* item)
@@ -1437,166 +1411,164 @@ void widgetLeftView::onFileTagClicked(const QModelIndex& index)
 
 void widgetLeftView::doSearch4()
 {
-	//if (m_pView->DBConnected() == false)
-	//{
-	//	QMessageBox::information(this, QString("확인"), QString("데이터베이스를 먼저 생성하세요."));
-	//	return;
-	//}
+	if (m_pView->DBConnected() == false)
+	{
+		QMessageBox::information(this, QString("확인"), QString("데이터베이스를 먼저 생성하세요."));
+		return;
+	}
 
-	//QVariantList data;
-	//QMap< int, bool > total_search_file_index;
-	//QMap< int, QList<QString>> total_file_find_info;
-	//QMap< int, QList<QString>> total_file_search_word;
-	//QMap< int, QList<int>> total_file_search_time;
+	QVariantList data;
+	QMap< int, bool > total_search_file_index;
+	QMap< int, QList<QString>> total_file_find_info;
+	QMap< int, QList<QString>> total_file_search_word;
+	QMap< int, QList<int>> total_file_search_time;
 
-	//QString prev_condition_name;
-	//QString query;
-	//for (int i = 0; i < mv_list.size(); i++)
-	//{
-	//	SearchControls* sc = mv_list[i];
-	//	QString search_word = sc->m_searchWord->text();
+	QString prev_condition_name;
+	QString query;
+	for (int i = 0; i < mv_list.size(); i++)
+	{
+		SearchControls* sc = mv_list[i];
+		QString search_word = sc->m_searchWord->text();
 
-	//	if (search_word.length() > 0)
-	//	{
-	//		QString condition_name = sc->m_searchCondition->currentText();
+		if (search_word.length() > 0)
+		{
+			QString condition_name = sc->m_searchCondition->currentText();
 
-	//		QList< int > search_file_index;
+			QList< int > search_file_index;
 
-	//		query = QString("SELECT file_id, s_title, s_time FROM play_info WHERE s_title LIKE \"%%1%\"").arg(search_word);
-	//		//query = QString("SELECT file_to_hash.file_id, file_to_hash.tag_id FROM file_to_hash INNER JOIN hsah_tags ON file_to_hash.tag_id = hsah_tags.id WHERE hsah_tags.tags LIKE \"%%1%\"").arg(search_word);
-	//		m_pView->db->exec(query, data);
-	//		for (const auto& item : data)
-	//		{
-	//			auto map = item.toMap();
-	//			int file_id = map["file_id"].toInt();
-	//			search_file_index.append(file_id);
-	//			QString s_title = map["s_title"].toString();
-	//			int s_time = map["s_time"].toInt();
+			query = QString("SELECT file_id, s_title, s_time FROM play_info WHERE s_title LIKE \"%%1%\"").arg(search_word);
+			//query = QString("SELECT file_to_hash.file_id, file_to_hash.tag_id FROM file_to_hash INNER JOIN hsah_tags ON file_to_hash.tag_id = hsah_tags.id WHERE hsah_tags.tags LIKE \"%%1%\"").arg(search_word);
+			m_pView->db->exec(query, data);
+			for (const auto& item : data)
+			{
+				auto map = item.toMap();
+				int file_id = map["file_id"].toInt();
+				search_file_index.append(file_id);
+				QString s_title = map["s_title"].toString();
+				int s_time = map["s_time"].toInt();
 
-	//			QList<int> find_index;
-	//			int index = s_title.indexOf(search_word);
-	//			while (index > -1)
-	//			{
-	//				find_index.append(index);
-	//				index = s_title.indexOf(search_word, index + 1);
-	//			}
+				QList<int> find_index;
+				int index = s_title.indexOf(search_word);
+				while (index > -1)
+				{
+					find_index.append(index);
+					index = s_title.indexOf(search_word, index + 1);
+				}
 
-	//			QString result_info;
-	//			index = 0;
-	//			for (int j = 0; j < find_index.size(); j++)
-	//			{
-	//				int current_index = find_index[j];
-	//				if (current_index > index)
-	//					result_info += s_title.mid(index, current_index - index);
+				QString result_info;
+				index = 0;
+				for (int j = 0; j < find_index.size(); j++)
+				{
+					int current_index = find_index[j];
+					if (current_index > index)
+						result_info += s_title.mid(index, current_index - index);
 
-	//				result_info += QString("<font color=\"red\">%1</font>").arg(search_word);
-	//				index = current_index + search_word.length();
-	//			}
-	//			result_info += s_title.right(s_title.length() - index);
+					result_info += QString("<font color=\"red\">%1</font>").arg(search_word);
+					index = current_index + search_word.length();
+				}
+				result_info += s_title.right(s_title.length() - index);
 
-	//			QTime temp_time(0, 0, 0);
-	//			temp_time = temp_time.addSecs(s_time);
-	//			result_info += " : ";
-	//			result_info += temp_time.toString("hh:mm:ss");
+				QTime temp_time(0, 0, 0);
+				temp_time = temp_time.addSecs(s_time);
+				result_info += " : ";
+				result_info += temp_time.toString("hh:mm:ss");
 
-	//			total_file_find_info[file_id].append(result_info);
-	//			total_file_search_word[file_id].append(search_word);
-	//			total_file_search_time[file_id].append(s_time);
-	//		}
+				total_file_find_info[file_id].append(result_info);
+				total_file_search_word[file_id].append(search_word);
+				total_file_search_time[file_id].append(s_time);
+			}
 
-	//		if (i == 0)
-	//		{
-	//			for (int j = 0; j < search_file_index.size(); j++)
-	//			{
-	//				total_search_file_index[search_file_index[j]] = true;
-	//			}
-	//		}
-	//		else
-	//		{
-	//			if (prev_condition_name == "AND")
-	//			{
-	//				QList< int > temp_file_index;
-	//				for (int j = 0; j < search_file_index.size(); j++)
-	//				{
-	//					if (total_search_file_index.contains(search_file_index[j]))
-	//					{
-	//						temp_file_index.append(search_file_index[j]);
-	//					}
-	//				}
+			if (i == 0)
+			{
+				for (int j = 0; j < search_file_index.size(); j++)
+				{
+					total_search_file_index[search_file_index[j]] = true;
+				}
+			}
+			else
+			{
+				if (prev_condition_name == "AND")
+				{
+					QList< int > temp_file_index;
+					for (int j = 0; j < search_file_index.size(); j++)
+					{
+						if (total_search_file_index.contains(search_file_index[j]))
+						{
+							temp_file_index.append(search_file_index[j]);
+						}
+					}
 
-	//				total_search_file_index.clear();
-	//				for (int j = 0; j < temp_file_index.size(); j++)
-	//				{
-	//					total_search_file_index[temp_file_index[j]] = true;
-	//				}
-	//			}
-	//			else if (prev_condition_name == "OR")
-	//			{
-	//				for (int j = 0; j < search_file_index.size(); j++)
-	//				{
-	//					total_search_file_index[search_file_index[j]] = true;
-	//				}
-	//			}
-	//			else if (prev_condition_name == "NOT")
-	//			{
-	//				for (int j = 0; j < search_file_index.size(); j++)
-	//				{
-	//					total_search_file_index[search_file_index[j]] = false;
-	//				}
-	//			}
-	//			else
-	//			{
-	//				//	이상 버림
-	//			}
-	//		}
+					total_search_file_index.clear();
+					for (int j = 0; j < temp_file_index.size(); j++)
+					{
+						total_search_file_index[temp_file_index[j]] = true;
+					}
+				}
+				else if (prev_condition_name == "OR")
+				{
+					for (int j = 0; j < search_file_index.size(); j++)
+					{
+						total_search_file_index[search_file_index[j]] = true;
+					}
+				}
+				else if (prev_condition_name == "NOT")
+				{
+					for (int j = 0; j < search_file_index.size(); j++)
+					{
+						total_search_file_index[search_file_index[j]] = false;
+					}
+				}
+				else
+				{
+					//	이상 버림
+				}
+			}
 
-	//		prev_condition_name = condition_name;
-	//	}
-	//}
+			prev_condition_name = condition_name;
+		}
+	}
 
-	//QTreeWidgetItem* this_search = new QTreeWidgetItem();
-	////	결과 표시
-	//int total_count = 0;
-	//int file_count = 0;
-	//QList<int> find_file_ids = total_search_file_index.keys();
-	//for (int i = 0; i < find_file_ids.size(); i++)
-	//{
-	//	int file_id = find_file_ids[i];
-	//	if (total_search_file_index[file_id])
-	//	{
-	//		QString file_name;
-	//		file_count = 0;
-	//		m_pView->db->exec(QString("SELECT file_name FROM file_info WHERE id=%1").arg(file_id), data);
-	//		for (const auto& item : data)
-	//		{
-	//			auto map = item.toMap();
-	//			file_name = map["file_name"].toString();
-	//		}
+	m_pView->_widgetBottomView->m_outputTree->setUpdatesEnabled(false);
+	QStandardItem* this_search = new QStandardItem();
+	//	결과 표시
+	int total_count = 0;
+	int file_count = 0;
+	QList<int> find_file_ids = total_search_file_index.keys();
+	for (int i = 0; i < find_file_ids.size(); i++)
+	{
+		int file_id = find_file_ids[i];
+		if (total_search_file_index[file_id])
+		{
+			QString file_name;
+			file_count = 0;
+			m_pView->db->exec(QString("SELECT file_name FROM file_info WHERE id=%1").arg(file_id), data);
+			for (const auto& item : data)
+			{
+				auto map = item.toMap();
+				file_name = map["file_name"].toString();
+			}
 
-	//		QTreeWidgetItem* this_file = new QTreeWidgetItem(this_search);
-	//		for (int j = 0; j < total_file_find_info[file_id].size(); j++)
-	//		{
-	//			QTreeWidgetItem* this_info = new QTreeWidgetItem(this_file);
-	//			QLabel* this_info_label = new QLabel();
-	//			this_info_label->setText(total_file_find_info[file_id][j]);
-	//			m_pView->_widgetBottomView->m_outputTree->setItemWidget(this_info, 0, this_info_label);
-	//			QString data_str = QString("%1/V/%2/%3").arg(file_id).arg(total_file_search_word[file_id][j]).arg(total_file_search_time[file_id][j]);
-	//			this_info->setData(0, Qt::AccessibleTextRole, data_str);
-	//			//this_info->setText(0, total_file_to_header[file_id][j].second);
-	//			total_count++;
-	//			file_count++;
-	//			m_pView->setSelectBySearch(file_id);
-	//		}
-	//		QString temp_str = QString("<font color=\"blue\">%1 [%2]</font>").arg(file_name).arg(file_count);
-	//		QLabel* this_info_label = new QLabel();
-	//		this_info_label->setText(temp_str);
-	//		m_pView->_widgetBottomView->m_outputTree->setItemWidget(this_file, 0, this_info_label);
-	//		//this_file->setText(0, QString("<font color=\"blue\">%1 [%2]</font>").arg(file_name).arg(file_count));
-	//	}
-	//}
-	//this_search->setText(0, QString("%1 [%2]").arg(QDateTime::currentDateTime().toString()).arg(total_count));
+			QStandardItem* this_file = new QStandardItem();
+			this_search->appendRow(this_file);
+			for (int j = 0; j < total_file_find_info[file_id].size(); j++)
+			{
+				QString data_str = QString("%1/V/%2/%3").arg(file_id).arg(total_file_search_word[file_id][j]).arg(total_file_search_time[file_id][j]);
+				QStandardItem* this_info = new QStandardItem(total_file_find_info[file_id][j]);
+				this_info->setData(data_str, Qt::AccessibleTextRole);
+				this_file->appendRow(this_info);
 
-	//m_pView->_widgetBottomView->AddResult(this_search);
+				total_count++;
+				file_count++;
+				m_pView->setSelectBySearch(file_id);
+			}
+			QString temp_str = QString("<font color=\"blue\">%1 [%2]</font>").arg(file_name).arg(file_count);
+			this_file->setText(temp_str);
+		}
+	}
+	this_search->setText(QString("%1 [%2]").arg(QDateTime::currentDateTime().toString()).arg(total_count));
+	m_pView->_widgetBottomView->model->insertRow(0, this_search);
+	m_pView->_widgetBottomView->m_outputTree->expandAll();
+	m_pView->_widgetBottomView->m_outputTree->setUpdatesEnabled(true);
 }
 
 widgetTag* widgetLeftView::addTagPage(int page_no)
