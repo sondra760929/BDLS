@@ -105,7 +105,7 @@ public:
         }
     }
 
-private:
+public:
     QSqlDatabase my_db;
     bool is_connected = false;
     QString db_path = "";

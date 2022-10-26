@@ -589,15 +589,18 @@ void widgetLeftView::doSearch1()
 		qint64 t2 = 0;
 		qint64 t3 = 0;
 		qint64 t4 = 0;
+		test_timer.start();
 
 		QVariantList data;
 		QMap< int, bool > total_search_file_index;
 		//QMap< int, QList<QPair<int, int>>> total_file_to_block;
-		QMap< int, QMap<int, QMap<int, QList< QString>>>> total_file_to_block2;
-		QMap< int, QMap<int, QMap<int, QString>>> total_file_to_block_content;
+		//QMap< int, QMap<int, QMap<int, QList< QString>>>> total_file_to_block2;
+		//QMap< int, QMap<int, QMap<int, QString>>> total_file_to_block_content;
 		//QMap< int, QList<QString>> total_file_to_word;
 		QMap< int, QList<QPair<int, QString>>> total_file_to_header;
 		QMap< int, QString > map_file_id_to_name;
+		QList< QString > search_words_list;
+		QMap< int, QMap<int, QList < QPair<int, int>>>> file_se_to_page_block;
 
 		QString prev_condition_name;
 		QString query;
@@ -652,8 +655,10 @@ void widgetLeftView::doSearch1()
 						search_file_index.append(file_id);
 						if (prev_condition_name != "NOT")
 						{
-							total_file_to_block2[file_id][page_no][block_no].append(search_word);
-							total_file_to_block_content[file_id][page_no][block_no] = block_text;
+							search_words_list.append(search_word);
+							file_se_to_page_block[file_id][search_words_list.count()].append(QPair<int, int>(page_no, block_no));
+							//total_file_to_block2[file_id][page_no][block_no].append(search_word);
+							//total_file_to_block_content[file_id][page_no][block_no] = block_text;
 							//total_file_to_block[file_id].append(QPair<int, int>(page_no, block_no));
 							//total_file_to_word[file_id].append(search_word);
 						}
@@ -730,30 +735,54 @@ void widgetLeftView::doSearch1()
 			}
 		}
 
-		//QMap<int, QMap<int, QMap<int, int>> > file_page_block_to_index;
-		//QMap<int, QList<int> > file_page_block_to_index_order;
-		//QMap<int, QString > file_to_contents;
+		QMap<int, QMap<int, QMap<int, int>> > file_page_block_to_index;
+		QMap<int, QList<int> > file_page_block_to_index_order;
+		QMap<int, QString > file_to_contents;
 
-		////	찾은 내용을 기준으로 앞뒤로 문자를 더 표시해주기 위해서 1개의 파일 내용을 모두 모아주는 부분
-		////	이 부분에서 시간이 가장 많이 걸리는 것 같다.
+		//	찾은 내용을 기준으로 앞뒤로 문자를 더 표시해주기 위해서 1개의 파일 내용을 모두 모아주는 부분
+		//	이 부분에서 시간이 가장 많이 걸리는 것 같다.
 		//test_timer.start();
-		//QString temp_query = QString("SELECT file_id, block_text, page_no, block_no FROM page_info WHERE file_id IN (%1) ORDER BY page_no, block_no").arg(file_id_string);
-		//m_pView->db->exec(temp_query, data);
-		//for (const auto& item : data)
+		QString temp_query = QString("SELECT file_id, group_concat(block_text, ' ') FROM page_info WHERE file_id IN (%1) GROUP BY file_id").arg(file_id_string);
+		//QString temp_query = QString("SELECT file_id, page_no, block_no, block_text FROM page_info WHERE file_id IN (%1)").arg(file_id_string);
+		m_pView->db->exec(temp_query, data);
+		for (const auto& item : data)
+		{
+			auto map = item.toMap();
+			int temp_file_id = map["file_id"].toInt();
+			//int temp_page_no = map["page_no"].toInt();
+			//int temp_block_no = map["block_no"].toInt();
+			file_to_contents[temp_file_id] = map["group_concat(block_text)"].toString();
+			////if (file_to_contents[temp_file_id] != "")
+			////	file_to_contents[temp_file_id] += " ";
+
+			//file_page_block_to_index[temp_file_id][temp_page_no][temp_block_no] = file_to_contents[temp_file_id].length();
+			//file_page_block_to_index_order[temp_file_id].append(file_to_contents[temp_file_id].length());
+
+			//file_to_contents[temp_file_id] += map["block_text"].toString();
+		}
+
+		//for (int i = 0; i < file_id_list.size(); i++)
 		//{
-		//	auto map = item.toMap();
-		//	int temp_file_id = map["file_id"].toInt();
-		//	int temp_page_no = map["page_no"].toInt();
-		//	int temp_block_no = map["block_no"].toInt();
-		//	if (file_to_contents[temp_file_id] != "")
-		//		file_to_contents[temp_file_id] += " ";
+		//	QString temp_query = QString("SELECT file_id, block_text, page_no, block_no FROM page_info WHERE file_id = %1 ORDER BY page_no, block_no").arg(file_id_list[i]);
+		//	m_pView->db->exec(temp_query, data);
+		//	//for (const auto& item : data)
+		//	//{
+		//	//	auto map = item.toMap();
+		//	//	int temp_file_id = map["file_id"].toInt();
+		//	//	int temp_page_no = map["page_no"].toInt();
+		//	//	int temp_block_no = map["block_no"].toInt();
+		//	//	//if (file_to_contents[temp_file_id] != "")
+		//	//	//	file_to_contents[temp_file_id] += " ";
 
-		//	file_page_block_to_index[temp_file_id][temp_page_no][temp_block_no] = file_to_contents[temp_file_id].length();
-		//	file_page_block_to_index_order[temp_file_id].append(file_to_contents[temp_file_id].length());
+		//	//	//file_page_block_to_index[temp_file_id][temp_page_no][temp_block_no] = file_to_contents[temp_file_id].length();
+		//	//	//file_page_block_to_index_order[temp_file_id].append(file_to_contents[temp_file_id].length());
 
-		//	file_to_contents[temp_file_id] += map["block_text"].toString();
+		//	//	//file_to_contents[temp_file_id] += map["block_text"].toString();
+		//	//}
 		//}
-		//t1 += test_timer.elapsed();
+
+		t1 += test_timer.elapsed();
+		test_timer.start();
 
 		for (int i = 0; i < file_id_list.size(); i++)
 		{
@@ -786,8 +815,83 @@ void widgetLeftView::doSearch1()
 						m_pView->setSelectBySearch(file_id);
 					}
 				}
+				
+				//if (total_file_to_block2.contains(file_id))
+				//{
+				//	//QString file_contents;
+				//	//QMap<int, QMap<int, int> > page_block_to_index;
+				//	//QList<int> page_block_to_index_order;
+				//	//query = QString("SELECT block_text, page_no, block_no FROM page_info WHERE file_id=%1 ORDER BY page_no, block_no").arg(file_id);
+				//	//m_pView->db->exec(query, data);
+				//	//for (const auto& item : data)
+				//	//{
+				//	//	auto map = item.toMap();
+				//	//	if (file_contents != "")
+				//	//		file_contents += " ";
 
-				if (total_file_to_block2.contains(file_id))
+				//	//	int temp_page_no = map["page_no"].toInt();
+				//	//	int temp_block_no = map["block_no"].toInt();
+				//	//	page_block_to_index[temp_page_no][temp_block_no] = file_contents.length();
+				//	//	page_block_to_index_order.append(file_contents.length());
+
+				//	//	file_contents += map["block_text"].toString();
+				//	//}
+
+
+				//	//int file_length = file_contents.length();
+				//	//int file_length = file_to_contents[file_id].length();
+				//	QList<int> page_no_keys = total_file_to_block2[file_id].keys();
+				//	for (int j = 0; j < page_no_keys.size(); j++)
+				//	{
+				//		QMap<int, int> search_to_count;
+				//		QList<int> block_no_keys = total_file_to_block2[file_id][page_no_keys[j]].keys();
+				//		for (int k = 0; k < block_no_keys.size(); k++)
+				//		{
+				//			QStringList search_words = total_file_to_block2[file_id][page_no_keys[j]][block_no_keys[k]];
+				//			for (int l = 0; l < search_words.size(); l++)
+				//			{
+				//				//int start_index = file_page_block_to_index[file_id][page_no_keys[j]][block_no_keys[k]];
+				//				//int next_index = file_page_block_to_index_order[file_id].indexOf(start_index) + 1;
+				//				//int end_index = file_to_contents[file_id].length();
+				//				//if (next_index < file_page_block_to_index_order[file_id].count())
+				//				//{
+				//				//	end_index = file_page_block_to_index_order[file_id][next_index];
+				//				//}
+				//				//int search_index = file_to_contents[file_id].indexOf(search_words[l], start_index);
+				//				QString block_content = total_file_to_block_content[file_id][page_no_keys[j]][block_no_keys[k]];
+				//				int search_index = block_content.indexOf(search_words[l]);
+				//				int file_length = block_content.length();
+				//				int search_word_count = search_words[l].length();
+				//				if (!search_to_count.contains(l))
+				//					search_to_count[l] = 0;
+				//				while (search_index > -1 && search_index < file_length)
+				//				{
+				//					int temp_length = file_length - search_index - search_word_count;
+				//					if (temp_length > 100)
+				//						temp_length = 100;
+				//					QString info_str = QString("[%1 page[%2] block[%3]] : <font color=\"red\">%4</font>%5")
+				//						.arg(search_words[l])
+				//						.arg(page_no_keys[j] + 1)
+				//						.arg(block_no_keys[k])
+				//						.arg(search_words[l])
+				//						.arg(block_content.mid(search_index + search_word_count, temp_length));
+
+				//					QString data_str = QString("%1/CC/%2/%3/%4").arg(file_id).arg(page_no_keys[j]).arg(search_words[l]).arg(search_to_count[l]);
+				//					QStandardItem* this_info = new QStandardItem(info_str);
+				//					this_info->setData(data_str, Qt::AccessibleTextRole);
+				//					this_file->appendRow(this_info);
+
+				//					search_index = block_content.indexOf(search_words[l], search_index + search_word_count);
+				//					total_count++;
+				//					file_count++;
+				//					search_to_count[l]++;
+				//				}
+				//			}
+				//		}
+				//	}
+				//	m_pView->setSelectBySearch(file_id);
+				//}
+				if (file_se_to_page_block.contains(file_id))
 				{
 					//QString file_contents;
 					//QMap<int, QMap<int, int> > page_block_to_index;
@@ -808,7 +912,6 @@ void widgetLeftView::doSearch1()
 					//	file_contents += map["block_text"].toString();
 					//}
 
-					test_timer.start();
 
 					//int file_length = file_contents.length();
 					//int file_length = file_to_contents[file_id].length();
@@ -862,14 +965,14 @@ void widgetLeftView::doSearch1()
 						}
 					}
 					m_pView->setSelectBySearch(file_id);
-					t2 += test_timer.elapsed();
 				}
 				QString temp_info_str = QString("<font color=\"blue\">%1 [%2]</font>").arg(file_name).arg(file_count);
 				this_file->setText(temp_info_str);
 			}
 		}
-		//QString temp_str = QString("%1 [%2] : %3, %4").arg(QDateTime::currentDateTime().toString()).arg(total_count).arg(t1).arg(t2);
-		QString temp_str = QString("%1 [%2]").arg(QDateTime::currentDateTime().toString()).arg(total_count);
+		t2 += test_timer.elapsed();
+		QString temp_str = QString("%1 [%2] : %3, %4").arg(QDateTime::currentDateTime().toString()).arg(total_count).arg(t1).arg(t2);
+		//QString temp_str = QString("%1 [%2]").arg(QDateTime::currentDateTime().toString()).arg(total_count);
 		this_search->setText(temp_str);
 		m_pView->_widgetBottomView->model->insertRow(0, this_search);
 		m_pView->_widgetBottomView->m_outputTree->expandAll();
