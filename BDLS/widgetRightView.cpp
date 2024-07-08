@@ -6,8 +6,9 @@
 #include <QAudioDevice>
 #include <QMediaDevices>
 #include "BDLS.h"
-#include <QPdfNavigationStack>
+//#include <QPdfNavigationStack>
 #include "ddecomm.h"
+#include "Windows.h"
 
 const qreal zoomMultiplier = qSqrt(2.0);
 #define DDEAPP      QString::fromUtf8("SUMATRA")
@@ -255,13 +256,13 @@ HWND widgetRightView::GetFormHandle()
 HWND widgetRightView::Sumatra_FrameHandle()
 {
 	QString frame("SUMATRA_PDF_FRAME");
-	return FindWindowEx(GetFormHandle(), 0, reinterpret_cast<const WCHAR*>(frame.utf16()), 0);
+	return FindWindowEx(GetFormHandle(), 0, reinterpret_cast<LPCSTR>(frame.utf16()), 0);
 }
 
 BOOL CALLBACK EnumProc(HWND hwnd, LPARAM lParam)
 {
 	wchar_t strvar[255];
-	GetClassName(hwnd, (LPWSTR)strvar, 255);
+	GetClassName(hwnd, (LPSTR)strvar, 255);
 	QString str_string = QString::fromWCharArray(strvar);
 	if (str_string == "Edit")
 	{
@@ -279,7 +280,7 @@ int widgetRightView::Sumatra_PageNumber()
 	if (hFrame)
 	{
 		QString rebar("ReBarWindow32");
-		HWND nHReBar = FindWindowEx(hFrame, 0, reinterpret_cast<const WCHAR*>(rebar.utf16()), 0);
+		HWND nHReBar = FindWindowEx(hFrame, 0, reinterpret_cast<LPCSTR>(rebar.utf16()), 0);
 		if (nHReBar)
 		{
 			HWND aHWnd;
@@ -372,13 +373,23 @@ void widgetRightView::ViewPDF(QString file_path, QString file_info, bool update_
 			//}
 			//else
 			//{
-				SHELLEXECUTEINFO seinfo = { 0 };
+			QByteArray temp_verb;
+			QByteArray temp_dir;
+			QByteArray temp_file;
+			QByteArray temp_param;
+			temp_verb = verb.toLocal8Bit();
+			temp_dir = QCoreApplication::applicationDirPath().toLocal8Bit();
+			temp_file = file.toLocal8Bit();
+			temp_param = cmdLine.toLocal8Bit();
+
+			SHELLEXECUTEINFO seinfo = { 0 };
 				seinfo.cbSize = sizeof(SHELLEXECUTEINFO);
 				//seinfo.fMask = SEE_MASK_ASYNCOK;
-				seinfo.lpVerb = reinterpret_cast<const WCHAR*>(verb.utf16());
-				seinfo.lpDirectory = reinterpret_cast<const WCHAR*>(QCoreApplication::applicationDirPath().utf16());
-				seinfo.lpFile = reinterpret_cast<const WCHAR*>(file.utf16());
-				seinfo.lpParameters = reinterpret_cast<const WCHAR*>(cmdLine.utf16());
+				seinfo.fMask = SEE_MASK_FLAG_NO_UI;
+				seinfo.lpVerb = (LPCSTR)temp_verb.constData();
+				seinfo.lpDirectory = (LPCSTR)temp_dir.constData();
+				seinfo.lpFile = (LPCSTR)temp_file.constData();
+				seinfo.lpParameters = (LPCSTR)temp_param.constData();
 				seinfo.nShow = SW_SHOWNOACTIVATE;
 				ShellExecuteEx(&seinfo);
 				//WaitForSingleObject(seinfo.hProcess, INFINITE);

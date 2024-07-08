@@ -122,10 +122,10 @@ private slots:
 	void onSearchTagDell();
 	void onSearchMVAdd();
 	void onSearchMVDell();
-	void doSearch1();
-	void doSearch2();
-	void doSearch3();
-	void doSearch4();
+	void doSearchPDF();
+	void doSearchMemo();
+	void doSearchTag();
+	void doSearchMovie();
 	void doAddMemo();
 	void doDelMemo();
 	void doAddTag();
@@ -136,6 +136,7 @@ private slots:
 	void onFileTagClicked(const QModelIndex& index);
 	void onFileMVClicked(QListWidgetItem* current, QListWidgetItem* previous);
 	void onFileMVDClicked(QListWidgetItem* item);
+	void showAddUser(QString id, QString pass, QString name, bool super);
 	void doAddUser();
 	void doDelUser();
 	void doAddFile();

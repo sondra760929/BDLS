@@ -1,9 +1,13 @@
 #include "widgetAddUser.h"
 
-widgetAddUser::widgetAddUser(QWidget *parent)
+widgetAddUser::widgetAddUser(QString id, QString pass, QString name, bool super, QWidget *parent)
 	: QDialog(parent)
 {
 	ui.setupUi(this);
+	ui.lineEdit_4->setText(id);
+	ui.lineEdit_3->setText(pass);
+	ui.lineEdit_5->setText(name);
+	ui.chkSuper->setChecked(super);
 
 	connect(ui.btnOK, &QPushButton::clicked, this, &widgetAddUser::onOKButtonClicked);
 	connect(ui.btnCancel, &QPushButton::clicked, this, &widgetAddUser::onCancelButtonClicked);

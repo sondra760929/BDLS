@@ -96,6 +96,9 @@ private:
     ItemBorderDelegate* m_item_border_delegate;
     void updateFrozenTableGeometry();
 
+    int copy_rows = -1;
+    int copy_cols = -1;
+
 private slots:
     void updateSectionWidth(int logicalIndex, int oldSize, int newSize);
     void updateSectionHeight(int logicalIndex, int oldSize, int newSize);

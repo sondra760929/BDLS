@@ -11,7 +11,7 @@
 #include <QVideoWidget>
 #include <QAudioOutput>
 #include <QStatusBar>
-#include <QQuickWidget>
+//#include <QQuickWidget>
 //#include <QQuickitem>
 //#include <qqmlcontext.h>
 #include <QElapsedTimer>

@@ -1,58 +1,61 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'zoomselector.h'
 **
-** Created by: The Qt Meta Object Compiler version 68 (Qt 6.4.0)
+** Created by: The Qt Meta Object Compiler version 68 (Qt 6.8.0)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
-#include <memory>
 #include "../../../zoomselector.h"
-#include <QtCore/qbytearray.h>
 #include <QtCore/qmetatype.h>
+
+#include <QtCore/qtmochelpers.h>
+
+#include <memory>
+
+
+#include <QtCore/qxptype_traits.h>
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'zoomselector.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 68
-#error "This file was generated using the moc from 6.4.0. It"
+#error "This file was generated using the moc from 6.8.0. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
 
-QT_BEGIN_MOC_NAMESPACE
+#ifndef Q_CONSTINIT
+#define Q_CONSTINIT
+#endif
+
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
-struct qt_meta_stringdata_ZoomSelector_t {
-    const uint offsetsAndSize[22];
-    char stringdata0[133];
-};
-#define QT_MOC_LITERAL(ofs, len) \
-    uint(offsetof(qt_meta_stringdata_ZoomSelector_t, stringdata0) + ofs), len 
-static const qt_meta_stringdata_ZoomSelector_t qt_meta_stringdata_ZoomSelector = {
-    {
-QT_MOC_LITERAL(0, 12), // "ZoomSelector"
-QT_MOC_LITERAL(13, 15), // "zoomModeChanged"
-QT_MOC_LITERAL(29, 0), // ""
-QT_MOC_LITERAL(30, 18), // "QPdfView::ZoomMode"
-QT_MOC_LITERAL(49, 8), // "zoomMode"
-QT_MOC_LITERAL(58, 17), // "zoomFactorChanged"
-QT_MOC_LITERAL(76, 10), // "zoomFactor"
-QT_MOC_LITERAL(87, 13), // "setZoomFactor"
-QT_MOC_LITERAL(101, 5), // "reset"
-QT_MOC_LITERAL(107, 20), // "onCurrentTextChanged"
-QT_MOC_LITERAL(128, 4) // "text"
+QT_WARNING_DISABLE_GCC("-Wuseless-cast")
+namespace {
 
-    },
-    "ZoomSelector\0zoomModeChanged\0\0"
-    "QPdfView::ZoomMode\0zoomMode\0"
-    "zoomFactorChanged\0zoomFactor\0setZoomFactor\0"
-    "reset\0onCurrentTextChanged\0text"
-};
-#undef QT_MOC_LITERAL
+#ifdef QT_MOC_HAS_STRINGDATA
+struct qt_meta_stringdata_CLASSZoomSelectorENDCLASS_t {};
+constexpr auto qt_meta_stringdata_CLASSZoomSelectorENDCLASS = QtMocHelpers::stringData(
+    "ZoomSelector",
+    "zoomModeChanged",
+    "",
+    "QPdfView::ZoomMode",
+    "zoomMode",
+    "zoomFactorChanged",
+    "zoomFactor",
+    "setZoomFactor",
+    "reset",
+    "onCurrentTextChanged",
+    "text"
+);
+#else  // !QT_MOC_HAS_STRINGDATA
+#error "qtmochelpers.h not found or too old."
+#endif // !QT_MOC_HAS_STRINGDATA
+} // unnamed namespace
 
-static const uint qt_meta_data_ZoomSelector[] = {
+Q_CONSTINIT static const uint qt_meta_data_CLASSZoomSelectorENDCLASS[] = {
 
  // content:
-      10,       // revision
+      12,       // revision
        0,       // classname
        0,    0, // classinfo
        5,   14, // methods
@@ -83,6 +86,33 @@ static const uint qt_meta_data_ZoomSelector[] = {
        0        // eod
 };
 
+Q_CONSTINIT const QMetaObject ZoomSelector::staticMetaObject = { {
+    QMetaObject::SuperData::link<QComboBox::staticMetaObject>(),
+    qt_meta_stringdata_CLASSZoomSelectorENDCLASS.offsetsAndSizes,
+    qt_meta_data_CLASSZoomSelectorENDCLASS,
+    qt_static_metacall,
+    nullptr,
+    qt_incomplete_metaTypeArray<qt_meta_stringdata_CLASSZoomSelectorENDCLASS_t,
+        // Q_OBJECT / Q_GADGET
+        QtPrivate::TypeAndForceComplete<ZoomSelector, std::true_type>,
+        // method 'zoomModeChanged'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<QPdfView::ZoomMode, std::false_type>,
+        // method 'zoomFactorChanged'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<qreal, std::false_type>,
+        // method 'setZoomFactor'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<qreal, std::false_type>,
+        // method 'reset'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'onCurrentTextChanged'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<const QString &, std::false_type>
+    >,
+    nullptr
+} };
+
 void ZoomSelector::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
 {
     if (_c == QMetaObject::InvokeMetaMethod) {
@@ -100,36 +130,20 @@ void ZoomSelector::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
         int *result = reinterpret_cast<int *>(_a[0]);
         {
             using _t = void (ZoomSelector::*)(QPdfView::ZoomMode );
-            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&ZoomSelector::zoomModeChanged)) {
+            if (_t _q_method = &ZoomSelector::zoomModeChanged; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
                 *result = 0;
                 return;
             }
         }
         {
             using _t = void (ZoomSelector::*)(qreal );
-            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&ZoomSelector::zoomFactorChanged)) {
+            if (_t _q_method = &ZoomSelector::zoomFactorChanged; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
                 *result = 1;
                 return;
             }
         }
     }
 }
-
-const QMetaObject ZoomSelector::staticMetaObject = { {
-    QMetaObject::SuperData::link<QComboBox::staticMetaObject>(),
-    qt_meta_stringdata_ZoomSelector.offsetsAndSize,
-    qt_meta_data_ZoomSelector,
-    qt_static_metacall,
-    nullptr,
-qt_incomplete_metaTypeArray<qt_meta_stringdata_ZoomSelector_t
-, QtPrivate::TypeAndForceComplete<ZoomSelector, std::true_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QPdfView::ZoomMode, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<qreal, std::false_type>
-, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<qreal, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<const QString &, std::false_type>
-
-
->,
-    nullptr
-} };
-
 
 const QMetaObject *ZoomSelector::metaObject() const
 {
@@ -139,7 +153,7 @@ const QMetaObject *ZoomSelector::metaObject() const
 void *ZoomSelector::qt_metacast(const char *_clname)
 {
     if (!_clname) return nullptr;
-    if (!strcmp(_clname, qt_meta_stringdata_ZoomSelector.stringdata0))
+    if (!strcmp(_clname, qt_meta_stringdata_CLASSZoomSelectorENDCLASS.stringdata0))
         return static_cast<void*>(this);
     return QComboBox::qt_metacast(_clname);
 }
@@ -175,4 +189,3 @@ void ZoomSelector::zoomFactorChanged(qreal _t1)
     QMetaObject::activate(this, &staticMetaObject, 1, _a);
 }
 QT_WARNING_POP
-QT_END_MOC_NAMESPACE

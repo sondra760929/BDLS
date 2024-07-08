@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QSqlRecord>
@@ -45,7 +45,7 @@ public:
         {
             if (path.toLower() != db_path.toLower())
             {
-                //  ´Ù¸¥ °æ·Î·Î ¿¬°á ½Ãµµ
+                //  ë‹¤ë¥¸ ê²½ë¡œë¡œ ì—°ê²° ì‹œë„
                 Close();
 
                 my_db.setDatabaseName(path);

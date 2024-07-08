@@ -1,74 +1,74 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'playercontrols.h'
 **
-** Created by: The Qt Meta Object Compiler version 68 (Qt 6.4.0)
+** Created by: The Qt Meta Object Compiler version 68 (Qt 6.8.0)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
-#include <memory>
 #include "../../../playercontrols.h"
-#include <QtCore/qbytearray.h>
 #include <QtCore/qmetatype.h>
+
+#include <QtCore/qtmochelpers.h>
+
+#include <memory>
+
+
+#include <QtCore/qxptype_traits.h>
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'playercontrols.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 68
-#error "This file was generated using the moc from 6.4.0. It"
+#error "This file was generated using the moc from 6.8.0. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
 
-QT_BEGIN_MOC_NAMESPACE
+#ifndef Q_CONSTINIT
+#define Q_CONSTINIT
+#endif
+
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
-struct qt_meta_stringdata_PlayerControls_t {
-    const uint offsetsAndSize[48];
-    char stringdata0[248];
-};
-#define QT_MOC_LITERAL(ofs, len) \
-    uint(offsetof(qt_meta_stringdata_PlayerControls_t, stringdata0) + ofs), len 
-static const qt_meta_stringdata_PlayerControls_t qt_meta_stringdata_PlayerControls = {
-    {
-QT_MOC_LITERAL(0, 14), // "PlayerControls"
-QT_MOC_LITERAL(15, 4), // "play"
-QT_MOC_LITERAL(20, 0), // ""
-QT_MOC_LITERAL(21, 5), // "pause"
-QT_MOC_LITERAL(27, 4), // "stop"
-QT_MOC_LITERAL(32, 4), // "next"
-QT_MOC_LITERAL(37, 8), // "previous"
-QT_MOC_LITERAL(46, 12), // "changeVolume"
-QT_MOC_LITERAL(59, 6), // "volume"
-QT_MOC_LITERAL(66, 12), // "changeMuting"
-QT_MOC_LITERAL(79, 6), // "muting"
-QT_MOC_LITERAL(86, 10), // "changeRate"
-QT_MOC_LITERAL(97, 4), // "rate"
-QT_MOC_LITERAL(102, 8), // "setState"
-QT_MOC_LITERAL(111, 27), // "QMediaPlayer::PlaybackState"
-QT_MOC_LITERAL(139, 5), // "state"
-QT_MOC_LITERAL(145, 9), // "setVolume"
-QT_MOC_LITERAL(155, 8), // "setMuted"
-QT_MOC_LITERAL(164, 5), // "muted"
-QT_MOC_LITERAL(170, 15), // "setPlaybackRate"
-QT_MOC_LITERAL(186, 11), // "playClicked"
-QT_MOC_LITERAL(198, 11), // "muteClicked"
-QT_MOC_LITERAL(210, 10), // "updateRate"
-QT_MOC_LITERAL(221, 26) // "onVolumeSliderValueChanged"
+QT_WARNING_DISABLE_GCC("-Wuseless-cast")
+namespace {
 
-    },
-    "PlayerControls\0play\0\0pause\0stop\0next\0"
-    "previous\0changeVolume\0volume\0changeMuting\0"
-    "muting\0changeRate\0rate\0setState\0"
-    "QMediaPlayer::PlaybackState\0state\0"
-    "setVolume\0setMuted\0muted\0setPlaybackRate\0"
-    "playClicked\0muteClicked\0updateRate\0"
+#ifdef QT_MOC_HAS_STRINGDATA
+struct qt_meta_stringdata_CLASSPlayerControlsENDCLASS_t {};
+constexpr auto qt_meta_stringdata_CLASSPlayerControlsENDCLASS = QtMocHelpers::stringData(
+    "PlayerControls",
+    "play",
+    "",
+    "pause",
+    "stop",
+    "next",
+    "previous",
+    "changeVolume",
+    "volume",
+    "changeMuting",
+    "muting",
+    "changeRate",
+    "rate",
+    "setState",
+    "QMediaPlayer::PlaybackState",
+    "state",
+    "setVolume",
+    "setMuted",
+    "muted",
+    "setPlaybackRate",
+    "playClicked",
+    "muteClicked",
+    "updateRate",
     "onVolumeSliderValueChanged"
-};
-#undef QT_MOC_LITERAL
+);
+#else  // !QT_MOC_HAS_STRINGDATA
+#error "qtmochelpers.h not found or too old."
+#endif // !QT_MOC_HAS_STRINGDATA
+} // unnamed namespace
 
-static const uint qt_meta_data_PlayerControls[] = {
+Q_CONSTINIT static const uint qt_meta_data_CLASSPlayerControlsENDCLASS[] = {
 
  // content:
-      10,       // revision
+      12,       // revision
        0,       // classname
        0,    0, // classinfo
       16,   14, // methods
@@ -121,6 +121,58 @@ static const uint qt_meta_data_PlayerControls[] = {
        0        // eod
 };
 
+Q_CONSTINIT const QMetaObject PlayerControls::staticMetaObject = { {
+    QMetaObject::SuperData::link<QWidget::staticMetaObject>(),
+    qt_meta_stringdata_CLASSPlayerControlsENDCLASS.offsetsAndSizes,
+    qt_meta_data_CLASSPlayerControlsENDCLASS,
+    qt_static_metacall,
+    nullptr,
+    qt_incomplete_metaTypeArray<qt_meta_stringdata_CLASSPlayerControlsENDCLASS_t,
+        // Q_OBJECT / Q_GADGET
+        QtPrivate::TypeAndForceComplete<PlayerControls, std::true_type>,
+        // method 'play'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'pause'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'stop'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'next'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'previous'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'changeVolume'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<float, std::false_type>,
+        // method 'changeMuting'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<bool, std::false_type>,
+        // method 'changeRate'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<qreal, std::false_type>,
+        // method 'setState'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<QMediaPlayer::PlaybackState, std::false_type>,
+        // method 'setVolume'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<float, std::false_type>,
+        // method 'setMuted'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<bool, std::false_type>,
+        // method 'setPlaybackRate'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<float, std::false_type>,
+        // method 'playClicked'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'muteClicked'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'updateRate'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'onVolumeSliderValueChanged'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>
+    >,
+    nullptr
+} };
+
 void PlayerControls::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
 {
     if (_c == QMetaObject::InvokeMetaMethod) {
@@ -149,78 +201,62 @@ void PlayerControls::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _
         int *result = reinterpret_cast<int *>(_a[0]);
         {
             using _t = void (PlayerControls::*)();
-            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&PlayerControls::play)) {
+            if (_t _q_method = &PlayerControls::play; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
                 *result = 0;
                 return;
             }
         }
         {
             using _t = void (PlayerControls::*)();
-            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&PlayerControls::pause)) {
+            if (_t _q_method = &PlayerControls::pause; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
                 *result = 1;
                 return;
             }
         }
         {
             using _t = void (PlayerControls::*)();
-            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&PlayerControls::stop)) {
+            if (_t _q_method = &PlayerControls::stop; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
                 *result = 2;
                 return;
             }
         }
         {
             using _t = void (PlayerControls::*)();
-            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&PlayerControls::next)) {
+            if (_t _q_method = &PlayerControls::next; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
                 *result = 3;
                 return;
             }
         }
         {
             using _t = void (PlayerControls::*)();
-            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&PlayerControls::previous)) {
+            if (_t _q_method = &PlayerControls::previous; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
                 *result = 4;
                 return;
             }
         }
         {
             using _t = void (PlayerControls::*)(float );
-            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&PlayerControls::changeVolume)) {
+            if (_t _q_method = &PlayerControls::changeVolume; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
                 *result = 5;
                 return;
             }
         }
         {
             using _t = void (PlayerControls::*)(bool );
-            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&PlayerControls::changeMuting)) {
+            if (_t _q_method = &PlayerControls::changeMuting; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
                 *result = 6;
                 return;
             }
         }
         {
             using _t = void (PlayerControls::*)(qreal );
-            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&PlayerControls::changeRate)) {
+            if (_t _q_method = &PlayerControls::changeRate; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
                 *result = 7;
                 return;
             }
         }
     }
 }
-
-const QMetaObject PlayerControls::staticMetaObject = { {
-    QMetaObject::SuperData::link<QWidget::staticMetaObject>(),
-    qt_meta_stringdata_PlayerControls.offsetsAndSize,
-    qt_meta_data_PlayerControls,
-    qt_static_metacall,
-    nullptr,
-qt_incomplete_metaTypeArray<qt_meta_stringdata_PlayerControls_t
-, QtPrivate::TypeAndForceComplete<PlayerControls, std::true_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<float, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<bool, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<qreal, std::false_type>
-, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QMediaPlayer::PlaybackState, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<float, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<bool, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<float, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>
-
-
->,
-    nullptr
-} };
-
 
 const QMetaObject *PlayerControls::metaObject() const
 {
@@ -230,7 +266,7 @@ const QMetaObject *PlayerControls::metaObject() const
 void *PlayerControls::qt_metacast(const char *_clname)
 {
     if (!_clname) return nullptr;
-    if (!strcmp(_clname, qt_meta_stringdata_PlayerControls.stringdata0))
+    if (!strcmp(_clname, qt_meta_stringdata_CLASSPlayerControlsENDCLASS.stringdata0))
         return static_cast<void*>(this);
     return QWidget::qt_metacast(_clname);
 }
@@ -303,4 +339,3 @@ void PlayerControls::changeRate(qreal _t1)
     QMetaObject::activate(this, &staticMetaObject, 7, _a);
 }
 QT_WARNING_POP
-QT_END_MOC_NAMESPACE

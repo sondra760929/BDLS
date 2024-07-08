@@ -1,4 +1,4 @@
-#ifndef TITLEBAR_H
+ï»¿#ifndef TITLEBAR_H
 #define TITLEBAR_H
 
 #include <QWidget>
@@ -23,48 +23,48 @@ public:
     explicit TitleBar(QWidget* parent = NULL);
     /**
      * @brief Set title block title
-     * @param title£¬Parameter, set title
+     * @param titleï¼ŒParameter, set title
      */
     void setWindowTitle(const QString& title);
     /**
      * @brief Sets the icon for the title block
-     * @param iconPath£¬Parameter, path of Icon
+     * @param iconPathï¼ŒParameter, path of Icon
      */
     void SetTitleBarIcon(const QString& iconPath);
 
 protected:
     /**
      * @brief Double click the event handler
-     * @param event£¬Parameters, events
+     * @param eventï¼ŒParameters, events
      * @note Double click the title bar to maximize / restore the interface
      */
     virtual void mouseDoubleClickEvent(QMouseEvent* event);
 
     /**
      * @brief Mouse down event handler
-     * @param event£¬Parameters, events
+     * @param eventï¼ŒParameters, events
      * @note Press the left mouse button
      */
     virtual void mousePressEvent(QMouseEvent* event);
 
     /**
      * @brief Mouse movement event handler
-     * @param event£¬Parameters, events
+     * @param eventï¼ŒParameters, events
      * @note Move mouse
      */
     virtual void mouseMoveEvent(QMouseEvent* event);
 
     /**
      * @brief Mouse release event handler
-     * @param event£¬Parameters, events
+     * @param eventï¼ŒParameters, events
      * @note Release the mouse
      */
     virtual void mouseReleaseEvent(QMouseEvent* event);
 
     /**
      * @brief Event filter processor
-     * @param obj£¬parameter
-     * @param event£¬Parameters, events
+     * @param objï¼Œparameter
+     * @param eventï¼ŒParameters, events
      * @return Return true for success and false for failure
      * @note Set title and Icon
      */

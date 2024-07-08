@@ -10,7 +10,8 @@
 #include "FilterLineEdit.h"
 #include "widgetInputPass.h"
 
-#include "mupdf/fitz.h"
+//#include "mupdf/fitz.h"
+#include "Windows.h"
 
 QString m_strKey = QString("HKEY_CURRENT_USER\\SOFTWARE\\DIGIBOOK\\PDFIndexExplorer\\Settings");
 QSettings m(m_strKey, QSettings::Registry64Format);
@@ -19,21 +20,21 @@ QStringList media_file_format;
 bool CheckEncrypted(QString file_path)
 {
 	bool is_encrypted = false;
-		fz_context* ctx;
-		fz_document* doc;
+		//fz_context* ctx;
+		//fz_document* doc;
 
-		ctx = fz_new_context(NULL, NULL, FZ_STORE_UNLIMITED);
-		fz_try(ctx) {
-			fz_register_document_handlers(ctx);
-			doc = fz_open_document(ctx, reinterpret_cast<const char*>(file_path.toUtf8().data()));
-			if (fz_needs_password(ctx, doc) == 1)
-				is_encrypted = true;
-		}fz_catch(ctx) {
-			fz_drop_context(ctx);
-			return is_encrypted;
-		}
-		fz_drop_document(ctx, doc);
-		fz_drop_context(ctx);
+		//ctx = fz_new_context(NULL, NULL, FZ_STORE_UNLIMITED);
+		//fz_try(ctx) {
+		//	fz_register_document_handlers(ctx);
+		//	doc = fz_open_document(ctx, reinterpret_cast<const char*>(file_path.toUtf8().data()));
+		//	if (fz_needs_password(ctx, doc) == 1)
+		//		is_encrypted = true;
+		//}fz_catch(ctx) {
+		//	fz_drop_context(ctx);
+		//	return is_encrypted;
+		//}
+		//fz_drop_document(ctx, doc);
+		//fz_drop_context(ctx);
 
 	return is_encrypted;
 }
@@ -1157,7 +1158,7 @@ void BDLS::onTableCellClicked(const QItemSelection& selected, const QItemSelecti
 			if (file_path != m_strCurrentSelectedItemPath)
 			{
 				SetCurrentFile(NONE, file_name);
-				SetFocus((HWND)(ui.tableView->winId()));
+				//SetFocus((HWND)(ui.tableView->winId()));
 			}
 		}
 	}
@@ -1671,8 +1672,8 @@ void BDLS::doLock()
 					ShExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
 					ShExecInfo.hwnd = NULL;
 					ShExecInfo.lpVerb = NULL;
-					ShExecInfo.lpFile = reinterpret_cast<const WCHAR*>(file.utf16());
-					ShExecInfo.lpParameters = reinterpret_cast<const WCHAR*>(cmdLine.utf16());
+					ShExecInfo.lpFile = reinterpret_cast<LPCSTR>(file.utf16());
+					ShExecInfo.lpParameters = reinterpret_cast<LPCSTR>(cmdLine.utf16());
 					ShExecInfo.lpDirectory = NULL;
 					ShExecInfo.nShow = SW_HIDE;
 					ShExecInfo.hInstApp = NULL;
@@ -1780,8 +1781,8 @@ void BDLS::doUnlock()
 					ShExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
 					ShExecInfo.hwnd = NULL;
 					ShExecInfo.lpVerb = NULL;
-					ShExecInfo.lpFile = reinterpret_cast<const WCHAR*>(file.utf16());
-					ShExecInfo.lpParameters = reinterpret_cast<const WCHAR*>(cmdLine.utf16());
+					ShExecInfo.lpFile = reinterpret_cast<LPCSTR>(file.utf16());
+					ShExecInfo.lpParameters = reinterpret_cast<LPCSTR>(cmdLine.utf16());
 					ShExecInfo.lpDirectory = NULL;
 					ShExecInfo.nShow = SW_HIDE;
 					ShExecInfo.hInstApp = NULL;
@@ -1887,6 +1888,17 @@ void BDLS::doDBUpdate()
 					total = row_count;
 				}
 
+				int file_db_id = 0;
+				QMap<int, int> exist_file_ids;
+				db->exec(QString("SELECT id FROM file_info ORDER BY id"), data);
+				for (int i = 0; i < data.count(); i++)
+				{
+					//	존재할 경우
+					auto map = data[i].toMap();
+					file_db_id = map["id"].toInt();
+					exist_file_ids[file_db_id] = 0;
+				}
+
 				int row_index;
 				for (int _i = 0; _i < row_count; _i++)
 				{
@@ -1926,7 +1938,7 @@ void BDLS::doDBUpdate()
 					UpdateProgress2("", 0, 100, false);
 					UpdateProgress(status_string, _i + 1, total);
 
-					int file_db_id = 0;
+					file_db_id = 0;
 					//	file id 확인
 					db->exec(QString("SELECT id FROM file_info WHERE file_path=\"%1\"").arg(file_path), data);
 					if (data.count() > 0)
@@ -1934,6 +1946,8 @@ void BDLS::doDBUpdate()
 						//	존재할 경우
 						auto map = data[0].toMap();
 						file_db_id = map["id"].toInt();
+						if (exist_file_ids.contains(file_db_id))
+							exist_file_ids[file_db_id] = 1;
 						for (int j = 3; j < col_count; j++)
 						{
 							QString header_name = originModel->data(originModel->index(row_index, j)).toString();
@@ -2079,6 +2093,21 @@ void BDLS::doDBUpdate()
 								//}
 							}
 						}
+					}
+				}
+
+				for (auto i = exist_file_ids.cbegin(), end = exist_file_ids.cend(); i != end; ++i)
+				{
+					if (i.value() == 0)
+					{
+						temp_string = QString("DELETE FROM file_info WHERE id=%1").arg(i.key());
+						db->exec(temp_string);
+
+						temp_string = QString("DELETE FROM header_info WHERE file_id=%1").arg(i.key());
+						db->exec(temp_string);
+
+						temp_string = QString("DELETE FROM page_info WHERE file_id=%1").arg(i.key());
+						db->exec(temp_string);
 					}
 				}
 			}

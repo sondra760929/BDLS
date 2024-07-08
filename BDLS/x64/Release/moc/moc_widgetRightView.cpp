@@ -1,68 +1,68 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'widgetRightView.h'
 **
-** Created by: The Qt Meta Object Compiler version 68 (Qt 6.4.0)
+** Created by: The Qt Meta Object Compiler version 68 (Qt 6.8.0)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
-#include <memory>
 #include "../../../widgetRightView.h"
-#include <QtCore/qbytearray.h>
 #include <QtCore/qmetatype.h>
+
+#include <QtCore/qtmochelpers.h>
+
+#include <memory>
+
+
+#include <QtCore/qxptype_traits.h>
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'widgetRightView.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 68
-#error "This file was generated using the moc from 6.4.0. It"
+#error "This file was generated using the moc from 6.8.0. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
 
-QT_BEGIN_MOC_NAMESPACE
+#ifndef Q_CONSTINIT
+#define Q_CONSTINIT
+#endif
+
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
-struct qt_meta_stringdata_widgetRightView_t {
-    const uint offsetsAndSize[36];
-    char stringdata0[243];
-};
-#define QT_MOC_LITERAL(ofs, len) \
-    uint(offsetof(qt_meta_stringdata_widgetRightView_t, stringdata0) + ofs), len 
-static const qt_meta_stringdata_widgetRightView_t qt_meta_stringdata_widgetRightView = {
-    {
-QT_MOC_LITERAL(0, 15), // "widgetRightView"
-QT_MOC_LITERAL(16, 17), // "fullScreenChanged"
-QT_MOC_LITERAL(34, 0), // ""
-QT_MOC_LITERAL(35, 10), // "fullScreen"
-QT_MOC_LITERAL(46, 15), // "durationChanged"
-QT_MOC_LITERAL(62, 8), // "duration"
-QT_MOC_LITERAL(71, 15), // "positionChanged"
-QT_MOC_LITERAL(87, 8), // "progress"
-QT_MOC_LITERAL(96, 15), // "metaDataChanged"
-QT_MOC_LITERAL(112, 4), // "seek"
-QT_MOC_LITERAL(117, 8), // "mseconds"
-QT_MOC_LITERAL(126, 13), // "statusChanged"
-QT_MOC_LITERAL(140, 25), // "QMediaPlayer::MediaStatus"
-QT_MOC_LITERAL(166, 6), // "status"
-QT_MOC_LITERAL(173, 17), // "bufferingProgress"
-QT_MOC_LITERAL(191, 21), // "videoAvailableChanged"
-QT_MOC_LITERAL(213, 9), // "available"
-QT_MOC_LITERAL(223, 19) // "displayErrorMessage"
+QT_WARNING_DISABLE_GCC("-Wuseless-cast")
+namespace {
 
-    },
-    "widgetRightView\0fullScreenChanged\0\0"
-    "fullScreen\0durationChanged\0duration\0"
-    "positionChanged\0progress\0metaDataChanged\0"
-    "seek\0mseconds\0statusChanged\0"
-    "QMediaPlayer::MediaStatus\0status\0"
-    "bufferingProgress\0videoAvailableChanged\0"
-    "available\0displayErrorMessage"
-};
-#undef QT_MOC_LITERAL
+#ifdef QT_MOC_HAS_STRINGDATA
+struct qt_meta_stringdata_CLASSwidgetRightViewENDCLASS_t {};
+constexpr auto qt_meta_stringdata_CLASSwidgetRightViewENDCLASS = QtMocHelpers::stringData(
+    "widgetRightView",
+    "fullScreenChanged",
+    "",
+    "fullScreen",
+    "durationChanged",
+    "duration",
+    "positionChanged",
+    "progress",
+    "metaDataChanged",
+    "seek",
+    "mseconds",
+    "statusChanged",
+    "QMediaPlayer::MediaStatus",
+    "status",
+    "bufferingProgress",
+    "videoAvailableChanged",
+    "available",
+    "displayErrorMessage"
+);
+#else  // !QT_MOC_HAS_STRINGDATA
+#error "qtmochelpers.h not found or too old."
+#endif // !QT_MOC_HAS_STRINGDATA
+} // unnamed namespace
 
-static const uint qt_meta_data_widgetRightView[] = {
+Q_CONSTINIT static const uint qt_meta_data_CLASSwidgetRightViewENDCLASS[] = {
 
  // content:
-      10,       // revision
+      12,       // revision
        0,       // classname
        0,    0, // classinfo
        9,   14, // methods
@@ -101,6 +101,44 @@ static const uint qt_meta_data_widgetRightView[] = {
        0        // eod
 };
 
+Q_CONSTINIT const QMetaObject widgetRightView::staticMetaObject = { {
+    QMetaObject::SuperData::link<QWidget::staticMetaObject>(),
+    qt_meta_stringdata_CLASSwidgetRightViewENDCLASS.offsetsAndSizes,
+    qt_meta_data_CLASSwidgetRightViewENDCLASS,
+    qt_static_metacall,
+    nullptr,
+    qt_incomplete_metaTypeArray<qt_meta_stringdata_CLASSwidgetRightViewENDCLASS_t,
+        // Q_OBJECT / Q_GADGET
+        QtPrivate::TypeAndForceComplete<widgetRightView, std::true_type>,
+        // method 'fullScreenChanged'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<bool, std::false_type>,
+        // method 'durationChanged'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<qint64, std::false_type>,
+        // method 'positionChanged'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<qint64, std::false_type>,
+        // method 'metaDataChanged'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'seek'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<int, std::false_type>,
+        // method 'statusChanged'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<QMediaPlayer::MediaStatus, std::false_type>,
+        // method 'bufferingProgress'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<float, std::false_type>,
+        // method 'videoAvailableChanged'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<bool, std::false_type>,
+        // method 'displayErrorMessage'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>
+    >,
+    nullptr
+} };
+
 void widgetRightView::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
 {
     if (_c == QMetaObject::InvokeMetaMethod) {
@@ -122,29 +160,13 @@ void widgetRightView::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int 
         int *result = reinterpret_cast<int *>(_a[0]);
         {
             using _t = void (widgetRightView::*)(bool );
-            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&widgetRightView::fullScreenChanged)) {
+            if (_t _q_method = &widgetRightView::fullScreenChanged; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
                 *result = 0;
                 return;
             }
         }
     }
 }
-
-const QMetaObject widgetRightView::staticMetaObject = { {
-    QMetaObject::SuperData::link<QWidget::staticMetaObject>(),
-    qt_meta_stringdata_widgetRightView.offsetsAndSize,
-    qt_meta_data_widgetRightView,
-    qt_static_metacall,
-    nullptr,
-qt_incomplete_metaTypeArray<qt_meta_stringdata_widgetRightView_t
-, QtPrivate::TypeAndForceComplete<widgetRightView, std::true_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<bool, std::false_type>
-, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<qint64, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<qint64, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<int, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QMediaPlayer::MediaStatus, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<float, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<bool, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>
-
-
->,
-    nullptr
-} };
-
 
 const QMetaObject *widgetRightView::metaObject() const
 {
@@ -154,7 +176,7 @@ const QMetaObject *widgetRightView::metaObject() const
 void *widgetRightView::qt_metacast(const char *_clname)
 {
     if (!_clname) return nullptr;
-    if (!strcmp(_clname, qt_meta_stringdata_widgetRightView.stringdata0))
+    if (!strcmp(_clname, qt_meta_stringdata_CLASSwidgetRightViewENDCLASS.stringdata0))
         return static_cast<void*>(this);
     return QWidget::qt_metacast(_clname);
 }
@@ -183,4 +205,3 @@ void widgetRightView::fullScreenChanged(bool _t1)
     QMetaObject::activate(this, &staticMetaObject, 0, _a);
 }
 QT_WARNING_POP
-QT_END_MOC_NAMESPACE

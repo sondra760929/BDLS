@@ -1027,6 +1027,8 @@ void ExtendedTableWidget::keyPressEvent(QKeyEvent* event) {
         else if (event->matches(QKeySequence::Copy)) {
             QString text;
             QItemSelectionRange range = selectionModel()->selection().first();
+            copy_rows = range.bottom() - range.top() + 1;
+            copy_cols = range.right() - range.left() + 1;
             for (auto i = range.top(); i <= range.bottom(); ++i)
             {
                 QStringList rowContents;
@@ -1041,15 +1043,28 @@ void ExtendedTableWidget::keyPressEvent(QKeyEvent* event) {
             QString text = QApplication::clipboard()->text();
             QStringList rowContents = text.split("\n", Qt::SkipEmptyParts);
 
-            QModelIndex initIndex = selectedIndexes().at(0);
-            auto initRow = initIndex.row();
-            auto initCol = initIndex.column();
-
-            for (auto i = 0; i < rowContents.size(); ++i) {
-                QStringList columnContents = rowContents.at(i).split("\t");
-                for (auto j = 0; j < columnContents.size(); ++j) {
+            if (copy_rows == 1 && copy_cols == 1)
+            {
+                for (auto i = 0; i < selectedIndexes().count(); i++)
+                {
+                    QModelIndex initIndex = selectedIndexes().at(i);
+                    auto initRow = initIndex.row();
+                    auto initCol = initIndex.column();
                     model()->setData(model()->index(
-                        initRow + i, initCol + j), columnContents.at(j));
+                        initRow, initCol), text);
+                }
+            }
+            else
+            {
+                QModelIndex initIndex = selectedIndexes().at(0);
+                auto initRow = initIndex.row();
+                auto initCol = initIndex.column();
+                for (auto i = 0; i < rowContents.size(); ++i) {
+                    QStringList columnContents = rowContents.at(i).split("\t");
+                    for (auto j = 0; j < columnContents.size(); ++j) {
+                        model()->setData(model()->index(
+                            initRow + i, initCol + j), columnContents.at(j));
+                    }
                 }
             }
         }

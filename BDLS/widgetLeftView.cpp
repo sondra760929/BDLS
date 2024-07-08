@@ -56,9 +56,9 @@ widgetLeftView::widgetLeftView(QWidget* parent)
 	search_list.append(sc);
 	searchViewLayout->addWidget(sc);
 
-	QPushButton* btn_search = new QPushButton(this);
-	btn_search->setText(QString("검색"));
-	searchViewLayout->addWidget(btn_search);
+	QPushButton* btn_search_pdf = new QPushButton(this);
+	btn_search_pdf->setText(QString("검색"));
+	searchViewLayout->addWidget(btn_search_pdf);
 
 	label = new QLabel(this);
 	label->setText("");
@@ -84,9 +84,9 @@ widgetLeftView::widgetLeftView(QWidget* parent)
 	memo_list.append(sc);
 	searchViewLayout->addWidget(sc);
 
-	QPushButton* btn_search2 = new QPushButton(this);
-	btn_search2->setText(QString("검색"));
-	searchViewLayout->addWidget(btn_search2);
+	QPushButton* btn_search_memo = new QPushButton(this);
+	btn_search_memo->setText(QString("검색"));
+	searchViewLayout->addWidget(btn_search_memo);
 
 	label = new QLabel(this);
 	label->setText("");
@@ -112,9 +112,9 @@ widgetLeftView::widgetLeftView(QWidget* parent)
 	tag_list.append(sc);
 	searchViewLayout->addWidget(sc);
 
-	QPushButton* btn_search3 = new QPushButton(this);
-	btn_search3->setText(QString("검색"));
-	searchViewLayout->addWidget(btn_search3);
+	QPushButton* btn_search_tag = new QPushButton(this);
+	btn_search_tag->setText(QString("검색"));
+	searchViewLayout->addWidget(btn_search_tag);
 
 	//label = new QLabel(this);
 	//label->setText(QString("3. 해시태그 검색"));
@@ -161,9 +161,9 @@ widgetLeftView::widgetLeftView(QWidget* parent)
 	mv_list.append(sc);
 	searchViewLayout->addWidget(sc);
 
-	QPushButton* btn_search4 = new QPushButton(this);
-	btn_search4->setText(QString("검색"));
-	searchViewLayout->addWidget(btn_search4);
+	QPushButton* btn_search_movie = new QPushButton(this);
+	btn_search_movie->setText(QString("검색"));
+	searchViewLayout->addWidget(btn_search_movie);
 
 	//label = new QLabel(this);
 	//label->setText(QString("4. 동영상 목차 검색"));
@@ -202,10 +202,10 @@ widgetLeftView::widgetLeftView(QWidget* parent)
 	//connect(tagSearchList, &QListView::clicked, this, &widgetLeftView::onSearchTagClicked);
 	//connect(mvSearchList, &QListWidget::itemClicked, this, &widgetLeftView::onSearchMVClicked);
 
-	connect(btn_search, &QPushButton::clicked, this, &widgetLeftView::doSearch1);
-	connect(btn_search2, &QPushButton::clicked, this, &widgetLeftView::doSearch2);
-	connect(btn_search3, &QPushButton::clicked, this, &widgetLeftView::doSearch3);
-	connect(btn_search4, &QPushButton::clicked, this, &widgetLeftView::doSearch4);
+	connect(btn_search_pdf, &QPushButton::clicked, this, &widgetLeftView::doSearchPDF);
+	connect(btn_search_memo, &QPushButton::clicked, this, &widgetLeftView::doSearchMemo);
+	connect(btn_search_tag, &QPushButton::clicked, this, &widgetLeftView::doSearchTag);
+	connect(btn_search_movie, &QPushButton::clicked, this, &widgetLeftView::doSearchMovie);
 
 	//------------------------------------------------------------------------------
 	noteViewLayout = new QVBoxLayout;
@@ -580,7 +580,7 @@ void widgetLeftView::ViewUser(bool show)
 		setUserList();
 }
 
-void widgetLeftView::doSearch1()
+void widgetLeftView::doSearchPDF()
 {
 	if (m_pView->DBConnected())
 	{
@@ -858,7 +858,7 @@ void widgetLeftView::doSearch1()
 	}
 }
 
-void widgetLeftView::doSearch2()
+void widgetLeftView::doSearchMemo()
 {
 	if (m_pView->DBConnected())
 	{
@@ -1080,7 +1080,7 @@ void widgetLeftView::doSearch2()
 	}
 }
 
-void widgetLeftView::doSearch3()
+void widgetLeftView::doSearchTag()
 {
 	if (m_pView->DBConnected())
 	{
@@ -1390,7 +1390,7 @@ void widgetLeftView::onFileTagClicked(const QModelIndex& index)
 	}
 }
 
-void widgetLeftView::doSearch4()
+void widgetLeftView::doSearchMovie()
 {
 	if (m_pView->DBConnected() == false)
 	{
@@ -2400,15 +2400,9 @@ void widgetLeftView::doDelFile()
 	}
 }
 
-void widgetLeftView::doAddUser()
+void widgetLeftView::showAddUser(QString id, QString pass, QString name, bool super)
 {
-	if (m_pView->DBConnected() == false)
-	{
-		QMessageBox::information(this, QString("확인"), QString("데이터베이스를 먼저 생성하세요."));
-		return;
-	}
-
-	widgetAddUser login_dlg(this);
+	widgetAddUser login_dlg(id, pass, name, false, this);
 	login_dlg.setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
 	login_dlg.move(this->rect().center() - QPoint(login_dlg.width() / 2, login_dlg.height() / 2));
 	if (login_dlg.exec() == QDialog::Accepted)
@@ -2417,6 +2411,20 @@ void widgetLeftView::doAddUser()
 		QString user_pass = login_dlg.user_pass;
 		QString user_name = login_dlg.user_name;
 		bool user_super = login_dlg.user_super;
+
+		if (user_id == "")
+		{
+			QMessageBox::information(0, "error", "ID를 입력하세요.");
+			showAddUser(user_id, user_pass, user_name, user_super);
+			return;
+		}
+
+		if (user_pass == "")
+		{
+			QMessageBox::information(0, "error", "암호를 입력하세요.");
+			showAddUser(user_id, user_pass, user_name, user_super);
+			return;
+		}
 
 		bool user_exist = false;
 		QString prev_user_name;
@@ -2446,6 +2454,11 @@ void widgetLeftView::doAddUser()
 
 				setUserList();
 			}
+			else
+			{
+				showAddUser(user_id, user_pass, user_name, user_super);
+				return;
+			}
 		}
 		else
 		{
@@ -2459,6 +2472,17 @@ void widgetLeftView::doAddUser()
 			setUserList();
 		}
 	}
+}
+
+void widgetLeftView::doAddUser()
+{
+	if (m_pView->DBConnected() == false)
+	{
+		QMessageBox::information(this, QString("확인"), QString("데이터베이스를 먼저 생성하세요."));
+		return;
+	}
+
+	showAddUser("", "", "", false);
 }
 
 void widgetLeftView::doDelUser()
